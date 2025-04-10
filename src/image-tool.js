@@ -1,522 +1,803 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Éléments DOM
-    const image = document.getElementById('cropit');
-    const addCropZoneBtn = document.getElementById('addCropZone');
-    const addFocusPointBtn = document.getElementById('addFocusPoint');
-    const cropZoneDiv = document.getElementById('cropzone');
-    const focusZoneDiv = document.getElementById('focuszone');
-    const focusXInput = document.getElementById('focusX');
-    const focusYInput = document.getElementById('focusY');
-    const cropXInput = document.getElementById('cx');
-    const cropYInput = document.getElementById('cy');
-    const cropWInput = document.getElementById('cw');
-    const cropHInput = document.getElementById('ch');
-    
-    // Variables globales
-    let focusMarker = null;
-    let cropOverlay = null;
-    let cropActive = false;
-    let focusActive = false;
-    let focusDragging = false;
-    let focusDragOffsetX = 0;
-    let focusDragOffsetY = 0;
-    let cropDragging = false;
-    let cropResizing = false;
-    let activeHandle = null;
-    let startX, startY, startWidth, startHeight, startMouseX, startMouseY;
+/**
+ * ImageTool - Un outil léger pour définir des points focaux et zones de recadrage sur des images
+ * @module image-tool
+ */
 
-    // Dimensions et échelles
-    let originalWidth = 1;
-    let originalHeight = 1;
-    let displayWidth = 1;
-    let displayHeight = 1;
-    let scaleX = 1;
-    let scaleY = 1;
-
-    // Mise à jour des facteurs d'échelle
-    function updateScaling() {
-        originalWidth = image.naturalWidth || 1;
-        originalHeight = image.naturalHeight || 1;
-        displayWidth = image.offsetWidth;
-        displayHeight = image.offsetHeight;
-        scaleX = displayWidth / originalWidth;
-        scaleY = displayHeight / originalHeight;
-        
-        // Repositionner le marqueur si actif après redimensionnement
-        if (focusActive) {
-            const currentOriginalX = parseInt(focusXInput.value, 10);
-            const currentOriginalY = parseInt(focusYInput.value, 10);
-            if (!isNaN(currentOriginalX) && !isNaN(currentOriginalY)) {
-                moveMarker(currentOriginalX, currentOriginalY);
-            }
-        }
-        
-        // Repositionner la zone de recadrage si active
-        if (cropActive && cropOverlay) {
-            updateCropOverlay();
-        }
+class ImageTool {
+    /**
+     * Crée une instance de l'outil d'image
+     * @param {Object} options - Options de configuration
+     * @param {HTMLElement|string} options.imageElement - Élément image ou sélecteur CSS
+     * @param {Object} [options.focusPoint] - Configuration du point focal
+     * @param {boolean} [options.focusPoint.enabled=true] - Activer la fonctionnalité de point focal
+     * @param {Object} [options.focusPoint.style] - Styles personnalisés pour le marqueur de point focal
+     * @param {Object} [options.cropZone] - Configuration de la zone de recadrage
+     * @param {boolean} [options.cropZone.enabled=true] - Activer la fonctionnalité de zone de recadrage
+     * @param {Object} [options.cropZone.style] - Styles personnalisés pour l'overlay de recadrage
+     * @param {Function} [options.onChange] - Callback appelé lors des changements
+     */
+    constructor(options) {
+      // Valider les options
+      if (!options || !options.imageElement) {
+        throw new Error('L\'élément image est requis');
+      }
+  
+      // Initialiser les propriétés
+      this.imageElement = typeof options.imageElement === 'string' 
+        ? document.querySelector(options.imageElement) 
+        : options.imageElement;
+      
+      if (!this.imageElement || this.imageElement.tagName !== 'IMG') {
+        throw new Error('Élément image invalide');
+      }
+  
+      // Options par défaut
+      this.options = {
+        focusPoint: {
+          enabled: true,
+          style: {
+            width: '30px',
+            height: '30px',
+            border: '3px solid white',
+            boxShadow: '0 0 0 2px black, 0 0 5px rgba(0,0,0,0.5)',
+            backgroundColor: 'rgba(255, 0, 0, 0.5)'
+          },
+          ...options.focusPoint
+        },
+        cropZone: {
+          enabled: true,
+          style: {
+            border: '1px dashed #fff',
+            backgroundColor: 'rgba(0, 0, 0, 0.4)'
+          },
+          handleStyle: {
+            width: '14px',
+            height: '14px',
+            backgroundColor: 'white',
+            border: '2px solid black',
+            boxShadow: '0 0 3px rgba(0,0,0,0.5)'
+          },
+          ...options.cropZone
+        },
+        onChange: options.onChange || (() => {})
+      };
+  
+      // État interne
+      this.state = {
+        focusMarker: null,
+        cropOverlay: null,
+        focusActive: false,
+        cropActive: false,
+        focusPoint: { x: 0, y: 0 },
+        cropZone: { x: 0, y: 0, width: 0, height: 0 },
+        originalWidth: 1,
+        originalHeight: 1,
+        displayWidth: 1,
+        displayHeight: 1,
+        scaleX: 1,
+        scaleY: 1
+      };
+  
+      // Variables pour le suivi des interactions
+      this.interaction = {
+        focusDragging: false,
+        focusDragOffsetX: 0,
+        focusDragOffsetY: 0,
+        cropDragging: false,
+        cropResizing: false,
+        activeHandle: null,
+        startX: 0,
+        startY: 0,
+        startWidth: 0,
+        startHeight: 0,
+        startMouseX: 0,
+        startMouseY: 0
+      };
+  
+      // Initialiser l'outil
+      this._init();
     }
-
-    // Conversion des coordonnées
-    function toOriginalCoords(scaledX, scaledY) {
-        return { x: scaledX / scaleX, y: scaledY / scaleY };
+  
+    /**
+     * Initialise l'outil d'image
+     * @private
+     */
+    _init() {
+      // Préparer le conteneur parent
+      this._prepareContainer();
+      
+      // Initialiser les dimensions
+      this._updateScaling();
+      
+      // Créer les éléments d'interface si activés
+      if (this.options.focusPoint.enabled) {
+        this._createFocusMarker();
+      }
+      
+      if (this.options.cropZone.enabled) {
+        this._createCropOverlay();
+      }
+      
+      // Ajouter les écouteurs d'événements
+      this._setupEventListeners();
     }
-
-    function toScaledCoords(originalX, originalY) {
-        return { x: originalX * scaleX, y: originalY * scaleY };
+  
+    /**
+     * Prépare le conteneur parent de l'image
+     * @private
+     */
+    _prepareContainer() {
+      // S'assurer que le parent est positionné
+      if (this.imageElement.parentNode) {
+        this.imageElement.parentNode.style.position = 'relative';
+      }
     }
-
-    // ===== FONCTIONNALITÉ DE POINT FOCAL =====
-    
-    // Mise à jour des champs de saisie du point focal
-    function updateFocusInputs(originalX, originalY) {
-        focusXInput.value = Math.round(originalX);
-        focusYInput.value = Math.round(originalY);
+  
+    /**
+     * Met à jour les facteurs d'échelle
+     * @private
+     */
+    _updateScaling() {
+      this.state.originalWidth = this.imageElement.naturalWidth || 1;
+      this.state.originalHeight = this.imageElement.naturalHeight || 1;
+      this.state.displayWidth = this.imageElement.offsetWidth;
+      this.state.displayHeight = this.imageElement.offsetHeight;
+      this.state.scaleX = this.state.displayWidth / this.state.originalWidth;
+      this.state.scaleY = this.state.displayHeight / this.state.originalHeight;
+      
+      // Repositionner les éléments si actifs
+      if (this.state.focusActive) {
+        this._updateFocusMarkerPosition();
+      }
+      
+      if (this.state.cropActive) {
+        this._updateCropOverlayPosition();
+      }
     }
-
-    // Déplacement du marqueur de point focal
-    function moveMarker(originalX, originalY) {
-        if (!focusMarker) return;
-        
-        // Limiter les coordonnées aux dimensions de l'image
-        const clampedX = Math.max(0, Math.min(originalX, originalWidth));
-        const clampedY = Math.max(0, Math.min(originalY, originalHeight));
-        
-        const scaled = toScaledCoords(clampedX, clampedY);
-        // Ajuster pour centrer le marqueur
-        focusMarker.style.left = (scaled.x - focusMarker.offsetWidth / 2) + 'px';
-        focusMarker.style.top = (scaled.y - focusMarker.offsetHeight / 2) + 'px';
-        updateFocusInputs(clampedX, clampedY);
+  
+    /**
+     * Convertit des coordonnées d'affichage en coordonnées originales
+     * @private
+     * @param {number} scaledX - Coordonnée X à l'échelle d'affichage
+     * @param {number} scaledY - Coordonnée Y à l'échelle d'affichage
+     * @returns {Object} Coordonnées originales
+     */
+    _toOriginalCoords(scaledX, scaledY) {
+      return { 
+        x: scaledX / this.state.scaleX, 
+        y: scaledY / this.state.scaleY 
+      };
     }
-
-    // Activation/désactivation du point focal
-    function toggleFocusPoint() {
-        if (!focusActive) {
-            // Créer le marqueur s'il n'existe pas
-            if (!focusMarker) {
-                focusMarker = document.createElement('div');
-                focusMarker.id = 'focus-marker';
-                // Amélioration de la visibilité du marqueur
-                focusMarker.style.width = '30px';
-                focusMarker.style.height = '30px';
-                focusMarker.style.border = '3px solid white';
-                focusMarker.style.boxShadow = '0 0 0 2px black, 0 0 5px rgba(0,0,0,0.5)';
-                focusMarker.style.backgroundColor = 'rgba(255, 0, 0, 0.5)';
-                image.parentNode.appendChild(focusMarker);
-                
-                // Ajouter les écouteurs d'événements au marqueur
-                focusMarker.addEventListener('mousedown', (e) => {
-                    focusDragging = true;
-                    focusMarker.style.cursor = 'grabbing';
-                    
-                    // Calculer le décalage par rapport au centre du marqueur
-                    const rect = focusMarker.getBoundingClientRect();
-                    focusDragOffsetX = e.clientX - (rect.left + rect.width / 2);
-                    focusDragOffsetY = e.clientY - (rect.top + rect.height / 2);
-                    e.preventDefault();
-                });
-            }
-            
-            // Positionner au centre de l'image par défaut
-            const centerX = originalWidth / 2;
-            const centerY = originalHeight / 2;
-            moveMarker(centerX, centerY);
-            
-            focusMarker.style.display = 'block';
-            focusZoneDiv.classList.remove('hidden');
-            addFocusPointBtn.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-                Annuler Point Focal
-            `;
-            addFocusPointBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
-            addFocusPointBtn.classList.add('bg-red-500', 'hover:bg-red-600');
-            focusActive = true;
-        } else {
-            // Désactiver le point focal
-            focusMarker.style.display = 'none';
-            focusZoneDiv.classList.add('hidden');
-            focusXInput.value = '';
-            focusYInput.value = '';
-            addFocusPointBtn.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
-                </svg>
-                Ajouter Point Focal
-            `;
-            addFocusPointBtn.classList.remove('bg-red-500', 'hover:bg-red-600');
-            addFocusPointBtn.classList.add('bg-green-500', 'hover:bg-green-600');
-            focusActive = false;
-        }
+  
+    /**
+     * Convertit des coordonnées originales en coordonnées d'affichage
+     * @private
+     * @param {number} originalX - Coordonnée X originale
+     * @param {number} originalY - Coordonnée Y originale
+     * @returns {Object} Coordonnées à l'échelle d'affichage
+     */
+    _toScaledCoords(originalX, originalY) {
+      return { 
+        x: originalX * this.state.scaleX, 
+        y: originalY * this.state.scaleY 
+      };
     }
-
-    // ===== FONCTIONNALITÉ DE ZONE DE RECADRAGE =====
-    
-    // Mise à jour des champs de saisie de la zone de recadrage
-    function updateCropInputs(x, y, width, height) {
-        cropXInput.value = Math.round(x);
-        cropYInput.value = Math.round(y);
-        cropWInput.value = Math.round(width);
-        cropHInput.value = Math.round(height);
+  
+    /**
+     * Crée le marqueur de point focal
+     * @private
+     */
+    _createFocusMarker() {
+      if (this.state.focusMarker) return;
+      
+      const marker = document.createElement('div');
+      marker.style.position = 'absolute';
+      marker.style.width = this.options.focusPoint.style.width;
+      marker.style.height = this.options.focusPoint.style.height;
+      marker.style.border = this.options.focusPoint.style.border;
+      marker.style.boxShadow = this.options.focusPoint.style.boxShadow;
+      marker.style.backgroundColor = this.options.focusPoint.style.backgroundColor;
+      marker.style.cursor = 'move';
+      marker.style.display = 'none';
+      marker.style.zIndex = '999';
+      marker.style.clipPath = 'polygon(40% 0%, 60% 0%, 60% 40%, 100% 40%, 100% 60%, 60% 60%, 60% 100%, 40% 100%, 40% 60%, 0% 60%, 0% 40%, 40% 40%)';
+      
+      this.imageElement.parentNode.appendChild(marker);
+      this.state.focusMarker = marker;
+      
+      // Ajouter les écouteurs d'événements au marqueur
+      marker.addEventListener('mousedown', this._handleFocusMarkerMouseDown.bind(this));
     }
-    
-    // Mise à jour de l'overlay de recadrage
-    function updateCropOverlay() {
-        if (!cropOverlay) return;
-        
-        const x = parseInt(cropXInput.value, 10);
-        const y = parseInt(cropYInput.value, 10);
-        const width = parseInt(cropWInput.value, 10);
-        const height = parseInt(cropHInput.value, 10);
-        
-        if (isNaN(x) || isNaN(y) || isNaN(width) || isNaN(height)) return;
-        
-        // Limiter aux dimensions de l'image
-        const clampedX = Math.max(0, Math.min(x, originalWidth - width));
-        const clampedY = Math.max(0, Math.min(y, originalHeight - height));
-        const clampedWidth = Math.max(10, Math.min(width, originalWidth - clampedX));
-        const clampedHeight = Math.max(10, Math.min(height, originalHeight - clampedY));
-        
-        // Convertir en coordonnées d'affichage
-        const scaled = toScaledCoords(clampedX, clampedY);
-        const scaledWidth = clampedWidth * scaleX;
-        const scaledHeight = clampedHeight * scaleY;
-        
-        // Mettre à jour l'overlay
-        cropOverlay.style.left = scaled.x + 'px';
-        cropOverlay.style.top = scaled.y + 'px';
-        cropOverlay.style.width = scaledWidth + 'px';
-        cropOverlay.style.height = scaledHeight + 'px';
-        
-        // Mettre à jour les champs si les valeurs ont été limitées
-        if (x !== clampedX || y !== clampedY || width !== clampedWidth || height !== clampedHeight) {
-            updateCropInputs(clampedX, clampedY, clampedWidth, clampedHeight);
-        }
+  
+    /**
+     * Gère l'événement mousedown sur le marqueur de point focal
+     * @private
+     * @param {MouseEvent} e - Événement mousedown
+     */
+    _handleFocusMarkerMouseDown(e) {
+      this.interaction.focusDragging = true;
+      this.state.focusMarker.style.cursor = 'grabbing';
+      
+      // Calculer le décalage par rapport au centre du marqueur
+      const rect = this.state.focusMarker.getBoundingClientRect();
+      this.interaction.focusDragOffsetX = e.clientX - (rect.left + rect.width / 2);
+      this.interaction.focusDragOffsetY = e.clientY - (rect.top + rect.height / 2);
+      
+      e.preventDefault();
     }
-    
-    // Activation/désactivation de la zone de recadrage
-    function toggleCropZone() {
-        if (!cropActive) {
-            // Créer l'overlay s'il n'existe pas
-            if (!cropOverlay) {
-                cropOverlay = document.createElement('div');
-                cropOverlay.id = 'crop-overlay';
-                
-                // Ajouter les poignées de redimensionnement
-                const handles = ['tl', 'tm', 'tr', 'ml', 'mr', 'bl', 'bm', 'br'];
-                handles.forEach(handleType => {
-                    const handle = document.createElement('div');
-                    handle.classList.add('crop-handle', `handle-${handleType}`);
-                    handle.dataset.handle = handleType;
-                    
-                    // Amélioration de la visibilité des poignées
-                    handle.style.width = '14px';
-                    handle.style.height = '14px';
-                    handle.style.backgroundColor = 'white';
-                    handle.style.border = '2px solid black';
-                    handle.style.boxShadow = '0 0 3px rgba(0,0,0,0.5)';
-                    
-                    // Ajouter les écouteurs d'événements pour les poignées
-                    handle.addEventListener('mousedown', (e) => {
-                        cropResizing = true;
-                        activeHandle = handleType;
-                        
-                        // Enregistrer les dimensions et position initiales
-                        startX = parseInt(cropOverlay.style.left, 10) || 0;
-                        startY = parseInt(cropOverlay.style.top, 10) || 0;
-                        startWidth = cropOverlay.offsetWidth;
-                        startHeight = cropOverlay.offsetHeight;
-                        startMouseX = e.clientX;
-                        startMouseY = e.clientY;
-                        
-                        e.preventDefault();
-                        e.stopPropagation();
-                    });
-                    
-                    cropOverlay.appendChild(handle);
-                });
-                
-                // Ajouter l'écouteur pour le déplacement de l'overlay
-                cropOverlay.addEventListener('mousedown', (e) => {
-                    // Ignorer si on clique sur une poignée
-                    if (e.target !== cropOverlay) return;
-                    
-                    cropDragging = true;
-                    cropOverlay.style.cursor = 'grabbing';
-                    
-                    // Enregistrer la position initiale
-                    startX = parseInt(cropOverlay.style.left, 10) || 0;
-                    startY = parseInt(cropOverlay.style.top, 10) || 0;
-                    startMouseX = e.clientX;
-                    startMouseY = e.clientY;
-                    
-                    e.preventDefault();
-                });
-                
-                image.parentNode.appendChild(cropOverlay);
-            }
-            
-            // Définir une zone de recadrage par défaut (50% de l'image)
-            const defaultWidth = originalWidth / 2;
-            const defaultHeight = originalHeight / 2;
-            const defaultX = (originalWidth - defaultWidth) / 2;
-            const defaultY = (originalHeight - defaultHeight) / 2;
-            
-            updateCropInputs(defaultX, defaultY, defaultWidth, defaultHeight);
-            updateCropOverlay();
-            
-            cropOverlay.style.display = 'block';
-            cropZoneDiv.classList.remove('hidden');
-            addCropZoneBtn.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-                Annuler Zone de Recadrage
-            `;
-            addCropZoneBtn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
-            addCropZoneBtn.classList.add('bg-red-500', 'hover:bg-red-600');
-            cropActive = true;
-        } else {
-            // Désactiver la zone de recadrage
-            cropOverlay.style.display = 'none';
-            cropZoneDiv.classList.add('hidden');
-            cropXInput.value = '';
-            cropYInput.value = '';
-            cropWInput.value = '';
-            cropHInput.value = '';
-            addCropZoneBtn.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
-                Ajouter Zone de Recadrage
-            `;
-            addCropZoneBtn.classList.remove('bg-red-500', 'hover:bg-red-600');
-            addCropZoneBtn.classList.add('bg-blue-500', 'hover:bg-blue-600');
-            cropActive = false;
+  
+    /**
+     * Crée l'overlay de zone de recadrage
+     * @private
+     */
+    _createCropOverlay() {
+      if (this.state.cropOverlay) return;
+      
+      const overlay = document.createElement('div');
+      overlay.style.position = 'absolute';
+      overlay.style.border = this.options.cropZone.style.border;
+      overlay.style.backgroundColor = this.options.cropZone.style.backgroundColor;
+      overlay.style.boxSizing = 'border-box';
+      overlay.style.cursor = 'move';
+      overlay.style.display = 'none';
+      overlay.style.zIndex = '998';
+      
+      // Ajouter les poignées de redimensionnement
+      const handles = ['tl', 'tm', 'tr', 'ml', 'mr', 'bl', 'bm', 'br'];
+      handles.forEach(handleType => {
+        const handle = document.createElement('div');
+        handle.style.position = 'absolute';
+        handle.style.width = this.options.cropZone.handleStyle.width;
+        handle.style.height = this.options.cropZone.handleStyle.height;
+        handle.style.backgroundColor = this.options.cropZone.handleStyle.backgroundColor;
+        handle.style.border = this.options.cropZone.handleStyle.border;
+        handle.style.boxShadow = this.options.cropZone.handleStyle.boxShadow;
+        handle.style.boxSizing = 'border-box';
+        handle.dataset.handle = handleType;
+        
+        // Positionner la poignée
+        switch (handleType) {
+          case 'tl': // Top-left
+            handle.style.top = '-7px';
+            handle.style.left = '-7px';
+            handle.style.cursor = 'nwse-resize';
+            break;
+          case 'tm': // Top-middle
+            handle.style.top = '-7px';
+            handle.style.left = '50%';
+            handle.style.marginLeft = '-7px';
+            handle.style.cursor = 'ns-resize';
+            break;
+          case 'tr': // Top-right
+            handle.style.top = '-7px';
+            handle.style.right = '-7px';
+            handle.style.cursor = 'nesw-resize';
+            break;
+          case 'ml': // Middle-left
+            handle.style.top = '50%';
+            handle.style.left = '-7px';
+            handle.style.marginTop = '-7px';
+            handle.style.cursor = 'ew-resize';
+            break;
+          case 'mr': // Middle-right
+            handle.style.top = '50%';
+            handle.style.right = '-7px';
+            handle.style.marginTop = '-7px';
+            handle.style.cursor = 'ew-resize';
+            break;
+          case 'bl': // Bottom-left
+            handle.style.bottom = '-7px';
+            handle.style.left = '-7px';
+            handle.style.cursor = 'nesw-resize';
+            break;
+          case 'bm': // Bottom-middle
+            handle.style.bottom = '-7px';
+            handle.style.left = '50%';
+            handle.style.marginLeft = '-7px';
+            handle.style.cursor = 'ns-resize';
+            break;
+          case 'br': // Bottom-right
+            handle.style.bottom = '-7px';
+            handle.style.right = '-7px';
+            handle.style.cursor = 'nwse-resize';
+            break;
         }
+        
+        // Ajouter l'écouteur d'événement
+        handle.addEventListener('mousedown', (e) => this._handleCropHandleMouseDown(e, handleType));
+        
+        overlay.appendChild(handle);
+      });
+      
+      // Ajouter l'écouteur pour le déplacement de l'overlay
+      overlay.addEventListener('mousedown', this._handleCropOverlayMouseDown.bind(this));
+      
+      this.imageElement.parentNode.appendChild(overlay);
+      this.state.cropOverlay = overlay;
     }
-    
-    // Gestion du redimensionnement de la zone de recadrage
-    function handleCropResize(e) {
-        if (!cropResizing || !activeHandle) return;
-        
-        const deltaX = e.clientX - startMouseX;
-        const deltaY = e.clientY - startMouseY;
-        
-        let newX = startX;
-        let newY = startY;
-        let newWidth = startWidth;
-        let newHeight = startHeight;
-        
-        // Ajuster en fonction de la poignée active
-        if (activeHandle.includes('t')) { // Top
-            newY = startY + deltaY;
-            newHeight = startHeight - deltaY;
-        }
-        if (activeHandle.includes('b')) { // Bottom
-            newHeight = startHeight + deltaY;
-        }
-        if (activeHandle.includes('l')) { // Left
-            newX = startX + deltaX;
-            newWidth = startWidth - deltaX;
-        }
-        if (activeHandle.includes('r')) { // Right
-            newWidth = startWidth + deltaX;
-        }
-        
-        // Empêcher les dimensions négatives
-        if (newWidth < 10) {
-            if (activeHandle.includes('l')) {
-                newX = startX + startWidth - 10;
-            }
-            newWidth = 10;
-        }
-        if (newHeight < 10) {
-            if (activeHandle.includes('t')) {
-                newY = startY + startHeight - 10;
-            }
-            newHeight = 10;
-        }
-        
-        // Convertir les coordonnées d'affichage en coordonnées originales pour les limites
-        const originalX = newX / scaleX;
-        const originalY = newY / scaleY;
-        const originalWidth = newWidth / scaleX;
-        const originalHeight = newHeight / scaleY;
-        
-        // Limiter aux dimensions de l'image
-        let clampedX = originalX;
-        let clampedY = originalY;
-        let clampedWidth = originalWidth;
-        let clampedHeight = originalHeight;
-        
-        // Vérifier si la zone dépasse les limites de l'image
-        if (originalX < 0) {
-            clampedX = 0;
-            clampedWidth = originalWidth + originalX; // Réduire la largeur
-        }
-        if (originalY < 0) {
-            clampedY = 0;
-            clampedHeight = originalHeight + originalY; // Réduire la hauteur
-        }
-        if (originalX + originalWidth > originalWidth) {
-            clampedWidth = originalWidth - originalX;
-        }
-        if (originalY + originalHeight > originalHeight) {
-            clampedHeight = originalHeight - originalY;
-        }
-        
-        // Assurer des dimensions minimales
-        clampedWidth = Math.max(10, clampedWidth);
-        clampedHeight = Math.max(10, clampedHeight);
-        
-        // Reconvertir en coordonnées d'affichage
-        const scaledX = clampedX * scaleX;
-        const scaledY = clampedY * scaleY;
-        const scaledWidth = clampedWidth * scaleX;
-        const scaledHeight = clampedHeight * scaleY;
-        
-        // Mettre à jour l'overlay
-        cropOverlay.style.left = scaledX + 'px';
-        cropOverlay.style.top = scaledY + 'px';
-        cropOverlay.style.width = scaledWidth + 'px';
-        cropOverlay.style.height = scaledHeight + 'px';
-        
-        // Mettre à jour les champs
-        updateCropInputs(clampedX, clampedY, clampedWidth, clampedHeight);
+  
+    /**
+     * Gère l'événement mousedown sur une poignée de redimensionnement
+     * @private
+     * @param {MouseEvent} e - Événement mousedown
+     * @param {string} handleType - Type de poignée
+     */
+    _handleCropHandleMouseDown(e, handleType) {
+      this.interaction.cropResizing = true;
+      this.interaction.activeHandle = handleType;
+      
+      // Enregistrer les dimensions et position initiales
+      this.interaction.startX = parseInt(this.state.cropOverlay.style.left, 10) || 0;
+      this.interaction.startY = parseInt(this.state.cropOverlay.style.top, 10) || 0;
+      this.interaction.startWidth = this.state.cropOverlay.offsetWidth;
+      this.interaction.startHeight = this.state.cropOverlay.offsetHeight;
+      this.interaction.startMouseX = e.clientX;
+      this.interaction.startMouseY = e.clientY;
+      
+      e.preventDefault();
+      e.stopPropagation();
     }
-    
-    // Gestion du déplacement de la zone de recadrage
-    function handleCropDrag(e) {
-        if (!cropDragging) return;
-        
-        const deltaX = e.clientX - startMouseX;
-        const deltaY = e.clientY - startMouseY;
-        
-        // Calculer la nouvelle position en pixels d'affichage
-        let newX = startX + deltaX;
-        let newY = startY + deltaY;
-        
-        // Convertir en coordonnées originales
-        const original = toOriginalCoords(newX, newY);
-        
-        // Obtenir les dimensions actuelles en coordonnées originales
-        const width = parseInt(cropWInput.value, 10);
-        const height = parseInt(cropHInput.value, 10);
-        
-        // Limiter aux dimensions de l'image
-        const clampedX = Math.max(0, Math.min(original.x, originalWidth - width));
-        const clampedY = Math.max(0, Math.min(original.y, originalHeight - height));
-        
-        // Reconvertir en coordonnées d'affichage
-        const scaled = toScaledCoords(clampedX, clampedY);
-        
-        // Mettre à jour l'overlay
-        cropOverlay.style.left = scaled.x + 'px';
-        cropOverlay.style.top = scaled.y + 'px';
-        
-        // Mettre à jour les champs
-        updateCropInputs(
-            clampedX,
-            clampedY,
-            parseInt(cropWInput.value, 10),
-            parseInt(cropHInput.value, 10)
-        );
+  
+    /**
+     * Gère l'événement mousedown sur l'overlay de recadrage
+     * @private
+     * @param {MouseEvent} e - Événement mousedown
+     */
+    _handleCropOverlayMouseDown(e) {
+      // Ignorer si on clique sur une poignée
+      if (e.target !== this.state.cropOverlay) return;
+      
+      this.interaction.cropDragging = true;
+      this.state.cropOverlay.style.cursor = 'grabbing';
+      
+      // Enregistrer la position initiale
+      this.interaction.startX = parseInt(this.state.cropOverlay.style.left, 10) || 0;
+      this.interaction.startY = parseInt(this.state.cropOverlay.style.top, 10) || 0;
+      this.interaction.startMouseX = e.clientX;
+      this.interaction.startMouseY = e.clientY;
+      
+      e.preventDefault();
     }
-
-    // Écouteurs d'événements pour le point focal
-    addFocusPointBtn.addEventListener('click', toggleFocusPoint);
-    
-    // Mise à jour du point focal depuis les champs de saisie
-    focusXInput.addEventListener('input', updateFocusFromInputs);
-    focusYInput.addEventListener('input', updateFocusFromInputs);
-    
-    function updateFocusFromInputs() {
-        const x = parseInt(focusXInput.value, 10);
-        const y = parseInt(focusYInput.value, 10);
-        if (!isNaN(x) && !isNaN(y)) {
-            moveMarker(x, y);
-            if (!focusActive) {
-                toggleFocusPoint();
-            }
+  
+    /**
+     * Configure les écouteurs d'événements globaux
+     * @private
+     */
+    _setupEventListeners() {
+      // Écouteur pour le redimensionnement de la fenêtre
+      window.addEventListener('resize', this._updateScaling.bind(this));
+      
+      // Écouteur pour le chargement de l'image
+      if (!this.imageElement.complete) {
+        this.imageElement.addEventListener('load', this._updateScaling.bind(this));
+      }
+      
+      // Écouteurs pour les interactions de souris
+      document.addEventListener('mouseup', this._handleMouseUp.bind(this));
+      document.addEventListener('mousemove', this._handleMouseMove.bind(this));
+    }
+  
+    /**
+     * Gère l'événement mouseup global
+     * @private
+     */
+    _handleMouseUp() {
+      if (this.interaction.focusDragging) {
+        this.interaction.focusDragging = false;
+        if (this.state.focusMarker) this.state.focusMarker.style.cursor = 'move';
+      }
+      
+      if (this.interaction.cropDragging) {
+        this.interaction.cropDragging = false;
+        if (this.state.cropOverlay) this.state.cropOverlay.style.cursor = 'move';
+      }
+      
+      this.interaction.cropResizing = false;
+      this.interaction.activeHandle = null;
+      document.body.style.cursor = 'default';
+    }
+  
+    /**
+     * Gère l'événement mousemove global
+     * @private
+     * @param {MouseEvent} e - Événement mousemove
+     */
+    _handleMouseMove(e) {
+      // Gestion du déplacement du point focal
+      if (this.interaction.focusDragging && this.state.focusMarker) {
+        this._handleFocusMarkerDrag(e);
+      }
+      
+      // Gestion du déplacement de la zone de recadrage
+      if (this.interaction.cropDragging) {
+        this._handleCropOverlayDrag(e);
+      }
+      
+      // Gestion du redimensionnement de la zone de recadrage
+      if (this.interaction.cropResizing) {
+        this._handleCropOverlayResize(e);
+      }
+    }
+  
+    /**
+     * Gère le déplacement du marqueur de point focal
+     * @private
+     * @param {MouseEvent} e - Événement mousemove
+     */
+    _handleFocusMarkerDrag(e) {
+      const imageRect = this.imageElement.getBoundingClientRect();
+      
+      // Calculer la position cible relative à l'image
+      const targetScaledX = e.clientX - imageRect.left - this.interaction.focusDragOffsetX;
+      const targetScaledY = e.clientY - imageRect.top - this.interaction.focusDragOffsetY;
+      
+      // Convertir en coordonnées originales
+      const original = this._toOriginalCoords(targetScaledX, targetScaledY);
+      
+      // Mettre à jour le point focal
+      this.setFocusPoint(original.x, original.y);
+    }
+  
+    /**
+     * Gère le déplacement de l'overlay de recadrage
+     * @private
+     * @param {MouseEvent} e - Événement mousemove
+     */
+    _handleCropOverlayDrag(e) {
+      const deltaX = e.clientX - this.interaction.startMouseX;
+      const deltaY = e.clientY - this.interaction.startMouseY;
+      
+      // Calculer la nouvelle position en pixels d'affichage
+      let newX = this.interaction.startX + deltaX;
+      let newY = this.interaction.startY + deltaY;
+      
+      // Convertir en coordonnées originales
+      const original = this._toOriginalCoords(newX, newY);
+      
+      // Obtenir les dimensions actuelles en coordonnées originales
+      const { width, height } = this.state.cropZone;
+      
+      // Mettre à jour la zone de recadrage
+      this.setCropZone(original.x, original.y, width, height);
+    }
+  
+    /**
+     * Gère le redimensionnement de l'overlay de recadrage
+     * @private
+     * @param {MouseEvent} e - Événement mousemove
+     */
+    _handleCropOverlayResize(e) {
+      if (!this.interaction.activeHandle) return;
+      
+      const deltaX = e.clientX - this.interaction.startMouseX;
+      const deltaY = e.clientY - this.interaction.startMouseY;
+      
+      let newX = this.interaction.startX;
+      let newY = this.interaction.startY;
+      let newWidth = this.interaction.startWidth;
+      let newHeight = this.interaction.startHeight;
+      
+      // Ajuster en fonction de la poignée active
+      if (this.interaction.activeHandle.includes('t')) { // Top
+        newY = this.interaction.startY + deltaY;
+        newHeight = this.interaction.startHeight - deltaY;
+      }
+      if (this.interaction.activeHandle.includes('b')) { // Bottom
+        newHeight = this.interaction.startHeight + deltaY;
+      }
+      if (this.interaction.activeHandle.includes('l')) { // Left
+        newX = this.interaction.startX + deltaX;
+        newWidth = this.interaction.startWidth - deltaX;
+      }
+      if (this.interaction.activeHandle.includes('r')) { // Right
+        newWidth = this.interaction.startWidth + deltaX;
+      }
+      
+      // Empêcher les dimensions négatives
+      if (newWidth < 10) {
+        if (this.interaction.activeHandle.includes('l')) {
+          newX = this.interaction.startX + this.interaction.startWidth - 10;
         }
-    }
-    
-    // Écouteurs d'événements pour la zone de recadrage
-    addCropZoneBtn.addEventListener('click', toggleCropZone);
-    
-    // Mise à jour de la zone de recadrage depuis les champs de saisie
-    cropXInput.addEventListener('input', updateCropFromInputs);
-    cropYInput.addEventListener('input', updateCropFromInputs);
-    cropWInput.addEventListener('input', updateCropFromInputs);
-    cropHInput.addEventListener('input', updateCropFromInputs);
-    
-    function updateCropFromInputs() {
-        if (cropActive) {
-            updateCropOverlay();
-        } else if (!isNaN(parseInt(cropXInput.value, 10)) && 
-                  !isNaN(parseInt(cropYInput.value, 10)) && 
-                  !isNaN(parseInt(cropWInput.value, 10)) && 
-                  !isNaN(parseInt(cropHInput.value, 10))) {
-            toggleCropZone();
+        newWidth = 10;
+      }
+      if (newHeight < 10) {
+        if (this.interaction.activeHandle.includes('t')) {
+          newY = this.interaction.startY + this.interaction.startHeight - 10;
         }
+        newHeight = 10;
+      }
+      
+      // Convertir les coordonnées d'affichage en coordonnées originales
+      const originalX = newX / this.state.scaleX;
+      const originalY = newY / this.state.scaleY;
+      const originalWidth = newWidth / this.state.scaleX;
+      const originalHeight = newHeight / this.state.scaleY;
+      
+      // Mettre à jour la zone de recadrage
+      this.setCropZone(originalX, originalY, originalWidth, originalHeight);
     }
-
-    // Initialisation
-    function initialize() {
-        updateScaling();
-        image.parentNode.style.position = 'relative';
+  
+    /**
+     * Met à jour la position du marqueur de point focal
+     * @private
+     */
+    _updateFocusMarkerPosition() {
+      if (!this.state.focusMarker) return;
+      
+      const { x, y } = this.state.focusPoint;
+      
+      // Limiter les coordonnées aux dimensions de l'image
+      const clampedX = Math.max(0, Math.min(x, this.state.originalWidth));
+      const clampedY = Math.max(0, Math.min(y, this.state.originalHeight));
+      
+      // Mettre à jour l'état si les coordonnées ont été limitées
+      if (x !== clampedX || y !== clampedY) {
+        this.state.focusPoint = { x: clampedX, y: clampedY };
+      }
+      
+      const scaled = this._toScaledCoords(clampedX, clampedY);
+      
+      // Ajuster pour centrer le marqueur
+      this.state.focusMarker.style.left = (scaled.x - this.state.focusMarker.offsetWidth / 2) + 'px';
+      this.state.focusMarker.style.top = (scaled.y - this.state.focusMarker.offsetHeight / 2) + 'px';
+    }
+  
+    /**
+     * Met à jour la position et les dimensions de l'overlay de recadrage
+     * @private
+     */
+    _updateCropOverlayPosition() {
+      if (!this.state.cropOverlay) return;
+      
+      const { x, y, width, height } = this.state.cropZone;
+      
+      // Limiter aux dimensions de l'image
+      const clampedX = Math.max(0, Math.min(x, this.state.originalWidth - width));
+      const clampedY = Math.max(0, Math.min(y, this.state.originalHeight - height));
+      const clampedWidth = Math.max(10, Math.min(width, this.state.originalWidth - clampedX));
+      const clampedHeight = Math.max(10, Math.min(height, this.state.originalHeight - clampedY));
+      
+      // Mettre à jour l'état si les valeurs ont été limitées
+      if (x !== clampedX || y !== clampedY || width !== clampedWidth || height !== clampedHeight) {
+        this.state.cropZone = { x: clampedX, y: clampedY, width: clampedWidth, height: clampedHeight };
+      }
+      
+      // Convertir en coordonnées d'affichage
+      const scaled = this._toScaledCoords(clampedX, clampedY);
+      const scaledWidth = clampedWidth * this.state.scaleX;
+      const scaledHeight = clampedHeight * this.state.scaleY;
+      
+      // Mettre à jour l'overlay
+      this.state.cropOverlay.style.left = scaled.x + 'px';
+      this.state.cropOverlay.style.top = scaled.y + 'px';
+      this.state.cropOverlay.style.width = scaledWidth + 'px';
+      this.state.cropOverlay.style.height = scaledHeight + 'px';
+    }
+  
+    /**
+     * Active ou désactive le point focal
+     * @public
+     * @param {boolean} active - État d'activation
+     * @returns {ImageTool} Instance pour chaînage
+     */
+    toggleFocusPoint(active) {
+      if (!this.options.focusPoint.enabled) return this;
+      
+      if (active === undefined) {
+        active = !this.state.focusActive;
+      }
+      
+      if (active && !this.state.focusActive) {
+        // Activer le point focal
+        if (!this.state.focusMarker) {
+          this._createFocusMarker();
+        }
         
-        // Écouteurs d'événements pour le déplacement et le redimensionnement
-        document.addEventListener('mouseup', () => {
-            if (focusDragging) {
-                focusDragging = false;
-                if (focusMarker) focusMarker.style.cursor = 'move';
-            }
-            
-            // Réinitialiser les drapeaux de recadrage aussi
-            if (cropDragging) {
-                cropDragging = false;
-                if (cropOverlay) cropOverlay.style.cursor = 'move';
-            }
-            cropResizing = false;
-            activeHandle = null;
-            document.body.style.cursor = 'default';
+        // Positionner au centre de l'image par défaut si pas déjà défini
+        if (this.state.focusPoint.x === 0 && this.state.focusPoint.y === 0) {
+          this.state.focusPoint = {
+            x: this.state.originalWidth / 2,
+            y: this.state.originalHeight / 2
+          };
+        }
+        
+        this._updateFocusMarkerPosition();
+        this.state.focusMarker.style.display = 'block';
+        this.state.focusActive = true;
+      } else if (!active && this.state.focusActive) {
+        // Désactiver le point focal
+        if (this.state.focusMarker) {
+          this.state.focusMarker.style.display = 'none';
+        }
+        this.state.focusActive = false;
+      }
+      
+      // Notifier le changement
+      this._notifyChange();
+      
+      return this;
+    }
+  
+    /**
+     * Active ou désactive la zone de recadrage
+     * @public
+     * @param {boolean} active - État d'activation
+     * @returns {ImageTool} Instance pour chaînage
+     */
+    toggleCropZone(active) {
+      if (!this.options.cropZone.enabled) return this;
+      
+      if (active === undefined) {
+        active = !this.state.cropActive;
+      }
+      
+      if (active && !this.state.cropActive) {
+        // Activer la zone de recadrage
+        if (!this.state.cropOverlay) {
+          this._createCropOverlay();
+        }
+        
+        // Définir une zone par défaut si pas déjà définie
+        if (this.state.cropZone.width === 0 || this.state.cropZone.height === 0) {
+          const defaultWidth = this.state.originalWidth / 2;
+          const defaultHeight = this.state.originalHeight / 2;
+          const defaultX = (this.state.originalWidth - defaultWidth) / 2;
+          const defaultY = (this.state.originalHeight - defaultHeight) / 2;
+          
+          this.state.cropZone = {
+            x: defaultX,
+            y: defaultY,
+            width: defaultWidth,
+            height: defaultHeight
+          };
+        }
+        
+        this._updateCropOverlayPosition();
+        this.state.cropOverlay.style.display = 'block';
+        this.state.cropActive = true;
+      } else if (!active && this.state.cropActive) {
+        // Désactiver la zone de recadrage
+        if (this.state.cropOverlay) {
+          this.state.cropOverlay.style.display = 'none';
+        }
+        this.state.cropActive = false;
+      }
+      
+      // Notifier le changement
+      this._notifyChange();
+      
+      return this;
+    }
+  
+    /**
+     * Définit la position du point focal
+     * @public
+     * @param {number} x - Coordonnée X en pixels originaux
+     * @param {number} y - Coordonnée Y en pixels originaux
+     * @returns {ImageTool} Instance pour chaînage
+     */
+    setFocusPoint(x, y) {
+      // Limiter les coordonnées aux dimensions de l'image
+      const clampedX = Math.max(0, Math.min(x, this.state.originalWidth));
+      const clampedY = Math.max(0, Math.min(y, this.state.originalHeight));
+      
+      this.state.focusPoint = { x: clampedX, y: clampedY };
+      
+      if (this.state.focusActive && this.state.focusMarker) {
+        this._updateFocusMarkerPosition();
+      }
+      
+      // Notifier le changement
+      this._notifyChange();
+      
+      return this;
+    }
+  
+    /**
+     * Définit la position et les dimensions de la zone de recadrage
+     * @public
+     * @param {number} x - Coordonnée X en pixels originaux
+     * @param {number} y - Coordonnée Y en pixels originaux
+     * @param {number} width - Largeur en pixels originaux
+     * @param {number} height - Hauteur en pixels originaux
+     * @returns {ImageTool} Instance pour chaînage
+     */
+    setCropZone(x, y, width, height) {
+      // Limiter aux dimensions de l'image
+      const clampedX = Math.max(0, Math.min(x, this.state.originalWidth - width));
+      const clampedY = Math.max(0, Math.min(y, this.state.originalHeight - height));
+      const clampedWidth = Math.max(10, Math.min(width, this.state.originalWidth - clampedX));
+      const clampedHeight = Math.max(10, Math.min(height, this.state.originalHeight - clampedY));
+      
+      this.state.cropZone = {
+        x: clampedX,
+        y: clampedY,
+        width: clampedWidth,
+        height: clampedHeight
+      };
+      
+      if (this.state.cropActive && this.state.cropOverlay) {
+        this._updateCropOverlayPosition();
+      }
+      
+      // Notifier le changement
+      this._notifyChange();
+      
+      return this;
+    }
+  
+    /**
+     * Obtient la position actuelle du point focal
+     * @public
+     * @returns {Object} Coordonnées du point focal {x, y}
+     */
+    getFocusPoint() {
+      return { ...this.state.focusPoint };
+    }
+  
+    /**
+     * Obtient la position et les dimensions actuelles de la zone de recadrage
+     * @public
+     * @returns {Object} Zone de recadrage {x, y, width, height}
+     */
+    getCropZone() {
+      return { ...this.state.cropZone };
+    }
+  
+    /**
+     * Obtient les dimensions originales de l'image
+     * @public
+     * @returns {Object} Dimensions {width, height}
+     */
+    getImageDimensions() {
+      return {
+        width: this.state.originalWidth,
+        height: this.state.originalHeight
+      };
+    }
+  
+    /**
+     * Notifie les changements via le callback
+     * @private
+     */
+    _notifyChange() {
+      if (typeof this.options.onChange === 'function') {
+        this.options.onChange({
+          focusPoint: this.getFocusPoint(),
+          cropZone: this.getCropZone(),
+          focusActive: this.state.focusActive,
+          cropActive: this.state.cropActive
         });
-        
-        document.addEventListener('mousemove', (e) => {
-            // Gestion du déplacement du point focal
-            if (focusDragging && focusMarker) {
-                const imageRect = image.getBoundingClientRect();
-                // Calculer la position cible relative à l'image
-                const targetScaledX = e.clientX - imageRect.left - focusDragOffsetX;
-                const targetScaledY = e.clientY - imageRect.top - focusDragOffsetY;
-                
-                // Convertir en coordonnées originales
-                const original = toOriginalCoords(targetScaledX, targetScaledY);
-                moveMarker(original.x, original.y);
-            }
-            
-            // Gestion du déplacement de la zone de recadrage
-            if (cropDragging) {
-                handleCropDrag(e);
-            }
-            
-            // Gestion du redimensionnement de la zone de recadrage
-            if (cropResizing) {
-                handleCropResize(e);
-            }
-        });
+      }
     }
-
-    // Initialiser après le chargement de l'image
-    if (image.complete) {
-        initialize();
-    } else {
-        image.addEventListener('load', initialize);
+  
+    /**
+     * Détruit l'instance et nettoie les ressources
+     * @public
+     */
+    destroy() {
+      // Supprimer les éléments DOM
+      if (this.state.focusMarker && this.state.focusMarker.parentNode) {
+        this.state.focusMarker.parentNode.removeChild(this.state.focusMarker);
+      }
+      
+      if (this.state.cropOverlay && this.state.cropOverlay.parentNode) {
+        this.state.cropOverlay.parentNode.removeChild(this.state.cropOverlay);
+      }
+      
+      // Supprimer les écouteurs d'événements
+      window.removeEventListener('resize', this._updateScaling.bind(this));
+      document.removeEventListener('mouseup', this._handleMouseUp.bind(this));
+      document.removeEventListener('mousemove', this._handleMouseMove.bind(this));
+      
+      // Réinitialiser l'état
+      this.state = null;
+      this.interaction = null;
+      this.options = null;
+      this.imageElement = null;
     }
-    
-    // Mettre à jour l'échelle lors du redimensionnement de la fenêtre
-    window.addEventListener('resize', updateScaling);
-});
+  }
+  
+  // Exporter la classe
+  export default ImageTool;
+  

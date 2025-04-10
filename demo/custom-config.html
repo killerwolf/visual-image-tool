@@ -236,7 +236,7 @@ document.getElementById('applyFocusConfig').addEventListener('click', () => {
       const cropRgba = `${cropOverlayColor}${Math.round(cropOverlayOpacity * 255).toString(16).padStart(2, '0')}`;
       
       // Créer une nouvelle instance avec la configuration
-      imageTool = new ImageTool({
+      imageTool = new ImageTool.ImageTool({
         imageElement: document.getElementById('demoImage'),
         focusPoint: {
           enabled: true,
