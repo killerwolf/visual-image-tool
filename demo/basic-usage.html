@@ -145,11 +145,11 @@ document.getElementById('resetCropZone').addEventListener('click', () => {
   </div>
 
   <!-- Charger la bibliothèque (version UMD pour l'exemple) -->
-  <script src="../dist/image-tool.umd.js"></script>
+  <script src="../dist/visual-image-tool.umd.js"></script>
   
   <script>
     // Initialiser l'outil sur une image
-    const imageTool = new ImageTool.ImageTool({
+    const imageTool = new VisualImageTool.VisualImageTool({
       imageElement: document.getElementById('demoImage'),
       onChange: (data) => {
         // Afficher les données mises à jour

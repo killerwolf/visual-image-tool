@@ -13,8 +13,8 @@ Ce document est destiné aux développeurs qui maintiennent, modifient ou contri
 
 1. Clonez le dépôt :
 ```bash
-git clone https://github.com/username/image-tool.git
-cd image-tool
+git clone https://github.com/killerwolf/visual-image-tool.git
+cd visual-image-tool
 ```
 
 2. Installez les dépendances :
@@ -48,9 +48,9 @@ image-tool/
 
 Le projet utilise Rollup pour générer trois formats de distribution :
 
-1. **ESM** (`dist/image-tool.esm.js`) : Modules ES pour les bundlers modernes
-2. **UMD** (`dist/image-tool.umd.js`) : Format universel minifié pour l'inclusion directe dans les navigateurs
-3. **CommonJS** (`dist/image-tool.js`) : Format pour Node.js
+1. **ESM** (`dist/visual-image-tool.esm.js`) : Modules ES pour les bundlers modernes
+2. **UMD** (`dist/visual-image-tool.umd.js`) : Format universel minifié pour l'inclusion directe dans les navigateurs
+3. **CommonJS** (`dist/visual-image-tool.js`) : Format pour Node.js
 
 Pour lancer le build :
 ```bash
@@ -70,7 +70,7 @@ Après avoir effectué des modifications, vous pouvez les tester en :
 npm link
 
 # Dans votre projet de test
-npm link image-tool
+npm link visual-image-tool
 ```
 
 ## Publication sur npm

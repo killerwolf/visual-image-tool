@@ -1,12 +1,12 @@
 /**
  * Point d'entrée principal pour le package image-tool
- * Exporte la classe ImageTool
+ * Exporte la classe VisualImageTool
  */
 
-import ImageTool from './image-tool.js';
+import VisualImageTool from './visual-image-tool.js';
 
 // Exporter la classe comme export par défaut
-export default ImageTool;
+export default VisualImageTool;
 
 // Exporter également comme export nommé pour plus de flexibilité
-export { ImageTool };
+export { VisualImageTool };

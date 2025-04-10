@@ -1,5 +1,5 @@
 {
-  "name": "image-tool",
+  "name": "@killerwolf/visual-image-tool",
   "version": "1.0.0",
   "description": "Un outil léger en JavaScript vanilla pour définir des points focaux et zones de recadrage sur des images",
   "main": "dist/image-tool.js",
@@ -12,6 +12,7 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
+    "demo": "npx http-server -o ./demo",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublishOnly": "npm run build"
   },
@@ -28,14 +29,14 @@
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.0.0",
     "rollup": "^2.79.0",
-    "rollup-plugin-terser": "^7.0.2"
+    "@rollup/plugin-terser": "^0.4"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/username/image-tool.git"
+    "url": "git+https://github.com/killerwolf/visual-image-tool.git"
   },
   "bugs": {
-    "url": "https://github.com/username/image-tool/issues"
+    "url": "https://github.com/killerwolf/visual-image-tool/issues"
   },
-  "homepage": "https://github.com/username/image-tool#readme"
+  "homepage": "https://github.com/killerwolf/visual-image-tool#readme"
 }

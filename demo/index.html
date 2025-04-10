@@ -49,11 +49,11 @@
   </div>
 
   <!-- Load the UMD bundle -->
-  <script src="../dist/image-tool.umd.js"></script>
+  <script src="../dist/visual-image-tool.umd.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const imageTool = new ImageTool.ImageTool({
+      const imageTool = new VisualImageTool.VisualImageTool({
         imageElement: document.getElementById('demoImage'),
         onChange: (data) => {
           console.log('Updated data:', data);

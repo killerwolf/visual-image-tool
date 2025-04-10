@@ -1,9 +1,9 @@
 /**
  * ImageTool - Un outil léger pour définir des points focaux et zones de recadrage sur des images
- * @module image-tool
+ * @module visual-image-tool
  */
 
-class ImageTool {
+class VisualImageTool {
     /**
      * Crée une instance de l'outil d'image
      * @param {Object} options - Options de configuration
@@ -799,5 +799,5 @@ class ImageTool {
   }
   
   // Exporter la classe
-  export default ImageTool;
+  export default VisualImageTool;
   

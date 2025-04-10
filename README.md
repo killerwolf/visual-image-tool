@@ -1,4 +1,4 @@
-# ImageTool
+# VisualImageTool
 
 Un outil léger en JavaScript vanilla pour définir des points focaux et zones de recadrage sur des images.
 
@@ -14,7 +14,7 @@ Un outil léger en JavaScript vanilla pour définir des points focaux et zones d
 ## Installation
 
 ```bash
-npm install image-tool
+npm install @killerwolf/visual-image-tool
 ```
 
 ## Guide de démarrage rapide
@@ -23,10 +23,10 @@ npm install image-tool
 
 ```javascript
 // Importation ES modules (recommandé)
-import ImageTool from 'image-tool';
+import VisualImageTool from '@killerwolf/visual-image-tool';
 
 // OU importation CommonJS
-const ImageTool = require('image-tool');
+const VisualImageTool = require('@killerwolf/visual-image-tool');
 
 // OU utilisation directe via balise script (UMD)
 // <script src="node_modules/image-tool/dist/image-tool.umd.js"></script>
@@ -36,7 +36,7 @@ const ImageTool = require('image-tool');
 
 ```javascript
 // Créer une instance avec une image
-const imageTool = new ImageTool({
+const imageTool = new VisualImageTool.VisualImageTool({
   imageElement: document.getElementById('myImage'),
   onChange: (data) => {
     console.log('Point focal:', data.focusPoint);
@@ -68,7 +68,7 @@ const cropZone = imageTool.getCropZone();
 ## Options de configuration
 
 ```javascript
-const imageTool = new ImageTool({
+const imageTool = new VisualImageTool.VisualImageTool({
   // Élément image (obligatoire) - peut être un sélecteur CSS ou un élément DOM
   imageElement: '#myImage',
   
@@ -114,18 +114,18 @@ const imageTool = new ImageTool({
 #### `toggleFocusPoint(active)`
 Active ou désactive le point focal.
 - `active` (boolean, optionnel): Si défini, force l'état à cette valeur. Si omis, inverse l'état actuel.
-- Retourne: L'instance ImageTool pour le chaînage.
+- Retourne: L'instance VisualImageTool pour le chaînage.
 
 #### `toggleCropZone(active)`
 Active ou désactive la zone de recadrage.
 - `active` (boolean, optionnel): Si défini, force l'état à cette valeur. Si omis, inverse l'état actuel.
-- Retourne: L'instance ImageTool pour le chaînage.
+- Retourne: L'instance VisualImageTool pour le chaînage.
 
 #### `setFocusPoint(x, y)`
 Définit la position du point focal.
 - `x` (number): Coordonnée X en pixels originaux.
 - `y` (number): Coordonnée Y en pixels originaux.
-- Retourne: L'instance ImageTool pour le chaînage.
+- Retourne: L'instance VisualImageTool pour le chaînage.
 
 #### `setCropZone(x, y, width, height)`
 Définit la position et les dimensions de la zone de recadrage.
@@ -133,7 +133,7 @@ Définit la position et les dimensions de la zone de recadrage.
 - `y` (number): Coordonnée Y en pixels originaux.
 - `width` (number): Largeur en pixels originaux.
 - `height` (number): Hauteur en pixels originaux.
-- Retourne: L'instance ImageTool pour le chaînage.
+- Retourne: L'instance VisualImageTool pour le chaînage.
 
 #### `getFocusPoint()`
 Obtient la position actuelle du point focal.
@@ -169,7 +169,7 @@ L'outil utilise le callback `onChange` pour notifier des changements. Ce callbac
 
 ```jsx
 import React, { useEffect, useRef } from 'react';
-import ImageTool from 'image-tool';
+import VisualImageTool from '@killerwolf/visual-image-tool';
 
 function ImageEditor() {
   const imageRef = useRef(null);
@@ -177,7 +177,7 @@ function ImageEditor() {
   
   useEffect(() => {
     if (imageRef.current && !toolRef.current) {
-      toolRef.current = new ImageTool({
+      toolRef.current = new VisualImageTool({
         imageElement: imageRef.current,
         onChange: (data) => {
           console.log('Données mises à jour:', data);
@@ -216,7 +216,7 @@ function ImageEditor() {
 </template>
 
 <script>
-import ImageTool from 'image-tool';
+import VisualImageTool from '@killerwolf/visual-image-tool';
 
 export default {
   data() {
@@ -225,7 +225,7 @@ export default {
     };
   },
   mounted() {
-    this.imageTool = new ImageTool({
+    this.imageTool = new VisualImageTool({
       imageElement: this.$refs.editableImage,
       onChange: (data) => {
         console.log('Données mises à jour:', data);
