@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ImageTool - Configuration personnalisée</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      color: #2563eb;
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 10px;
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .image-container {
+      position: relative;
+      border: 1px solid #e5e7eb;
+      padding: 10px;
+      border-radius: 8px;
+      flex: 1;
+      min-width: 300px;
+    }
+    .controls {
+      flex: 1;
+      min-width: 300px;
+      background-color: #f9fafb;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    img {
+      max-width: 100%;
+      display: block;
+    }
+    button {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    button:hover {
+      background-color: #1d4ed8;
+    }
+    .output {
+      margin-top: 20px;
+      background-color: #f3f4f6;
+      padding: 15px;
+      border-radius: 4px;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+    .code-example {
+      background-color: #f3f4f6;
+      padding: 15px;
+      border-radius: 4px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      margin-top: 30px;
+    }
+    .config-section {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+    }
+    .config-section h3 {
+      margin-top: 0;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input[type="color"], input[type="range"] {
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <h1>ImageTool - Configuration personnalisée</h1>
+  
+  <div class="container">
+    <div class="image-container">
+      <img id="demoImage" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1024&q=80" alt="Paysage de démonstration">
+    </div>
+    
+    <div class="controls">
+      <h2>Contrôles</h2>
+      <button id="toggleFocusPoint">Activer Point Focal</button>
+      <button id="toggleCropZone">Activer Zone de Recadrage</button>
+      
+      <div class="config-section">
+        <h3>Configuration du Point Focal</h3>
+        <label for="focusSize">Taille du marqueur:</label>
+        <input type="range" id="focusSize" min="10" max="50" value="30">
+        
+        <label for="focusColor">Couleur du marqueur:</label>
+        <input type="color" id="focusColor" value="#ff0000">
+        
+        <label for="focusOpacity">Opacité:</label>
+        <input type="range" id="focusOpacity" min="0" max="100" value="50">
+        
+        <button id="applyFocusConfig">Appliquer</button>
+      </div>
+      
+      <div class="config-section">
+        <h3>Configuration de la Zone de Recadrage</h3>
+        <label for="cropBorderStyle">Style de bordure:</label>
+        <select id="cropBorderStyle">
+          <option value="dashed">Pointillés</option>
+          <option value="solid">Solide</option>
+          <option value="dotted">Points</option>
+        </select>
+        
+        <label for="cropBorderColor">Couleur de bordure:</label>
+        <input type="color" id="cropBorderColor" value="#ffffff">
+        
+        <label for="cropOverlayColor">Couleur de l'overlay:</label>
+        <input type="color" id="cropOverlayColor" value="#000000">
+        
+        <label for="cropOverlayOpacity">Opacité de l'overlay:</label>
+        <input type="range" id="cropOverlayOpacity" min="0" max="100" value="40">
+        
+        <button id="applyCropConfig">Appliquer</button>
+      </div>
+      
+      <h3>Données actuelles</h3>
+      <div id="output" class="output">Aucune donnée disponible</div>
+    </div>
+  </div>
+  
+  <div class="code-example">
+    <h2>Code d'exemple</h2>
+    <pre>
+// Importer la bibliothèque (dans un environnement module)
+// import ImageTool from 'image-tool';
+
+// Initialiser l'outil avec une configuration personnalisée
+const imageTool = new ImageTool({
+  imageElement: document.getElementById('demoImage'),
+  focusPoint: {
+    enabled: true,
+    style: {
+      width: '30px',
+      height: '30px',
+      border: '3px solid white',
+      boxShadow: '0 0 0 2px black, 0 0 5px rgba(0,0,0,0.5)',
+      backgroundColor: 'rgba(255, 0, 0, 0.5)'
+    }
+  },
+  cropZone: {
+    enabled: true,
+    style: {
+      border: '1px dashed #fff',
+      backgroundColor: 'rgba(0, 0, 0, 0.4)'
+    },
+    handleStyle: {
+      width: '14px',
+      height: '14px',
+      backgroundColor: 'white',
+      border: '2px solid black',
+      boxShadow: '0 0 3px rgba(0,0,0,0.5)'
+    }
+  },
+  onChange: (data) => {
+    document.getElementById('output').textContent = 
+      JSON.stringify(data, null, 2);
+  }
+});
+
+// Appliquer une nouvelle configuration pour le point focal
+document.getElementById('applyFocusConfig').addEventListener('click', () => {
+  // Récupérer les valeurs des contrôles
+  const size = document.getElementById('focusSize').value + 'px';
+  const color = document.getElementById('focusColor').value;
+  const opacity = document.getElementById('focusOpacity').value / 100;
+  
+  // Recréer l'instance avec la nouvelle configuration
+  imageTool.destroy();
+  imageTool = new ImageTool({
+    imageElement: document.getElementById('demoImage'),
+    focusPoint: {
+      enabled: true,
+      style: {
+        width: size,
+        height: size,
+        border: '3px solid white',
+        boxShadow: '0 0 0 2px black, 0 0 5px rgba(0,0,0,0.5)',
+        backgroundColor: `${color}${Math.round(opacity * 255).toString(16).padStart(2, '0')}`
+      }
+    },
+    // ... autres options
+  });
+});
+    </pre>
+  </div>
+
+  <!-- Charger la bibliothèque (version UMD pour l'exemple) -->
+  <script src="../dist/image-tool.umd.js"></script>
+  
+  <script>
+    // Variable pour stocker l'instance
+    let imageTool;
+    
+    // Fonction pour créer ou recréer l'instance avec les options actuelles
+    function createImageTool() {
+      // Détruire l'instance existante si elle existe
+      if (imageTool) {
+        const focusActive = imageTool.getFocusPoint().active;
+        const cropActive = imageTool.getCropZone().active;
+        imageTool.destroy();
+      }
+      
+      // Récupérer les valeurs de configuration
+      const focusSize = document.getElementById('focusSize').value + 'px';
+      const focusColor = document.getElementById('focusColor').value;
+      const focusOpacity = document.getElementById('focusOpacity').value / 100;
+      const focusRgba = `${focusColor}${Math.round(focusOpacity * 255).toString(16).padStart(2, '0')}`;
+      
+      const cropBorderStyle = document.getElementById('cropBorderStyle').value;
+      const cropBorderColor = document.getElementById('cropBorderColor').value;
+      const cropOverlayColor = document.getElementById('cropOverlayColor').value;
+      const cropOverlayOpacity = document.getElementById('cropOverlayOpacity').value / 100;
+      const cropRgba = `${cropOverlayColor}${Math.round(cropOverlayOpacity * 255).toString(16).padStart(2, '0')}`;
+      
+      // Créer une nouvelle instance avec la configuration
+      imageTool = new ImageTool({
+        imageElement: document.getElementById('demoImage'),
+        focusPoint: {
+          enabled: true,
+          style: {
+            width: focusSize,
+            height: focusSize,
+            border: '3px solid white',
+            boxShadow: '0 0 0 2px black, 0 0 5px rgba(0,0,0,0.5)',
+            backgroundColor: focusRgba
+          }
+        },
+        cropZone: {
+          enabled: true,
+          style: {
+            border: `1px ${cropBorderStyle} ${cropBorderColor}`,
+            backgroundColor: cropRgba
+          },
+          handleStyle: {
+            width: '14px',
+            height: '14px',
+            backgroundColor: 'white',
+            border: '2px solid black',
+            boxShadow: '0 0 3px rgba(0,0,0,0.5)'
+          }
+        },
+        onChange: (data) => {
+          // Afficher les données mises à jour
+          document.getElementById('output').textContent = 
+            JSON.stringify(data, null, 2);
+        }
+      });
+      
+      // Mettre à jour le texte des boutons
+      updateButtonText();
+    }
+    
+    // Fonction pour mettre à jour le texte des boutons
+    function updateButtonText() {
+      document.getElementById('toggleFocusPoint').textContent = 
+        imageTool.getFocusPoint().active ? 'Désactiver Point Focal' : 'Activer Point Focal';
+      document.getElementById('toggleCropZone').textContent = 
+        imageTool.getCropZone().active ? 'Désactiver Zone de Recadrage' : 'Activer Zone de Recadrage';
+    }
+    
+    // Initialiser l'outil
+    createImageTool();
+    
+    // Activer/désactiver le point focal
+    document.getElementById('toggleFocusPoint').addEventListener('click', () => {
+      imageTool.toggleFocusPoint();
+      updateButtonText();
+    });
+
+    // Activer/désactiver la zone de recadrage
+    document.getElementById('toggleCropZone').addEventListener('click', () => {
+      imageTool.toggleCropZone();
+      updateButtonText();
+    });
+    
+    // Appliquer la configuration du point focal
+    document.getElementById('applyFocusConfig').addEventListener('click', () => {
+      createImageTool();
+    });
+    
+    // Appliquer la configuration de la zone de recadrage
+    document.getElementById('applyCropConfig').addEventListener('click', () => {
+      createImageTool();
+    });
+  </script>
+</body>
+</html>
