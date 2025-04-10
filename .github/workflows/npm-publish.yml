@@ -22,7 +22,7 @@ jobs:
 
       - run: npm run build
 
-      - run: npm version patch --git-tag-version
+      - run: npm version --no-git-tag-version ${{github.ref_name}}
 
       - run: npm publish --access public
         env:
