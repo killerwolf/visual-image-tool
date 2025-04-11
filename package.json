@@ -1,5 +1,5 @@
 {
-  "name": "@killerwolf/visual-image-tool",
+  "name": "@h4md1/visual-image-tool",
   "version": "1.0.0",
   "description": "Un outil léger en JavaScript vanilla pour définir des points focaux et zones de recadrage sur des images",
   "main": "dist/image-tool.js",

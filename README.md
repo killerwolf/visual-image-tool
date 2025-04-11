@@ -14,7 +14,7 @@ Un outil léger en JavaScript vanilla pour définir des points focaux et zones d
 ## Installation
 
 ```bash
-npm install @killerwolf/visual-image-tool
+npm install @h4md1/visual-image-tool
 ```
 
 ## Guide de démarrage rapide
@@ -23,10 +23,10 @@ npm install @killerwolf/visual-image-tool
 
 ```javascript
 // Importation ES modules (recommandé)
-import VisualImageTool from '@killerwolf/visual-image-tool';
+import VisualImageTool from '@h4md1/visual-image-tool';
 
 // OU importation CommonJS
-const VisualImageTool = require('@killerwolf/visual-image-tool');
+const VisualImageTool = require('@h4md1/visual-image-tool');
 
 // OU utilisation directe via balise script (UMD)
 // <script src="node_modules/image-tool/dist/image-tool.umd.js"></script>
@@ -169,7 +169,7 @@ L'outil utilise le callback `onChange` pour notifier des changements. Ce callbac
 
 ```jsx
 import React, { useEffect, useRef } from 'react';
-import VisualImageTool from '@killerwolf/visual-image-tool';
+import VisualImageTool from '@h4md1/visual-image-tool';
 
 function ImageEditor() {
   const imageRef = useRef(null);
@@ -216,7 +216,7 @@ function ImageEditor() {
 </template>
 
 <script>
-import VisualImageTool from '@killerwolf/visual-image-tool';
+import VisualImageTool from '@h4md1/visual-image-tool';
 
 export default {
   data() {
