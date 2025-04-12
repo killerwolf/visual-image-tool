@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Image Tool Demo with ESM</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #image-container {
+            position: relative;
+        }
+        img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="image-container">
+        <img id="myImage" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1024&q=80" alt="Sample Image">
+    </div>
+    <script type="module">
+        import { VisualImageTool } from 'https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool@0.1.5/dist/visual-image-tool.esm.js';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the VisualImageTool with the image element
+            const imageTool = new VisualImageTool({
+                imageElement: '#myImage', // Selector for the image element
+                focusPoint: {
+                    enabled: true,
+                    style: {
+                        width: "30px",
+                        height: "30px",
+                        border: "3px solid white",
+                        boxShadow: "0 0 0 2px black, 0 0 5px rgba(0,0,0,0.5)",
+                        backgroundColor: "rgba(255, 0, 0, 0.5)"
+                    }
+                },
+                cropZone: {
+                    enabled: true,
+                    style: {
+                        border: "1px dashed #fff",
+                        backgroundColor: "rgba(0, 0, 0, 0.4)"
+                    },
+                    handleStyle: {
+                        width: "14px",
+                        height: "14px",
+                        backgroundColor: "white",
+                        border: "2px solid black",
+                        boxShadow: "0 0 3px rgba(0,0,0,0.5)"
+                    }
+                },
+                onChange: function(state) {
+                    console.log('State changed:', state);
+                }
+            });
+
+            // Example usage
+            imageTool.toggleFocusPoint(true);
+            imageTool.toggleCropZone(true);
+        });
+    </script>
+</body>
+</html>
