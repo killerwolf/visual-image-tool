@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Preact + visual-image-tool ESM Demo</title>
+  <script type="importmap">
+    {
+      "imports": {
+        "preact": "https://cdn.jsdelivr.net/npm/preact@10.19.2/dist/preact.module.js",
+        "preact/hooks": "https://cdn.jsdelivr.net/npm/preact@10.19.2/hooks/dist/hooks.module.js",
+        "@h4md1/visual-image-tool": "https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool@0.1.5/dist/visual-image-tool.esm.js"
+      }
+    }
+  </script>
+  <style>
+    body { font-family: sans-serif; }
+    .image-container { position: relative; display: inline-block; }
+    .demo-img { max-width: 600px; border: 1px solid #ccc; display: block; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script type="module">
+    import { h, render } from "preact";
+    import { useEffect, useRef } from "preact/hooks";
+    import { VisualImageTool } from "@h4md1/visual-image-tool";
+
+    function ImageToolDemo() {
+      const imgRef = useRef(null);
+      const toolRef = useRef(null);
+
+      useEffect(() => {
+        let cleanup = null;
+        function initTool() {
+          if (toolRef.current) {
+            toolRef.current.destroy();
+            toolRef.current = null;
+          }
+          toolRef.current = new VisualImageTool({
+            imageElement: imgRef.current,
+            onChange: (state) => {
+              console.log("Image tool state changed:", state);
+            }
+          });
+          toolRef.current.toggleFocusPoint(true);
+          toolRef.current.toggleCropZone(true);
+        }
+
+        if (imgRef.current) {
+          if (imgRef.current.complete && imgRef.current.naturalWidth !== 0) {
+            // Image already loaded
+            initTool();
+          } else {
+            // Wait for image to load
+            const onLoad = () => {
+              initTool();
+            };
+            imgRef.current.addEventListener("load", onLoad);
+            cleanup = () => {
+              imgRef.current && imgRef.current.removeEventListener("load", onLoad);
+            };
+          }
+        }
+        return () => {
+          if (cleanup) cleanup();
+          if (toolRef.current) {
+            toolRef.current.destroy();
+            toolRef.current = null;
+          }
+        };
+      }, []);
+
+      return h(
+        "div",
+        null,
+        h("h2", null, "Preact + visual-image-tool Demo"),
+        h("div", { class: "image-container" },
+          h("img", {
+            ref: imgRef,
+            class: "demo-img",
+            src: "https://placecats.com/900/600",
+            alt: "Demo"
+          })
+        )
+      );
+    }
+
+    render(h(ImageToolDemo), document.getElementById("app"));
+  </script>
+</body>
+</html>

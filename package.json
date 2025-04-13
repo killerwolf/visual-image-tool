@@ -13,6 +13,7 @@
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "demo": "npx http-server -o ./demo",
+    "publish:demo": "gh-pages -d demo",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublishOnly": "npm run build"
   },
@@ -28,8 +29,9 @@
   "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.0.0",
-    "rollup": "^2.79.0",
-    "@rollup/plugin-terser": "^0.4"
+    "@rollup/plugin-terser": "^0.4",
+    "gh-pages": "^6.3.0",
+    "rollup": "^2.79.0"
   },
   "repository": {
     "type": "git",

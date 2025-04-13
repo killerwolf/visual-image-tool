@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Preact App</title>
+  <script type="importmap">
+    {
+      "imports": {
+        "preact": "https://unpkg.com/preact@10.11.3/dist/preact.module.js",
+        "preact/compat": "https://unpkg.com/preact@10.11.3/compat/dist/compat.module.js",
+        "htm": "https://unpkg.com/htm@3.1.1/dist/htm.module.js"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="app"></div>
+  <script type="module">
+    import { h, render } from 'preact';
+    import { useState } from 'preact/compat';
+    import htm from 'htm';
+
+    // Initialiser htm avec la fonction h de Preact
+    const html = htm.bind(h);
+
+    const App = () => {
+      const [count, setCount] = useState(0);
+
+      return html`
+        <div>
+          <h1>Hello, Preact!</h1>
+          <p>Count: ${count}</p>
+          <button onClick=${() => setCount(count + 1)}>Increment</button>
+        </div>
+      `;
+    };
+
+    render(h(App, null), document.getElementById('app'));
+  </script>
+</body>
+</html>
