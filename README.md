@@ -248,12 +248,17 @@ export default {
 
 ## Demos
 
-See the `demos/` folder for complete examples:
+The `demo/` folder contains the following examples:
 
 - `basic-usage.html`: Basic usage example
-- `custom-config.html`: Example with custom configuration
-- `react-integration.jsx`: Example integration with React
-- `vue-integration.js`: Example integration with Vue.js
+- `custom-config.html`: Custom configuration demo with live controls
+- `demo-esm.html`: ESM (ECMAScript Module) integration demo
+- `demo-umd.html`: UMD (Universal Module Definition) integration demo
+- `index2.html`: Alternate or experimental demo page
+- `preact-importmap-demo.html`: Preact integration using importmap
+- `react-integration.jsx`: React integration example
+- `vue-importmap-demo.html`: Vue integration using importmap
+- `vue-integration.js`: Vue integration script
 
 ## Browser Compatibility
 
