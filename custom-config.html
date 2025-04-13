@@ -140,87 +140,32 @@
       <div id="output" class="output">Aucune donnée disponible</div>
     </div>
   </div>
-  
-  <div class="code-example">
-    <h2>Code d'exemple</h2>
-    <pre>
-// Importer la bibliothèque (dans un environnement module)
-// import ImageTool from 'image-tool';
-
-// Initialiser l'outil avec une configuration personnalisée
-const imageTool = new ImageTool({
-  imageElement: document.getElementById('demoImage'),
-  focusPoint: {
-    enabled: true,
-    style: {
-      width: '30px',
-      height: '30px',
-      border: '3px solid white',
-      boxShadow: '0 0 0 2px black, 0 0 5px rgba(0,0,0,0.5)',
-      backgroundColor: 'rgba(255, 0, 0, 0.5)'
-    }
-  },
-  cropZone: {
-    enabled: true,
-    style: {
-      border: '1px dashed #fff',
-      backgroundColor: 'rgba(0, 0, 0, 0.4)'
-    },
-    handleStyle: {
-      width: '14px',
-      height: '14px',
-      backgroundColor: 'white',
-      border: '2px solid black',
-      boxShadow: '0 0 3px rgba(0,0,0,0.5)'
-    }
-  },
-  onChange: (data) => {
-    document.getElementById('output').textContent = 
-      JSON.stringify(data, null, 2);
-  }
-});
-
-// Appliquer une nouvelle configuration pour le point focal
-document.getElementById('applyFocusConfig').addEventListener('click', () => {
-  // Récupérer les valeurs des contrôles
-  const size = document.getElementById('focusSize').value + 'px';
-  const color = document.getElementById('focusColor').value;
-  const opacity = document.getElementById('focusOpacity').value / 100;
-  
-  // Recréer l'instance avec la nouvelle configuration
-  imageTool.destroy();
-  imageTool = new ImageTool({
-    imageElement: document.getElementById('demoImage'),
-    focusPoint: {
-      enabled: true,
-      style: {
-        width: size,
-        height: size,
-        border: '3px solid white',
-        boxShadow: '0 0 0 2px black, 0 0 5px rgba(0,0,0,0.5)',
-        backgroundColor: `${color}${Math.round(opacity * 255).toString(16).padStart(2, '0')}`
-      }
-    },
-    // ... autres options
-  });
-});
-    </pre>
-  </div>
 
   <!-- Charger la bibliothèque (version UMD pour l'exemple) -->
-  <script src="../dist/image-tool.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool@0.1.5/dist/visual-image-tool.umd.js"></script>
   
   <script>
     // Variable pour stocker l'instance
     let imageTool;
+    // Track active states
+    let focusActive = false;
+    let cropActive = false;
     
     // Fonction pour créer ou recréer l'instance avec les options actuelles
     function createImageTool() {
       // Détruire l'instance existante si elle existe
       if (imageTool) {
-        const focusActive = imageTool.getFocusPoint().active;
-        const cropActive = imageTool.getCropZone().active;
-        imageTool.destroy();
+        // Defensive: try to end any drag before destroying
+        try {
+          // Attempt to trigger mouseup in case of drag
+          document.dispatchEvent(new MouseEvent('mouseup'));
+        } catch (e) {}
+        try {
+          imageTool.destroy();
+        } catch (e) {
+          // Prevent error from breaking UI
+          console.error("Error destroying previous VisualImageTool instance:", e);
+        }
       }
       
       // Récupérer les valeurs de configuration
@@ -263,9 +208,13 @@ document.getElementById('applyFocusConfig').addEventListener('click', () => {
           }
         },
         onChange: (data) => {
-          // Afficher les données mises à jour
-          document.getElementById('output').textContent = 
+          // Display updated data
+          document.getElementById('output').textContent =
             JSON.stringify(data, null, 2);
+          // Update active states
+          focusActive = data.focusActive;
+          cropActive = data.cropActive;
+          updateButtonText();
         }
       });
       
@@ -275,10 +224,10 @@ document.getElementById('applyFocusConfig').addEventListener('click', () => {
     
     // Fonction pour mettre à jour le texte des boutons
     function updateButtonText() {
-      document.getElementById('toggleFocusPoint').textContent = 
-        imageTool.getFocusPoint().active ? 'Désactiver Point Focal' : 'Activer Point Focal';
-      document.getElementById('toggleCropZone').textContent = 
-        imageTool.getCropZone().active ? 'Désactiver Zone de Recadrage' : 'Activer Zone de Recadrage';
+      document.getElementById('toggleFocusPoint').textContent =
+        focusActive ? 'Désactiver Point Focal' : 'Activer Point Focal';
+      document.getElementById('toggleCropZone').textContent =
+        cropActive ? 'Désactiver Zone de Recadrage' : 'Activer Zone de Recadrage';
     }
     
     // Initialiser l'outil
