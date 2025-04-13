@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ImageTool - Configuration personnalisée</title>
+  <title>ImageTool - Custom Configuration</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -89,71 +89,71 @@
   </style>
 </head>
 <body>
-  <h1>ImageTool - Configuration personnalisée</h1>
+  <h1>ImageTool - Custom Configuration</h1>
   
   <div class="container">
     <div class="image-container">
-      <img id="demoImage" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1024&q=80" alt="Paysage de démonstration">
+      <img id="demoImage" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1024&q=80" alt="Demo landscape">
     </div>
     
     <div class="controls">
-      <h2>Contrôles</h2>
-      <button id="toggleFocusPoint">Activer Point Focal</button>
-      <button id="toggleCropZone">Activer Zone de Recadrage</button>
+      <h2>Controls</h2>
+      <button id="toggleFocusPoint">Enable Focus Point</button>
+      <button id="toggleCropZone">Enable Crop Zone</button>
       
       <div class="config-section">
-        <h3>Configuration du Point Focal</h3>
-        <label for="focusSize">Taille du marqueur:</label>
+        <h3>Focus Point Configuration</h3>
+        <label for="focusSize">Marker size:</label>
         <input type="range" id="focusSize" min="10" max="50" value="30">
         
-        <label for="focusColor">Couleur du marqueur:</label>
+        <label for="focusColor">Marker color:</label>
         <input type="color" id="focusColor" value="#ff0000">
         
-        <label for="focusOpacity">Opacité:</label>
+        <label for="focusOpacity">Opacity:</label>
         <input type="range" id="focusOpacity" min="0" max="100" value="50">
         
-        <button id="applyFocusConfig">Appliquer</button>
+        <button id="applyFocusConfig">Apply</button>
       </div>
       
       <div class="config-section">
-        <h3>Configuration de la Zone de Recadrage</h3>
-        <label for="cropBorderStyle">Style de bordure:</label>
+        <h3>Crop Zone Configuration</h3>
+        <label for="cropBorderStyle">Border style:</label>
         <select id="cropBorderStyle">
-          <option value="dashed">Pointillés</option>
-          <option value="solid">Solide</option>
-          <option value="dotted">Points</option>
+          <option value="dashed">Dashed</option>
+          <option value="solid">Solid</option>
+          <option value="dotted">Dotted</option>
         </select>
         
-        <label for="cropBorderColor">Couleur de bordure:</label>
+        <label for="cropBorderColor">Border color:</label>
         <input type="color" id="cropBorderColor" value="#ffffff">
         
-        <label for="cropOverlayColor">Couleur de l'overlay:</label>
+        <label for="cropOverlayColor">Overlay color:</label>
         <input type="color" id="cropOverlayColor" value="#000000">
         
-        <label for="cropOverlayOpacity">Opacité de l'overlay:</label>
+        <label for="cropOverlayOpacity">Overlay opacity:</label>
         <input type="range" id="cropOverlayOpacity" min="0" max="100" value="40">
         
-        <button id="applyCropConfig">Appliquer</button>
+        <button id="applyCropConfig">Apply</button>
       </div>
       
-      <h3>Données actuelles</h3>
-      <div id="output" class="output">Aucune donnée disponible</div>
+      <h3>Current Data</h3>
+      <div id="output" class="output">No data available</div>
     </div>
   </div>
 
-  <!-- Charger la bibliothèque (version UMD pour l'exemple) -->
+  <!-- Load the library (UMD version for the example) -->
   <script src="https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool@0.1.5/dist/visual-image-tool.umd.js"></script>
   
   <script>
-    // Variable pour stocker l'instance
+    // Variable to store the instance
     let imageTool;
     // Track active states
     let focusActive = false;
     let cropActive = false;
     
-    // Fonction pour créer ou recréer l'instance avec les options actuelles
+    // Function to create or recreate the instance with current options
     function createImageTool() {
-      // Détruire l'instance existante si elle existe
+      // Destroy existing instance if it exists
       if (imageTool) {
         // Defensive: try to end any drag before destroying
         try {
@@ -168,7 +168,7 @@
         }
       }
       
-      // Récupérer les valeurs de configuration
+      // Get configuration values
       const focusSize = document.getElementById('focusSize').value + 'px';
       const focusColor = document.getElementById('focusColor').value;
       const focusOpacity = document.getElementById('focusOpacity').value / 100;
@@ -180,7 +180,7 @@
       const cropOverlayOpacity = document.getElementById('cropOverlayOpacity').value / 100;
       const cropRgba = `${cropOverlayColor}${Math.round(cropOverlayOpacity * 255).toString(16).padStart(2, '0')}`;
       
-      // Créer une nouvelle instance avec la configuration
+      // Create a new instance with the configuration
       imageTool = new VisualImageTool.VisualImageTool({
         imageElement: document.getElementById('demoImage'),
         focusPoint: {
@@ -218,39 +218,39 @@
         }
       });
       
-      // Mettre à jour le texte des boutons
+      // Update button text
       updateButtonText();
     }
     
-    // Fonction pour mettre à jour le texte des boutons
+    // Function to update button text
     function updateButtonText() {
       document.getElementById('toggleFocusPoint').textContent =
-        focusActive ? 'Désactiver Point Focal' : 'Activer Point Focal';
+        focusActive ? 'Disable Focus Point' : 'Enable Focus Point';
       document.getElementById('toggleCropZone').textContent =
-        cropActive ? 'Désactiver Zone de Recadrage' : 'Activer Zone de Recadrage';
+        cropActive ? 'Disable Crop Zone' : 'Enable Crop Zone';
     }
     
-    // Initialiser l'outil
+    // Initialize the tool
     createImageTool();
     
-    // Activer/désactiver le point focal
+    // Enable/disable focus point
     document.getElementById('toggleFocusPoint').addEventListener('click', () => {
       imageTool.toggleFocusPoint();
       updateButtonText();
     });
 
-    // Activer/désactiver la zone de recadrage
+    // Enable/disable crop zone
     document.getElementById('toggleCropZone').addEventListener('click', () => {
       imageTool.toggleCropZone();
       updateButtonText();
     });
     
-    // Appliquer la configuration du point focal
+    // Apply focus point configuration
     document.getElementById('applyFocusConfig').addEventListener('click', () => {
       createImageTool();
     });
     
-    // Appliquer la configuration de la zone de recadrage
+    // Apply crop zone configuration
     document.getElementById('applyCropConfig').addEventListener('click', () => {
       createImageTool();
     });
