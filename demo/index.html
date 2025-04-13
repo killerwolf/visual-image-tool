@@ -280,7 +280,7 @@ import VisualImageTool from '@h4md1/visual-image-tool';
 const VisualImageTool = require('@h4md1/visual-image-tool');
 
 // UMD (script tag)
-<script src="node_modules/image-tool/dist/image-tool.umd.js"></script>
+&lt;script src="node_modules/image-tool/dist/image-tool.umd.js "&gt;&lt;/script&gt;
 </code></pre>
         </li>
         <li>
@@ -552,6 +552,112 @@ export default {
           );
         },
       });
+
+      // Wait for image to load before animating demo
+      function initVisualImageToolDemo() {
+        // Activate both features
+        imageTool.toggleFocusPoint(true);
+        imageTool.toggleCropZone(true);
+
+        const dimensions = imageTool.getImageDimensions();
+
+        // Animate focus point: move in a smooth, organic arc
+        function animateFocusOrganic(cb) {
+          const steps = 32;
+          let step = 0;
+          function easeInOut(t) {
+            return t < 0.5
+              ? 2 * t * t
+              : -1 + (4 - 2 * t) * t;
+          }
+          function frame() {
+            const t = step / steps;
+            // Arc path: from left-bottom to right-top, with a gentle curve and less amplitude
+            const x = dimensions.width * (0.28 + 0.44 * easeInOut(t));
+            const y = dimensions.height * (0.62 - 0.13 * Math.sin(Math.PI * t));
+            imageTool.setFocusPoint(x, y);
+            step++;
+            if (step <= steps) {
+              setTimeout(frame, 28 + Math.random() * 12);
+            } else if (cb) {
+              cb();
+            }
+          }
+          frame();
+        }
+
+        // Animate crop zone: grow and wiggle a bit
+        function animateCropOrganic(cb) {
+          const steps = 16;
+          let step = 0;
+          function ease(t) {
+            return t < 0.5
+              ? 2 * t * t
+              : -1 + (4 - 2 * t) * t;
+          }
+          function frame() {
+            const t = step / steps;
+            // Grow from small to large, with a little "wiggle"
+            const x = dimensions.width * (0.38 - 0.18 * Math.sin(2 * Math.PI * t) * (1 - t));
+            const y = dimensions.height * (0.38 - 0.18 * Math.cos(2 * Math.PI * t) * (1 - t));
+            const width = dimensions.width * (0.12 + 0.56 * ease(t));
+            const height = dimensions.height * (0.12 + 0.56 * ease(t));
+            imageTool.setCropZone(x, y, width, height);
+            step++;
+            if (step <= steps) {
+              setTimeout(frame, 14 + Math.random() * 8);
+            } else if (cb) {
+              cb();
+            }
+          }
+          frame();
+        }
+
+        // Deactivate all 4 buttons
+        [
+          "toggleFocusPoint",
+          "toggleCropZone",
+          "centerFocusPoint",
+          "resetCropZone"
+        ].forEach(id => {
+          const btn = document.getElementById(id);
+          if (btn) {
+            btn.disabled = true;
+            btn.style.opacity = "0.5";
+            btn.style.pointerEvents = "none";
+          }
+        });
+
+        // Animate focus, then crop, then re-enable buttons
+        animateFocusOrganic(() => {
+          setTimeout(() => {
+            animateCropOrganic(() => {
+              setTimeout(() => {
+                [
+                  "toggleFocusPoint",
+                  "toggleCropZone",
+                  "centerFocusPoint",
+                  "resetCropZone"
+                ].forEach(id => {
+                  const btn = document.getElementById(id);
+                  if (btn) {
+                    btn.disabled = false;
+                    btn.style.opacity = "";
+                    btn.style.pointerEvents = "";
+                  }
+                });
+              }, 200);
+            });
+          }, 80);
+        });
+      }
+
+      const img = document.getElementById("demoImage");
+      if (img.complete) {
+        initVisualImageToolDemo();
+      } else {
+        img.addEventListener("load", initVisualImageToolDemo);
+      }
 
       // Enable/disable the focus point
       document
