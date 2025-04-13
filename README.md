@@ -1,15 +1,15 @@
 # VisualImageTool
 
-Un outil léger en JavaScript vanilla pour définir des points focaux et zones de recadrage sur des images.
+A lightweight vanilla JavaScript tool to define focus points and crop zones on images.
 
-## Fonctionnalités
+## Features
 
-- **Point focal** : Définissez un point d'intérêt sur l'image avec un marqueur visuel
-- **Zone de recadrage** : Définissez une zone de recadrage avec poignées de redimensionnement
-- **Sans dépendances** : Fonctionne sans bibliothèques externes
-- **API simple** : Interface claire et facile à utiliser
-- **Personnalisable** : Options de configuration flexibles
-- **Responsive** : S'adapte aux redimensionnements d'écran
+- **Focus point**: Set a point of interest on the image with a visual marker
+- **Crop zone**: Define a crop zone with resize handles
+- **No dependencies**: Works without external libraries
+- **Simple API**: Clear and easy-to-use interface
+- **Customizable**: Flexible configuration options
+- **Responsive**: Adapts to screen resizing
 
 ## Installation
 
@@ -17,64 +17,64 @@ Un outil léger en JavaScript vanilla pour définir des points focaux et zones d
 npm install @h4md1/visual-image-tool
 ```
 
-## Guide de démarrage rapide
+## Quick Start Guide
 
-### 1. Importation
+### 1. Import
 
 ```javascript
-// Importation ES modules (recommandé)
+// ES modules import (recommended)
 import VisualImageTool from '@h4md1/visual-image-tool';
 
-// OU importation CommonJS
+// OR CommonJS import
 const VisualImageTool = require('@h4md1/visual-image-tool');
 
-// OU utilisation directe via balise script (UMD)
+// OR direct usage via script tag (UMD)
 // <script src="node_modules/image-tool/dist/image-tool.umd.js"></script>
 ```
 
-### 2. Initialisation
+### 2. Initialization
 
 ```javascript
-// Créer une instance avec une image
+// Create an instance with an image
 const imageTool = new VisualImageTool.VisualImageTool({
   imageElement: document.getElementById('myImage'),
   onChange: (data) => {
-    console.log('Point focal:', data.focusPoint);
-    console.log('Zone de recadrage:', data.cropZone);
+    console.log('Focus point:', data.focusPoint);
+    console.log('Crop zone:', data.cropZone);
   }
 });
 ```
 
-### 3. Utilisation des fonctionnalités
+### 3. Using the Features
 
 ```javascript
-// Activer le point focal
+// Enable the focus point
 imageTool.toggleFocusPoint(true);
 
-// Activer la zone de recadrage
+// Enable the crop zone
 imageTool.toggleCropZone(true);
 
-// Définir manuellement un point focal
+// Manually set a focus point
 imageTool.setFocusPoint(x, y);
 
-// Définir manuellement une zone de recadrage
+// Manually set a crop zone
 imageTool.setCropZone(x, y, width, height);
 
-// Obtenir les valeurs actuelles
+// Get current values
 const focusPoint = imageTool.getFocusPoint();
 const cropZone = imageTool.getCropZone();
 ```
 
-## Options de configuration
+## Configuration Options
 
 ```javascript
 const imageTool = new VisualImageTool.VisualImageTool({
-  // Élément image (obligatoire) - peut être un sélecteur CSS ou un élément DOM
+  // Image element (required) - can be a CSS selector or a DOM element
   imageElement: '#myImage',
   
-  // Configuration du point focal (optionnel)
+  // Focus point configuration (optional)
   focusPoint: {
-    enabled: true, // Activer/désactiver la fonctionnalité
+    enabled: true, // Enable/disable the feature
     style: {
       width: '30px',
       height: '30px',
@@ -84,9 +84,9 @@ const imageTool = new VisualImageTool.VisualImageTool({
     }
   },
   
-  // Configuration de la zone de recadrage (optionnel)
+  // Crop zone configuration (optional)
   cropZone: {
-    enabled: true, // Activer/désactiver la fonctionnalité
+    enabled: true, // Enable/disable the feature
     style: {
       border: '1px dashed #fff',
       backgroundColor: 'rgba(0, 0, 0, 0.4)'
@@ -100,70 +100,70 @@ const imageTool = new VisualImageTool.VisualImageTool({
     }
   },
   
-  // Callback appelé lors des changements (optionnel)
+  // Callback called on changes (optional)
   onChange: function(data) {
-    // data contient focusPoint, cropZone, focusActive, cropActive
+    // data contains focusPoint, cropZone, focusActive, cropActive
   }
 });
 ```
 
-## API complète
+## Full API
 
-### Méthodes
+### Methods
 
 #### `toggleFocusPoint(active)`
-Active ou désactive le point focal.
-- `active` (boolean, optionnel): Si défini, force l'état à cette valeur. Si omis, inverse l'état actuel.
-- Retourne: L'instance VisualImageTool pour le chaînage.
+Enables or disables the focus point.
+- `active` (boolean, optional): If set, forces the state to this value. If omitted, toggles the current state.
+- Returns: The VisualImageTool instance for chaining.
 
 #### `toggleCropZone(active)`
-Active ou désactive la zone de recadrage.
-- `active` (boolean, optionnel): Si défini, force l'état à cette valeur. Si omis, inverse l'état actuel.
-- Retourne: L'instance VisualImageTool pour le chaînage.
+Enables or disables the crop zone.
+- `active` (boolean, optional): If set, forces the state to this value. If omitted, toggles the current state.
+- Returns: The VisualImageTool instance for chaining.
 
 #### `setFocusPoint(x, y)`
-Définit la position du point focal.
-- `x` (number): Coordonnée X en pixels originaux.
-- `y` (number): Coordonnée Y en pixels originaux.
-- Retourne: L'instance VisualImageTool pour le chaînage.
+Sets the position of the focus point.
+- `x` (number): X coordinate in original pixels.
+- `y` (number): Y coordinate in original pixels.
+- Returns: The VisualImageTool instance for chaining.
 
 #### `setCropZone(x, y, width, height)`
-Définit la position et les dimensions de la zone de recadrage.
-- `x` (number): Coordonnée X en pixels originaux.
-- `y` (number): Coordonnée Y en pixels originaux.
-- `width` (number): Largeur en pixels originaux.
-- `height` (number): Hauteur en pixels originaux.
-- Retourne: L'instance VisualImageTool pour le chaînage.
+Sets the position and dimensions of the crop zone.
+- `x` (number): X coordinate in original pixels.
+- `y` (number): Y coordinate in original pixels.
+- `width` (number): Width in original pixels.
+- `height` (number): Height in original pixels.
+- Returns: The VisualImageTool instance for chaining.
 
 #### `getFocusPoint()`
-Obtient la position actuelle du point focal.
-- Retourne: Un objet `{x, y}` avec les coordonnées en pixels originaux.
+Gets the current position of the focus point.
+- Returns: An object `{x, y}` with coordinates in original pixels.
 
 #### `getCropZone()`
-Obtient la position et les dimensions actuelles de la zone de recadrage.
-- Retourne: Un objet `{x, y, width, height}` avec les valeurs en pixels originaux.
+Gets the current position and dimensions of the crop zone.
+- Returns: An object `{x, y, width, height}` with values in original pixels.
 
 #### `getImageDimensions()`
-Obtient les dimensions originales de l'image.
-- Retourne: Un objet `{width, height}` avec les dimensions en pixels originaux.
+Gets the original dimensions of the image.
+- Returns: An object `{width, height}` with dimensions in original pixels.
 
 #### `destroy()`
-Détruit l'instance et nettoie les ressources.
+Destroys the instance and cleans up resources.
 
-### Événements
+### Events
 
-L'outil utilise le callback `onChange` pour notifier des changements. Ce callback reçoit un objet avec les propriétés suivantes:
+The tool uses the `onChange` callback to notify about changes. This callback receives an object with the following properties:
 
 ```javascript
 {
-  focusPoint: {x, y},           // Position du point focal
-  cropZone: {x, y, width, height}, // Position et dimensions de la zone de recadrage
-  focusActive: true|false,      // État d'activation du point focal
-  cropActive: true|false        // État d'activation de la zone de recadrage
+  focusPoint: {x, y},                // Position of the focus point
+  cropZone: {x, y, width, height},   // Position and dimensions of the crop zone
+  focusActive: true|false,           // Activation state of the focus point
+  cropActive: true|false             // Activation state of the crop zone
 }
 ```
 
-## Exemples d'intégration avec des frameworks
+## Integration Examples with Frameworks
 
 ### React
 
@@ -180,16 +180,16 @@ function ImageEditor() {
       toolRef.current = new VisualImageTool({
         imageElement: imageRef.current,
         onChange: (data) => {
-          console.log('Données mises à jour:', data);
+          console.log('Updated data:', data);
         }
       });
       
-      // Activer les fonctionnalités
+      // Enable features
       toolRef.current.toggleFocusPoint(true);
       toolRef.current.toggleCropZone(true);
     }
     
-    // Nettoyage
+    // Cleanup
     return () => {
       if (toolRef.current) {
         toolRef.current.destroy();
@@ -200,7 +200,7 @@ function ImageEditor() {
   
   return (
     <div>
-      <img ref={imageRef} src="path/to/image.jpg" alt="Éditable" />
+      <img ref={imageRef} src="path/to/image.jpg" alt="Editable" />
     </div>
   );
 }
@@ -211,7 +211,7 @@ function ImageEditor() {
 ```vue
 <template>
   <div>
-    <img ref="editableImage" src="path/to/image.jpg" alt="Éditable" />
+    <img ref="editableImage" src="path/to/image.jpg" alt="Editable" />
   </div>
 </template>
 
@@ -228,11 +228,11 @@ export default {
     this.imageTool = new VisualImageTool({
       imageElement: this.$refs.editableImage,
       onChange: (data) => {
-        console.log('Données mises à jour:', data);
+        console.log('Updated data:', data);
       }
     });
     
-    // Activer les fonctionnalités
+    // Enable features
     this.imageTool.toggleFocusPoint(true);
     this.imageTool.toggleCropZone(true);
   },
@@ -246,22 +246,22 @@ export default {
 </script>
 ```
 
-## Démos
+## Demos
 
-Consultez le dossier `demos/` pour des exemples complets :
+See the `demos/` folder for complete examples:
 
-- `basic-usage.html` : Exemple d'utilisation basique
-- `custom-config.html` : Exemple avec configuration personnalisée
-- `react-integration.jsx` : Exemple d'intégration avec React
-- `vue-integration.js` : Exemple d'intégration avec Vue.js
+- `basic-usage.html`: Basic usage example
+- `custom-config.html`: Example with custom configuration
+- `react-integration.jsx`: Example integration with React
+- `vue-integration.js`: Example integration with Vue.js
 
-## Compatibilité navigateur
+## Browser Compatibility
 
-- Chrome (dernières versions)
-- Firefox (dernières versions)
-- Safari (dernières versions)
-- Edge (dernières versions)
+- Chrome (latest versions)
+- Firefox (latest versions)
+- Safari (latest versions)
+- Edge (latest versions)
 
-## Licence
+## License
 
 MIT
