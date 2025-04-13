@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>VisualImageTool – Démos</title>
+    <title>VisualImageTool – Demos</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- Prism.js for syntax highlighting -->
     <link
@@ -175,31 +175,30 @@
     <header>
       <h1>VisualImageTool</h1>
       <p>
-        Un outil léger en JavaScript vanilla pour définir des points focaux et
-        zones de recadrage sur des images.
+        A lightweight vanilla JavaScript tool to define focus points and crop zones on images.
       </p>
     </header>
     <main>
-      <h2 style="margin-bottom: 1.2em">Démo interactive</h2>
+      <h2 style="margin-bottom: 1.2em">Interactive demo</h2>
       <div class="main-demo-container">
         <div class="main-demo-image-container">
           <img
             id="demoImage"
             src="https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1024&q=80"
-            alt="Paysage de démonstration"
+            alt="Demo landscape"
           />
         </div>
         <div class="main-demo-controls">
-          <h2>Contrôles</h2>
-          <button id="toggleFocusPoint">Activer Point Focal</button>
-          <button id="toggleCropZone">Activer Zone de Recadrage</button>
-          <h3>Données actuelles</h3>
+          <h2>Controls</h2>
+          <button id="toggleFocusPoint">Enable Focus point</button>
+          <button id="toggleCropZone">Enable Crop zone</button>
+          <h3>Current data</h3>
           <div id="output" class="main-demo-output">
-            Aucune donnée disponible
+            No data available
           </div>
           <h3>Actions</h3>
-          <button id="centerFocusPoint">Centrer le Point Focal</button>
-          <button id="resetCropZone">Réinitialiser la Zone de Recadrage</button>
+          <button id="centerFocusPoint">Center Focus point</button>
+          <button id="resetCropZone">Reset Crop zone</button>
         </div>
       </div>
       <a
@@ -215,107 +214,102 @@
             fill="#1565c0"
           />
         </svg>
-        Essayez en ligne sur JSFiddle
+        Try online on JSFiddle
       </a>
-      <div class="section-title">Utilisation sans installation</div>
+      <div class="section-title">Usage without installation</div>
       <p>
-        Vous pouvez utiliser VisualImageTool directement dans vos pages HTML
-        sans installer de dépendance, grâce au CDN
+        You can use VisualImageTool directly in your HTML pages without installing any dependency, thanks to the CDN
         <a
           href="https://www.jsdelivr.com/package/npm/@h4md1/visual-image-tool"
           target="_blank"
           rel="noopener"
           >jsdelivr</a
-        >
-        :
+        >:
       </p>
 
-      <div class="section-title">Démos rapides</div>
+      <div class="section-title">Quick demos</div>
       <div class="demo-links">
-        <a href="basic-usage.html">Usage basique</a>
-        <a href="custom-config.html">Configuration personnalisée</a>
-        <a href="preact-importmap-demo.html">Intégration Preact (importmap)</a>
-        <a href="react-integration.jsx">Intégration React</a>
-        <a href="vue-importmap-demo.html">Intégration Vue (importmap)</a>
+        <a href="basic-usage.html">Basic usage</a>
+        <a href="custom-config.html">Custom configuration</a>
+        <a href="preact-importmap-demo.html">Preact integration (importmap)</a>
+        <a href="react-integration.jsx">React integration</a>
+        <a href="vue-importmap-demo.html">Vue integration (importmap)</a>
         <a href="pp.html">Test PP</a>
         <a href="test.html">Test 1</a>
         <a href="test2.html">Test 2</a>
       </div>
 
-      <div class="section-title">Fonctionnalités</div>
+      <div class="section-title">Features</div>
       <ul>
         <li>
-          <strong>Point focal</strong> : Définissez un point d'intérêt sur
-          l'image avec un marqueur visuel
+          <strong>Focus point</strong>: Set a point of interest on the image with a visual marker
         </li>
         <li>
-          <strong>Zone de recadrage</strong> : Définissez une zone de recadrage
-          avec poignées de redimensionnement
+          <strong>Crop zone</strong>: Define a crop zone with resize handles
         </li>
         <li>
-          <strong>Sans dépendances</strong> : Fonctionne sans bibliothèques
-          externes
+          <strong>No dependencies</strong>: Works without external libraries
         </li>
         <li>
-          <strong>API simple</strong> : Interface claire et facile à utiliser
+          <strong>Simple API</strong>: Clear and easy-to-use interface
         </li>
         <li>
-          <strong>Personnalisable</strong> : Options de configuration flexibles
+          <strong>Customizable</strong>: Flexible configuration options
         </li>
         <li>
-          <strong>Responsive</strong> : S'adapte aux redimensionnements d'écran
+          <strong>Responsive</strong>: Adapts to screen resizing
         </li>
       </ul>
 
       <div class="section-title">Installation</div>
       <pre><code class="language-bash">npm install @h4md1/visual-image-tool</code></pre>
 
-      <div class="section-title">Guide de démarrage rapide</div>
+      <div class="section-title">Quick start guide</div>
       <ol>
         <li>
-          <strong>Importation</strong>
-          <pre><code class="language-js">// ES modules (recommandé)
+          <strong>Import</strong>
+          <pre><code class="language-js">// ES modules (recommended)
 import VisualImageTool from '@h4md1/visual-image-tool';
 
 // CommonJS
 const VisualImageTool = require('@h4md1/visual-image-tool');
 
-// UMD (balise script)
+// UMD (script tag)
 <script src="node_modules/image-tool/dist/image-tool.umd.js"></script>
 </code></pre>
         </li>
         <li>
-          <strong>Initialisation</strong>
+          <strong>Initialization</strong>
           <pre><code class="language-js">const imageTool = new VisualImageTool.VisualImageTool({
   imageElement: document.getElementById('myImage'),
   onChange: (data) => {
-    console.log('Point focal:', data.focusPoint);
-    console.log('Zone de recadrage:', data.cropZone);
+    console.log('Focus point:', data.focusPoint);
+    console.log('Crop zone:', data.cropZone);
   }
 });</code></pre>
         </li>
         <li>
-          <strong>Utilisation des fonctionnalités</strong>
-          <pre><code class="language-js">// Activer le point focal
+          <strong>Using the features</strong>
+          <pre><code class="language-js">// Enable the focus point
 imageTool.toggleFocusPoint(true);
 
-// Activer la zone de recadrage
+// Enable the crop zone
 imageTool.toggleCropZone(true);
 
-// Définir manuellement un point focal
+// Manually set a focus point
 imageTool.setFocusPoint(x, y);
 
-// Définir manuellement une zone de recadrage
+// Manually set a crop zone
 imageTool.setCropZone(x, y, width, height);
 
-// Obtenir les valeurs actuelles
+// Get current values
 const focusPoint = imageTool.getFocusPoint();
 const cropZone = imageTool.getCropZone();
 </code></pre>
         </li>
       </ol>
 
-      <div class="section-title">Licence</div>
+      <div class="section-title">License</div>
       <p>MIT</p>
     </main>
     <!-- Prism.js for syntax highlighting -->
@@ -325,11 +319,11 @@ const cropZone = imageTool.getCropZone();
     <!-- VisualImageTool UMD bundle -->
     <script src="../dist/visual-image-tool.umd.js"></script>
     <script>
-      // Initialiser l'outil sur une image
+      // Initialize the tool on an image
       const imageTool = new VisualImageTool.VisualImageTool({
         imageElement: document.getElementById("demoImage"),
         onChange: (data) => {
-          // Afficher les données mises à jour
+          // Display updated data
           document.getElementById("output").textContent = JSON.stringify(
             data,
             null,
@@ -338,21 +332,21 @@ const cropZone = imageTool.getCropZone();
         },
       });
 
-      // Activer/désactiver le point focal
+      // Enable/disable the focus point
       document
         .getElementById("toggleFocusPoint")
         .addEventListener("click", () => {
           imageTool.toggleFocusPoint();
         });
 
-      // Activer/désactiver la zone de recadrage
+      // Enable/disable the crop zone
       document
         .getElementById("toggleCropZone")
         .addEventListener("click", () => {
           imageTool.toggleCropZone();
         });
 
-      // Centrer le point focal
+      // Center the focus point
       document
         .getElementById("centerFocusPoint")
         .addEventListener("click", () => {
@@ -360,7 +354,7 @@ const cropZone = imageTool.getCropZone();
           imageTool.setFocusPoint(dimensions.width / 2, dimensions.height / 2);
         });
 
-      // Réinitialiser la zone de recadrage
+      // Reset the crop zone
       document.getElementById("resetCropZone").addEventListener("click", () => {
         const dimensions = imageTool.getImageDimensions();
         const width = dimensions.width / 2;
