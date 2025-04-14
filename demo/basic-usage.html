@@ -1,102 +1,110 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ImageTool - Basic Usage Example</title>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      color: #333;
-    }
-    h1 {
-      color: #2563eb;
-      border-bottom: 2px solid #e5e7eb;
-      padding-bottom: 10px;
-    }
-    .container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-    .image-container {
-      position: relative;
-      border: 1px solid #e5e7eb;
-      padding: 10px;
-      border-radius: 8px;
-      flex: 1;
-      min-width: 300px;
-    }
-    .controls {
-      flex: 1;
-      min-width: 300px;
-      background-color: #f9fafb;
-      padding: 20px;
-      border-radius: 8px;
-    }
-    img {
-      max-width: 100%;
-      display: block;
-    }
-    button {
-      background-color: #2563eb;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-right: 10px;
-      margin-bottom: 10px;
-    }
-    button:hover {
-      background-color: #1d4ed8;
-    }
-    .output {
-      margin-top: 20px;
-      background-color: #f3f4f6;
-      padding: 15px;
-      border-radius: 4px;
-      font-family: monospace;
-      white-space: pre-wrap;
-    }
-    .code-example {
-      background-color: #f3f4f6;
-      padding: 15px;
-      border-radius: 4px;
-      font-family: monospace;
-      white-space: pre-wrap;
-      margin-top: 30px;
-    }
-  </style>
-</head>
-<body>
-  <h1>ImageTool - Basic Usage Example</h1>
-  
-  <div class="container">
-    <div class="image-container">
-      <div><img id="demoImage" src="https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1024&q=80" alt="Demo landscape"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ImageTool - Basic Usage Example</title>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+          Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        color: #333;
+      }
+      h1 {
+        color: #2563eb;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 10px;
+      }
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+      .image-container {
+        position: relative;
+        border: 1px solid #e5e7eb;
+        padding: 10px;
+        border-radius: 8px;
+        flex: 1;
+        min-width: 300px;
+      }
+      .controls {
+        flex: 1;
+        min-width: 300px;
+        background-color: #f9fafb;
+        padding: 20px;
+        border-radius: 8px;
+      }
+      img {
+        max-width: 100%;
+        display: block;
+      }
+      button {
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
+      button:hover {
+        background-color: #1d4ed8;
+      }
+      .output {
+        margin-top: 20px;
+        background-color: #f3f4f6;
+        padding: 15px;
+        border-radius: 4px;
+        font-family: monospace;
+        white-space: pre-wrap;
+      }
+      .code-example {
+        background-color: #f3f4f6;
+        padding: 15px;
+        border-radius: 4px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        margin-top: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>ImageTool - Basic Usage Example</h1>
+
+    <div class="container">
+      <div class="image-container">
+        <div>
+          <img
+            id="demoImage"
+            src="https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1024&q=80"
+            alt="Demo landscape"
+          />
+        </div>
+      </div>
+
+      <div class="controls">
+        <h2>Controls</h2>
+        <button id="toggleFocusPoint">Enable Focus Point</button>
+        <button id="toggleCropZone">Enable Crop Zone</button>
+
+        <h3>Current Data</h3>
+        <div id="output" class="output">No data available</div>
+
+        <h3>Actions</h3>
+        <button id="centerFocusPoint">Center Focus Point</button>
+        <button id="resetCropZone">Reset Crop Zone</button>
+      </div>
     </div>
-    
-    <div class="controls">
-      <h2>Controls</h2>
-      <button id="toggleFocusPoint">Enable Focus Point</button>
-      <button id="toggleCropZone">Enable Crop Zone</button>
-      
-      <h3>Current Data</h3>
-      <div id="output" class="output">No data available</div>
-      
-      <h3>Actions</h3>
-      <button id="centerFocusPoint">Center Focus Point</button>
-      <button id="resetCropZone">Reset Crop Zone</button>
-    </div>
-  </div>
-  
-  <div class="code-example">
-    <h2>Example Code</h2>
-    <pre>
+
+    <div class="code-example">
+      <h2>Example Code</h2>
+      <pre>
 // Import the library (in a module environment)
 // import ImageTool from 'image-tool';
 
@@ -141,58 +149,69 @@ document.getElementById('resetCropZone').addEventListener('click', () => {
     height
   );
 });
-    </pre>
-  </div>
+    </pre
+      >
+    </div>
 
-  <!-- Load the library (UMD version for the example) -->
-  <script src="https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool/dist/visual-image-tool.umd.js"></script>
-  
-  <script>
-    // Initialize the tool on an image
-    const imageTool = new VisualImageTool.VisualImageTool({
-      imageElement: document.getElementById('demoImage'),
-      onChange: (data) => {
-        // Display updated data
-        document.getElementById('output').textContent = 
-          JSON.stringify(data, null, 2);
-      }
-    });
+    <!-- Load the library (UMD version for the example) -->
+    <script src="https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool/dist/visual-image-tool.umd.js"></script>
 
-    // Enable/disable focus point
-    document.getElementById('toggleFocusPoint').addEventListener('click', () => {
-      imageTool.toggleFocusPoint();
-      document.getElementById('toggleFocusPoint').textContent = 
-        imageTool.getFocusPoint().active ? 'Disable Focus Point' : 'Enable Focus Point';
-    });
+    <script>
+      // Initialize the tool on an image
+      const imageTool = new VisualImageTool.VisualImageTool({
+        imageElement: document.getElementById("demoImage"),
+        onChange: (data) => {
+          // Display updated data
+          document.getElementById("output").textContent = JSON.stringify(
+            data,
+            null,
+            2
+          );
+        },
+      });
 
-    // Enable/disable crop zone
-    document.getElementById('toggleCropZone').addEventListener('click', () => {
-      imageTool.toggleCropZone();
-      document.getElementById('toggleCropZone').textContent = 
-        imageTool.getCropZone().active ? 'Disable Crop Zone' : 'Enable Crop Zone';
-    });
+      // Enable/disable focus point
+      document
+        .getElementById("toggleFocusPoint")
+        .addEventListener("click", () => {
+          imageTool.toggleFocusPoint();
+          document.getElementById("toggleFocusPoint").textContent =
+            imageTool.getFocusPoint().active
+              ? "Disable Focus Point"
+              : "Enable Focus Point";
+        });
 
-    // Center the focus point
-    document.getElementById('centerFocusPoint').addEventListener('click', () => {
-      const dimensions = imageTool.getImageDimensions();
-      imageTool.setFocusPoint(
-        dimensions.width / 2,
-        dimensions.height / 2
-      );
-    });
+      // Enable/disable crop zone
+      document
+        .getElementById("toggleCropZone")
+        .addEventListener("click", () => {
+          imageTool.toggleCropZone();
+          document.getElementById("toggleCropZone").textContent =
+            imageTool.getCropZone().active
+              ? "Disable Crop Zone"
+              : "Enable Crop Zone";
+        });
 
-    // Reset the crop zone
-    document.getElementById('resetCropZone').addEventListener('click', () => {
-      const dimensions = imageTool.getImageDimensions();
-      const width = dimensions.width / 2;
-      const height = dimensions.height / 2;
-      imageTool.setCropZone(
-        (dimensions.width - width) / 2,
-        (dimensions.height - height) / 2,
-        width,
-        height
-      );
-    });
-  </script>
-</body>
+      // Center the focus point
+      document
+        .getElementById("centerFocusPoint")
+        .addEventListener("click", () => {
+          const dimensions = imageTool.getImageDimensions();
+          imageTool.setFocusPoint(dimensions.width / 2, dimensions.height / 2);
+        });
+
+      // Reset the crop zone
+      document.getElementById("resetCropZone").addEventListener("click", () => {
+        const dimensions = imageTool.getImageDimensions();
+        const width = dimensions.width / 2;
+        const height = dimensions.height / 2;
+        imageTool.setCropZone(
+          (dimensions.width - width) / 2,
+          (dimensions.height - height) / 2,
+          width,
+          height
+        );
+      });
+    </script>
+  </body>
 </html>

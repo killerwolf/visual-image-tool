@@ -1,216 +1,244 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VisualImageTool - Preact ImportMap Demo</title>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      color: #333;
-    }
-    h1 {
-      color: #2563eb;
-      border-bottom: 2px solid #e5e7eb;
-      padding-bottom: 10px;
-    }
-    .container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-    .image-container {
-      position: relative;
-      border: 1px solid #e5e7eb;
-      padding: 10px;
-      border-radius: 8px;
-      flex: 1;
-      min-width: 300px;
-    }
-    .controls {
-      flex: 1;
-      min-width: 300px;
-      background-color: #f9fafb;
-      padding: 20px;
-      border-radius: 8px;
-    }
-    img {
-      max-width: 100%;
-      display: block;
-    }
-    button {
-      background-color: #2563eb;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-right: 10px;
-      margin-bottom: 10px;
-    }
-    button:hover {
-      background-color: #1d4ed8;
-    }
-    .output {
-      margin-top: 20px;
-      background-color: #f3f4f6;
-      padding: 15px;
-      border-radius: 4px;
-      font-family: monospace;
-      white-space: pre-wrap;
-    }
-  </style>
-  <script type="importmap">
-    {
-      "imports": {
-        "preact": "https://cdn.jsdelivr.net/npm/preact@10.19.2/dist/preact.module.js",
-        "preact/hooks": "https://cdn.jsdelivr.net/npm/preact@10.19.2/hooks/dist/hooks.module.js",
-        "@h4md1/visual-image-tool": "https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool/dist/visual-image-tool.esm.js"
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VisualImageTool - Preact ImportMap Demo</title>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+          Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        color: #333;
       }
-    }
-  </script>
-</head>
-<body>
-  <h1>VisualImageTool - Preact ImportMap Demo</h1>
-  <div id="app"></div>
-  <script type="module">
-    import { h, render } from "preact";
-    import { useEffect, useRef, useState } from "preact/hooks";
-    import { VisualImageTool } from "@h4md1/visual-image-tool";
+      h1 {
+        color: #2563eb;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 10px;
+      }
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+      .image-container {
+        position: relative;
+        border: 1px solid #e5e7eb;
+        padding: 10px;
+        border-radius: 8px;
+        flex: 1;
+        min-width: 300px;
+      }
+      .controls {
+        flex: 1;
+        min-width: 300px;
+        background-color: #f9fafb;
+        padding: 20px;
+        border-radius: 8px;
+      }
+      img {
+        max-width: 100%;
+        display: block;
+      }
+      button {
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
+      button:hover {
+        background-color: #1d4ed8;
+      }
+      .output {
+        margin-top: 20px;
+        background-color: #f3f4f6;
+        padding: 15px;
+        border-radius: 4px;
+        font-family: monospace;
+        white-space: pre-wrap;
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "preact": "https://cdn.jsdelivr.net/npm/preact@10.19.2/dist/preact.module.js",
+          "preact/hooks": "https://cdn.jsdelivr.net/npm/preact@10.19.2/hooks/dist/hooks.module.js",
+          "@h4md1/visual-image-tool": "https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool/dist/visual-image-tool.esm.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <h1>VisualImageTool - Preact ImportMap Demo</h1>
+    <div id="app"></div>
+    <script type="module">
+      import { h, render } from "preact";
+      import { useEffect, useRef, useState } from "preact/hooks";
+      import { VisualImageTool } from "@h4md1/visual-image-tool";
 
-    function ImageToolDemo() {
-      const imgRef = useRef(null);
-      const toolRef = useRef(null);
+      function ImageToolDemo() {
+        const imgRef = useRef(null);
+        const toolRef = useRef(null);
 
-      // State for UI
-      const [focusActive, setFocusActive] = useState(false);
-      const [cropActive, setCropActive] = useState(false);
-      const [focusPoint, setFocusPoint] = useState({ x: 0, y: 0 });
-      const [cropZone, setCropZone] = useState({ x: 0, y: 0, width: 0, height: 0 });
+        // State for UI
+        const [focusActive, setFocusActive] = useState(false);
+        const [cropActive, setCropActive] = useState(false);
+        const [focusPoint, setFocusPoint] = useState({ x: 0, y: 0 });
+        const [cropZone, setCropZone] = useState({
+          x: 0,
+          y: 0,
+          width: 0,
+          height: 0,
+        });
 
-      useEffect(() => {
-        let cleanup = null;
-        function initTool() {
-          if (toolRef.current) {
-            toolRef.current.destroy();
-            toolRef.current = null;
-          }
-          toolRef.current = new VisualImageTool({
-            imageElement: imgRef.current,
-            focusPoint: {
-              enabled: true,
-              style: {
-                width: '30px',
-                height: '30px',
-                border: '3px solid white',
-                boxShadow: '0 0 0 2px black, 0 0 5px rgba(0,0,0,0.5)',
-                backgroundColor: 'rgba(255, 0, 0, 0.5)'
-              }
-            },
-            cropZone: {
-              enabled: true,
-              style: {
-                border: '1px dashed #fff',
-                backgroundColor: 'rgba(0, 0, 0, 0.4)'
-              }
-            },
-            onChange: (data) => {
-              setFocusPoint(data.focusPoint);
-              setCropZone(data.cropZone);
-              setFocusActive(data.focusActive);
-              setCropActive(data.cropActive);
+        useEffect(() => {
+          let cleanup = null;
+          function initTool() {
+            if (toolRef.current) {
+              toolRef.current.destroy();
+              toolRef.current = null;
             }
-          });
-        }
+            toolRef.current = new VisualImageTool({
+              imageElement: imgRef.current,
+              focusPoint: {
+                enabled: true,
+                style: {
+                  width: "30px",
+                  height: "30px",
+                  border: "3px solid white",
+                  boxShadow: "0 0 0 2px black, 0 0 5px rgba(0,0,0,0.5)",
+                  backgroundColor: "rgba(255, 0, 0, 0.5)",
+                },
+              },
+              cropZone: {
+                enabled: true,
+                style: {
+                  border: "1px dashed #fff",
+                  backgroundColor: "rgba(0, 0, 0, 0.4)",
+                },
+              },
+              onChange: (data) => {
+                setFocusPoint(data.focusPoint);
+                setCropZone(data.cropZone);
+                setFocusActive(data.focusActive);
+                setCropActive(data.cropActive);
+              },
+            });
+          }
 
-        if (imgRef.current) {
-          if (imgRef.current.complete && imgRef.current.naturalWidth !== 0) {
-            initTool();
-          } else {
-            const onLoad = () => {
+          if (imgRef.current) {
+            if (imgRef.current.complete && imgRef.current.naturalWidth !== 0) {
               initTool();
-            };
-            imgRef.current.addEventListener("load", onLoad);
-            cleanup = () => {
-              imgRef.current && imgRef.current.removeEventListener("load", onLoad);
-            };
+            } else {
+              const onLoad = () => {
+                initTool();
+              };
+              imgRef.current.addEventListener("load", onLoad);
+              cleanup = () => {
+                imgRef.current &&
+                  imgRef.current.removeEventListener("load", onLoad);
+              };
+            }
           }
-        }
-        return () => {
-          if (cleanup) cleanup();
+          return () => {
+            if (cleanup) cleanup();
+            if (toolRef.current) {
+              toolRef.current.destroy();
+              toolRef.current = null;
+            }
+          };
+        }, []);
+
+        // UI actions
+        function toggleFocusPoint() {
           if (toolRef.current) {
-            toolRef.current.destroy();
-            toolRef.current = null;
+            toolRef.current.toggleFocusPoint();
           }
-        };
-      }, []);
+        }
+        function toggleCropZone() {
+          if (toolRef.current) {
+            toolRef.current.toggleCropZone();
+          }
+        }
+        function centerFocusPoint() {
+          if (toolRef.current) {
+            const dims = toolRef.current.getImageDimensions();
+            toolRef.current.setFocusPoint(dims.width / 2, dims.height / 2);
+          }
+        }
+        function resetCropZone() {
+          if (toolRef.current) {
+            const dims = toolRef.current.getImageDimensions();
+            const width = dims.width / 2;
+            const height = dims.height / 2;
+            toolRef.current.setCropZone(
+              (dims.width - width) / 2,
+              (dims.height - height) / 2,
+              width,
+              height
+            );
+          }
+        }
 
-      // UI actions
-      function toggleFocusPoint() {
-        if (toolRef.current) {
-          toolRef.current.toggleFocusPoint();
-        }
-      }
-      function toggleCropZone() {
-        if (toolRef.current) {
-          toolRef.current.toggleCropZone();
-        }
-      }
-      function centerFocusPoint() {
-        if (toolRef.current) {
-          const dims = toolRef.current.getImageDimensions();
-          toolRef.current.setFocusPoint(dims.width / 2, dims.height / 2);
-        }
-      }
-      function resetCropZone() {
-        if (toolRef.current) {
-          const dims = toolRef.current.getImageDimensions();
-          const width = dims.width / 2;
-          const height = dims.height / 2;
-          toolRef.current.setCropZone(
-            (dims.width - width) / 2,
-            (dims.height - height) / 2,
-            width,
-            height
-          );
-        }
+        return h(
+          "div",
+          { class: "container" },
+          h(
+            "div",
+            { class: "image-container" },
+            h("img", {
+              ref: imgRef,
+              src: "https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1024&q=80",
+              alt: "Demo landscape",
+            })
+          ),
+          h(
+            "div",
+            { class: "controls" },
+            h("h2", null, "Controls"),
+            h(
+              "button",
+              { onClick: toggleFocusPoint },
+              (focusActive ? "Disable" : "Enable") + " Focus point"
+            ),
+            h(
+              "button",
+              { onClick: toggleCropZone },
+              (cropActive ? "Disable" : "Enable") + " Crop zone"
+            ),
+            h("h3", null, "Current data"),
+            h(
+              "div",
+              { class: "output" },
+              "Focus point: x=" +
+                focusPoint.x.toFixed(2) +
+                ", y=" +
+                focusPoint.y.toFixed(2),
+              h("br"),
+              "Crop zone: x=" +
+                cropZone.x.toFixed(2) +
+                ", y=" +
+                cropZone.y.toFixed(2) +
+                ", width=" +
+                cropZone.width.toFixed(2) +
+                ", height=" +
+                cropZone.height.toFixed(2)
+            ),
+            h("h3", null, "Actions"),
+            h("button", { onClick: centerFocusPoint }, "Center Focus point"),
+            h("button", { onClick: resetCropZone }, "Reset Crop zone")
+          )
+        );
       }
 
-      return h(
-        "div",
-        { class: "container" },
-        h("div", { class: "image-container" },
-          h("img", {
-            ref: imgRef,
-            src: "https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1024&q=80",
-            alt: "Demo landscape"
-          })
-        ),
-        h("div", { class: "controls" },
-          h("h2", null, "Controls"),
-          h("button", { onClick: toggleFocusPoint },
-            (focusActive ? "Disable" : "Enable") + " Focus point"
-          ),
-          h("button", { onClick: toggleCropZone },
-            (cropActive ? "Disable" : "Enable") + " Crop zone"
-          ),
-          h("h3", null, "Current data"),
-          h("div", { class: "output" },
-            "Focus point: x=" + focusPoint.x.toFixed(2) + ", y=" + focusPoint.y.toFixed(2), h("br"),
-            "Crop zone: x=" + cropZone.x.toFixed(2) + ", y=" + cropZone.y.toFixed(2) +
-            ", width=" + cropZone.width.toFixed(2) + ", height=" + cropZone.height.toFixed(2)
-          ),
-          h("h3", null, "Actions"),
-          h("button", { onClick: centerFocusPoint }, "Center Focus point"),
-          h("button", { onClick: resetCropZone }, "Reset Crop zone")
-        )
-      );
-    }
-
-    render(h(ImageToolDemo), document.getElementById("app"));
-  </script>
-</body>
+      render(h(ImageToolDemo), document.getElementById("app"));
+    </script>
+  </body>
 </html>

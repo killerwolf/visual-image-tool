@@ -1,0 +1,16 @@
+# Ignore dependencies
+node_modules/
+
+# Ignore lock files
+package-lock.json
+
+# Ignore build output (if any)
+# dist/
+# build/
+
+# Ignore JS/TS files (handled by Biome)
+*.js
+*.jsx
+*.ts
+*.tsx
+*.json

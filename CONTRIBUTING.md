@@ -12,12 +12,14 @@ Ce document est destiné aux développeurs qui maintiennent, modifient ou contri
 ### Installation locale
 
 1. Clonez le dépôt :
+
 ```bash
 git clone https://github.com/killerwolf/visual-image-tool.git
 cd visual-image-tool
 ```
 
 2. Installez les dépendances :
+
 ```bash
 npm install
 ```
@@ -53,6 +55,7 @@ Le projet utilise Rollup pour générer trois formats de distribution :
 3. **CommonJS** (`dist/visual-image-tool.js`) : Format pour Node.js
 
 Pour lancer le build :
+
 ```bash
 npm run build
 ```
@@ -78,6 +81,7 @@ npm link visual-image-tool
 ### Préparation
 
 1. Mettez à jour la version dans `package.json` selon les règles de [SemVer](https://semver.org/) :
+
    - Patch (1.0.x) : Corrections de bugs
    - Minor (1.x.0) : Nouvelles fonctionnalités rétrocompatibles
    - Major (x.0.0) : Changements non rétrocompatibles
@@ -89,16 +93,19 @@ npm link visual-image-tool
 ### Publication
 
 1. Connectez-vous à npm :
+
 ```bash
 npm login
 ```
 
 2. Publiez le package :
+
 ```bash
 npm publish
 ```
 
 Pour une version bêta ou release candidate :
+
 ```bash
 npm publish --tag beta
 ```
