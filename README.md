@@ -286,12 +286,18 @@ The `demo/` folder contains the following examples:
 - Safari (latest versions)
 - Edge (latest versions)
 
-## Linting and Formatting
+## Code Formatting
 
-This project uses [Biome](https://biomejs.dev/) for code formatting and linting.
+This project uses a combination of tools for code formatting and linting to ensure consistency:
 
-- Run `npm run lint:check` to check for formatting and linting issues.
-- Run `npm run lint:fix` to automatically fix formatting and safe linting issues.
+- **[Biome](https://biomejs.dev/)**: Handles formatting and linting for JavaScript (`.js`, `.jsx`), TypeScript (`.ts`, `.tsx`), and JSON (`.json`) files.
+  - Check: `npm run lint:check` (`biome check .`)
+  - Fix: `npm run lint:fix` (`biome check --write .`)
+- **[Prettier](https://prettier.io/)**: Handles formatting for other file types like HTML, CSS, Markdown, etc.
+  - Check: `npm run format:check` (`prettier --check --ignore-unknown .`)
+  - Fix: `npm run format:write` (`prettier --write --ignore-unknown .`)
+
+These formatting checks are automatically enforced in the CI pipeline (see `.github/workflows/code-quality.yml`) to maintain code quality.
 
 ## License
 

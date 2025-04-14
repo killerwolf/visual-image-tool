@@ -23,3 +23,5 @@ jobs:
 
       - name: Run linting check
         run: npm run lint:check
+      - name: Check formatting (Prettier)
+        run: npm run format:check
