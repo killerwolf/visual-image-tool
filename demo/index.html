@@ -287,6 +287,7 @@ const VisualImageTool = require('@h4md1/visual-image-tool');
           <strong>Initialization</strong>
           <pre><code class="language-js">const imageTool = new VisualImageTool.VisualImageTool({
   imageElement: document.getElementById('myImage'),
+  debug: true, // Enable debug logs for overlay positioning (optional)
   onChange: (data) => {
     console.log('Focus point:', data.focusPoint);
     console.log('Crop zone:', data.cropZone);
@@ -409,81 +410,86 @@ const cropZone = imageTool.getCropZone();
 
       <div class="section-title">Configuration Options</div>
       <pre><code class="language-js">const imageTool = new VisualImageTool.VisualImageTool({
-  // Image element (required) - can be a CSS selector or a DOM element
-  imageElement: '#myImage',
-  
-  // Focus point configuration (optional)
-  focusPoint: {
-    enabled: true, // Enable/disable the feature
-    style: {
-      width: '30px',
-      height: '30px',
-      border: '3px solid white',
-      boxShadow: '0 0 0 2px black, 0 0 5px rgba(0,0,0,0.5)',
-      backgroundColor: 'rgba(255, 0, 0, 0.5)'
-    }
-  },
-  
-  // Crop zone configuration (optional)
-  cropZone: {
-    enabled: true, // Enable/disable the feature
-    style: {
-      border: '1px dashed #fff',
-      backgroundColor: 'rgba(0, 0, 0, 0.4)'
-    },
-    handleStyle: {
-      width: '14px',
-      height: '14px',
-      backgroundColor: 'white',
-      border: '2px solid black',
-      boxShadow: '0 0 3px rgba(0,0,0,0.5)'
-    }
-  },
-  
-  // Callback called on changes (optional)
-  onChange: function(data) {
-    // data contains focusPoint, cropZone, focusActive, cropActive
+// Image element (required) - can be a CSS selector or a DOM element
+imageElement: '#myImage',
+
+// Enable debug logs for overlay positioning (optional)
+debug: true, // Set to true to see overlay positioning logs in the console
+
+// Focus point configuration (optional)
+focusPoint: {
+  enabled: true, // Enable/disable the feature
+  style: {
+    width: '30px',
+    height: '30px',
+    border: '3px solid white',
+    boxShadow: '0 0 0 2px black, 0 0 5px rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(255, 0, 0, 0.5)'
   }
+},
+
+// Crop zone configuration (optional)
+cropZone: {
+  enabled: true, // Enable/disable the feature
+  style: {
+    border: '1px dashed #fff',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)'
+  },
+  handleStyle: {
+    width: '14px',
+    height: '14px',
+    backgroundColor: 'white',
+    border: '2px solid black',
+    boxShadow: '0 0 3px rgba(0,0,0,0.5)'
+  }
+},
+
+// Callback called on changes (optional)
+onChange: function(data) {
+  // data contains focusPoint, cropZone, focusActive, cropActive
+}
 });</code></pre>
 
       <div class="section-title">Framework Integration Examples</div>
       <h3>React</h3>
-      <pre><code class="language-jsx">import React, { useEffect, useRef } from 'react';
+      <pre><code class="language-js">&lt;!-- React integration example --&gt;
+import React, &#123; useEffect, useRef &#125; from 'react';
 import VisualImageTool from '@h4md1/visual-image-tool';
 
-function ImageEditor() {
+function ImageEditor() &#123;
   const imageRef = useRef(null);
   const toolRef = useRef(null);
   
-  useEffect(() => {
-    if (imageRef.current && !toolRef.current) {
-      toolRef.current = new VisualImageTool({
+  useEffect(() =&gt; &#123;
+    if (imageRef.current &amp;&amp; !toolRef.current) &#123;
+      toolRef.current = new VisualImageTool(&#123;
         imageElement: imageRef.current,
-        onChange: (data) => {
+        onChange: (data) =&gt; &#123;
           console.log('Updated data:', data);
-        }
-      });
+        &#125;
+      &#125;);
       
       // Enable features
       toolRef.current.toggleFocusPoint(true);
       toolRef.current.toggleCropZone(true);
-    }
+    &#125;
     
     // Cleanup
-    return () => {
-      if (toolRef.current) {
+    return () =&gt; &#123;
+      if (toolRef.current) &#123;
         toolRef.current.destroy();
         toolRef.current = null;
-      }
-    };
-  }, []);
+      &#125;
+    &#125;;
+  &#125;, []);
   
   return (
-    <div>
-      <img ref={imageRef} src="path/to/image.jpg" alt="Editable" />
-    </div>
+    &lt;div&gt;
+      &lt;img ref=&#123;imageRef&#125; src="path/to/image.jpg" alt="Editable" /&gt;
+    &lt;/div&gt;
   );
-}</code></pre>
+&#125;
+</code></pre>
 
       <h3>Vue.js</h3>
       <pre><code class="language-html">&lt;template&gt;

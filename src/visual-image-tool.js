@@ -59,7 +59,8 @@ class VisualImageTool {
           },
           ...options.cropZone
         },
-        onChange: options.onChange || (() => {})
+        onChange: options.onChange || (() => {}),
+        debug: options.debug || false
       };
   
       // État interne
@@ -536,10 +537,31 @@ class VisualImageTool {
       }
       
       const scaled = this._toScaledCoords(clampedX, clampedY);
-      
+
+      // LOGGING: Validate padding offset
+      if (this.options.debug) {
+        const container = this.imageElement.parentNode;
+        const computedStyle = window.getComputedStyle(container);
+        const paddingLeft = parseFloat(computedStyle.paddingLeft);
+        const paddingTop = parseFloat(computedStyle.paddingTop);
+        console.log('[FocusMarker] scaled:', scaled, 'paddingLeft:', paddingLeft, 'paddingTop:', paddingTop, 'containerRect:', container.getBoundingClientRect());
+      }
+
       // Ajuster pour centrer le marqueur
-      this.state.focusMarker.style.left = (scaled.x - this.state.focusMarker.offsetWidth / 2) + 'px';
-      this.state.focusMarker.style.top = (scaled.y - this.state.focusMarker.offsetHeight / 2) + 'px';
+      // Adjust for container padding (use unique variable names)
+      let focusPaddingLeft = 0, focusPaddingTop = 0;
+      {
+        const container = this.imageElement.parentNode;
+        const computedStyle = window.getComputedStyle(container);
+        focusPaddingLeft = parseFloat(computedStyle.paddingLeft);
+        focusPaddingTop = parseFloat(computedStyle.paddingTop);
+      }
+
+      this.state.focusMarker.style.left = (scaled.x + focusPaddingLeft - this.state.focusMarker.offsetWidth / 2) + 'px';
+      this.state.focusMarker.style.top = (scaled.y + focusPaddingTop - this.state.focusMarker.offsetHeight / 2) + 'px';
+      if (this.options.debug) {
+        console.log('[FocusMarker] style.left:', this.state.focusMarker.style.left, 'style.top:', this.state.focusMarker.style.top);
+      }
     }
   
     /**
@@ -566,12 +588,33 @@ class VisualImageTool {
       const scaled = this._toScaledCoords(clampedX, clampedY);
       const scaledWidth = clampedWidth * this.state.scaleX;
       const scaledHeight = clampedHeight * this.state.scaleY;
-      
+
+      // LOGGING: Validate padding offset
+      if (this.options.debug) {
+        const container = this.imageElement.parentNode;
+        const computedStyle = window.getComputedStyle(container);
+        const paddingLeft = parseFloat(computedStyle.paddingLeft);
+        const paddingTop = parseFloat(computedStyle.paddingTop);
+        console.log('[CropOverlay] scaled:', scaled, 'paddingLeft:', paddingLeft, 'paddingTop:', paddingTop, 'containerRect:', container.getBoundingClientRect());
+      }
+
       // Mettre à jour l'overlay
-      this.state.cropOverlay.style.left = scaled.x + 'px';
-      this.state.cropOverlay.style.top = scaled.y + 'px';
+      // Adjust for container padding (use unique variable names)
+      let cropPaddingLeft = 0, cropPaddingTop = 0;
+      {
+        const container = this.imageElement.parentNode;
+        const computedStyle = window.getComputedStyle(container);
+        cropPaddingLeft = parseFloat(computedStyle.paddingLeft);
+        cropPaddingTop = parseFloat(computedStyle.paddingTop);
+      }
+
+      this.state.cropOverlay.style.left = (scaled.x + cropPaddingLeft) + 'px';
+      this.state.cropOverlay.style.top = (scaled.y + cropPaddingTop) + 'px';
       this.state.cropOverlay.style.width = scaledWidth + 'px';
       this.state.cropOverlay.style.height = scaledHeight + 'px';
+      if (this.options.debug) {
+        console.log('[CropOverlay] style.left:', this.state.cropOverlay.style.left, 'style.top:', this.state.cropOverlay.style.top);
+      }
     }
   
     /**

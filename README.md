@@ -38,6 +38,7 @@ const VisualImageTool = require('@h4md1/visual-image-tool');
 // Create an instance with an image
 const imageTool = new VisualImageTool.VisualImageTool({
   imageElement: document.getElementById('myImage'),
+  debug: true, // Enable debug logs for overlay positioning (optional)
   onChange: (data) => {
     console.log('Focus point:', data.focusPoint);
     console.log('Crop zone:', data.cropZone);
@@ -71,7 +72,10 @@ const cropZone = imageTool.getCropZone();
 const imageTool = new VisualImageTool.VisualImageTool({
   // Image element (required) - can be a CSS selector or a DOM element
   imageElement: '#myImage',
-  
+
+  // Enable debug logs for overlay positioning (optional)
+  debug: true, // Set to true to see overlay positioning logs in the console
+
   // Focus point configuration (optional)
   focusPoint: {
     enabled: true, // Enable/disable the feature
@@ -83,7 +87,7 @@ const imageTool = new VisualImageTool.VisualImageTool({
       backgroundColor: 'rgba(255, 0, 0, 0.5)'
     }
   },
-  
+
   // Crop zone configuration (optional)
   cropZone: {
     enabled: true, // Enable/disable the feature
@@ -99,7 +103,7 @@ const imageTool = new VisualImageTool.VisualImageTool({
       boxShadow: '0 0 3px rgba(0,0,0,0.5)'
     }
   },
-  
+
   // Callback called on changes (optional)
   onChange: function(data) {
     // data contains focusPoint, cropZone, focusActive, cropActive
