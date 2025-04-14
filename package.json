@@ -13,8 +13,6 @@
 		"publish:demo": "gh-pages -d demo",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"prepublishOnly": "npm run build",
-		"format": "biome format --write .",
-		"lint": "biome lint .",
 		"lint:fix": "biome check --apply .",
 		"lint:check": "biome check ."
 	},
