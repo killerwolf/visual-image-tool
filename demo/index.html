@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -176,10 +176,21 @@
   </head>
   <body>
     <header>
-      <img src="android-chrome-192x192.png" alt="VisualImageTool logo" width="48" height="48" style="margin-bottom: 0.2em; border-radius: 10px; box-shadow: 0 1px 4px #0002;">
-      <h1 style="margin: 0.2em 0 0.1em 0; font-size: 2rem;">VisualImageTool</h1>
-      <p style="margin: 0 0 0.2em 0; font-size: 1.08em;">
-        A lightweight vanilla JavaScript tool to define focus points and crop zones on images.
+      <img
+        src="android-chrome-192x192.png"
+        alt="VisualImageTool logo"
+        width="48"
+        height="48"
+        style="
+          margin-bottom: 0.2em;
+          border-radius: 10px;
+          box-shadow: 0 1px 4px #0002;
+        "
+      />
+      <h1 style="margin: 0.2em 0 0.1em 0; font-size: 2rem">VisualImageTool</h1>
+      <p style="margin: 0 0 0.2em 0; font-size: 1.08em">
+        A lightweight vanilla JavaScript tool to define focus points and crop
+        zones on images.
       </p>
     </header>
     <main>
@@ -572,9 +583,7 @@ export default {
           const steps = 32;
           let step = 0;
           function easeInOut(t) {
-            return t < 0.5
-              ? 2 * t * t
-              : -1 + (4 - 2 * t) * t;
+            return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
           }
           function frame() {
             const t = step / steps;
@@ -597,15 +606,17 @@ export default {
           const steps = 16;
           let step = 0;
           function ease(t) {
-            return t < 0.5
-              ? 2 * t * t
-              : -1 + (4 - 2 * t) * t;
+            return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
           }
           function frame() {
             const t = step / steps;
             // Grow from small to large, with a little "wiggle"
-            const x = dimensions.width * (0.38 - 0.18 * Math.sin(2 * Math.PI * t) * (1 - t));
-            const y = dimensions.height * (0.38 - 0.18 * Math.cos(2 * Math.PI * t) * (1 - t));
+            const x =
+              dimensions.width *
+              (0.38 - 0.18 * Math.sin(2 * Math.PI * t) * (1 - t));
+            const y =
+              dimensions.height *
+              (0.38 - 0.18 * Math.cos(2 * Math.PI * t) * (1 - t));
             const width = dimensions.width * (0.12 + 0.56 * ease(t));
             const height = dimensions.height * (0.12 + 0.56 * ease(t));
             imageTool.setCropZone(x, y, width, height);
@@ -624,8 +635,8 @@ export default {
           "toggleFocusPoint",
           "toggleCropZone",
           "centerFocusPoint",
-          "resetCropZone"
-        ].forEach(id => {
+          "resetCropZone",
+        ].forEach((id) => {
           const btn = document.getElementById(id);
           if (btn) {
             btn.disabled = true;
@@ -643,8 +654,8 @@ export default {
                   "toggleFocusPoint",
                   "toggleCropZone",
                   "centerFocusPoint",
-                  "resetCropZone"
-                ].forEach(id => {
+                  "resetCropZone",
+                ].forEach((id) => {
                   const btn = document.getElementById(id);
                   if (btn) {
                     btn.disabled = false;
