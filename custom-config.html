@@ -1,259 +1,299 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ImageTool - Custom Configuration</title>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      color: #333;
-    }
-    h1 {
-      color: #2563eb;
-      border-bottom: 2px solid #e5e7eb;
-      padding-bottom: 10px;
-    }
-    .container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-    .image-container {
-      position: relative;
-      border: 1px solid #e5e7eb;
-      padding: 10px;
-      border-radius: 8px;
-      flex: 1;
-      min-width: 300px;
-    }
-    .controls {
-      flex: 1;
-      min-width: 300px;
-      background-color: #f9fafb;
-      padding: 20px;
-      border-radius: 8px;
-    }
-    img {
-      max-width: 100%;
-      display: block;
-    }
-    button {
-      background-color: #2563eb;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-right: 10px;
-      margin-bottom: 10px;
-    }
-    button:hover {
-      background-color: #1d4ed8;
-    }
-    .output {
-      margin-top: 20px;
-      background-color: #f3f4f6;
-      padding: 15px;
-      border-radius: 4px;
-      font-family: monospace;
-      white-space: pre-wrap;
-    }
-    .code-example {
-      background-color: #f3f4f6;
-      padding: 15px;
-      border-radius: 4px;
-      font-family: monospace;
-      white-space: pre-wrap;
-      margin-top: 30px;
-    }
-    .config-section {
-      margin-top: 20px;
-      padding: 15px;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-    }
-    .config-section h3 {
-      margin-top: 0;
-    }
-    label {
-      display: block;
-      margin-bottom: 5px;
-    }
-    input[type="color"], input[type="range"] {
-      margin-bottom: 15px;
-    }
-  </style>
-</head>
-<body>
-  <h1>ImageTool - Custom Configuration</h1>
-  
-  <div class="container">
-    <div class="image-container">
-      <img id="demoImage" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1024&q=80" alt="Demo landscape">
-    </div>
-    
-    <div class="controls">
-      <h2>Controls</h2>
-      <button id="toggleFocusPoint">Enable Focus Point</button>
-      <button id="toggleCropZone">Enable Crop Zone</button>
-      
-      <div class="config-section">
-        <h3>Focus Point Configuration</h3>
-        <label for="focusSize">Marker size:</label>
-        <input type="range" id="focusSize" min="10" max="50" value="30">
-        
-        <label for="focusColor">Marker color:</label>
-        <input type="color" id="focusColor" value="#ff0000">
-        
-        <label for="focusOpacity">Opacity:</label>
-        <input type="range" id="focusOpacity" min="0" max="100" value="50">
-        
-        <button id="applyFocusConfig">Apply</button>
-      </div>
-      
-      <div class="config-section">
-        <h3>Crop Zone Configuration</h3>
-        <label for="cropBorderStyle">Border style:</label>
-        <select id="cropBorderStyle">
-          <option value="dashed">Dashed</option>
-          <option value="solid">Solid</option>
-          <option value="dotted">Dotted</option>
-        </select>
-        
-        <label for="cropBorderColor">Border color:</label>
-        <input type="color" id="cropBorderColor" value="#ffffff">
-        
-        <label for="cropOverlayColor">Overlay color:</label>
-        <input type="color" id="cropOverlayColor" value="#000000">
-        
-        <label for="cropOverlayOpacity">Overlay opacity:</label>
-        <input type="range" id="cropOverlayOpacity" min="0" max="100" value="40">
-        
-        <button id="applyCropConfig">Apply</button>
-      </div>
-      
-      <h3>Current Data</h3>
-      <div id="output" class="output">No data available</div>
-    </div>
-  </div>
-
-  <!-- Load the library (UMD version for the example) -->
-  <script src="https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool/dist/visual-image-tool.umd.js"></script>
-  
-  <script>
-    // Variable to store the instance
-    let imageTool;
-    // Track active states
-    let focusActive = false;
-    let cropActive = false;
-    
-    // Function to create or recreate the instance with current options
-    function createImageTool() {
-      // Destroy existing instance if it exists
-      if (imageTool) {
-        // Defensive: try to end any drag before destroying
-        try {
-          // Attempt to trigger mouseup in case of drag
-          document.dispatchEvent(new MouseEvent('mouseup'));
-        } catch (e) {}
-        try {
-          imageTool.destroy();
-        } catch (e) {
-          // Prevent error from breaking UI
-          console.error("Error destroying previous VisualImageTool instance:", e);
-        }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ImageTool - Custom Configuration</title>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+          Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        color: #333;
       }
-      
-      // Get configuration values
-      const focusSize = document.getElementById('focusSize').value + 'px';
-      const focusColor = document.getElementById('focusColor').value;
-      const focusOpacity = document.getElementById('focusOpacity').value / 100;
-      const focusRgba = `${focusColor}${Math.round(focusOpacity * 255).toString(16).padStart(2, '0')}`;
-      
-      const cropBorderStyle = document.getElementById('cropBorderStyle').value;
-      const cropBorderColor = document.getElementById('cropBorderColor').value;
-      const cropOverlayColor = document.getElementById('cropOverlayColor').value;
-      const cropOverlayOpacity = document.getElementById('cropOverlayOpacity').value / 100;
-      const cropRgba = `${cropOverlayColor}${Math.round(cropOverlayOpacity * 255).toString(16).padStart(2, '0')}`;
-      
-      // Create a new instance with the configuration
-      imageTool = new VisualImageTool.VisualImageTool({
-        imageElement: document.getElementById('demoImage'),
-        focusPoint: {
-          enabled: true,
-          style: {
-            width: focusSize,
-            height: focusSize,
-            border: '3px solid white',
-            boxShadow: '0 0 0 2px black, 0 0 5px rgba(0,0,0,0.5)',
-            backgroundColor: focusRgba
-          }
-        },
-        cropZone: {
-          enabled: true,
-          style: {
-            border: `1px ${cropBorderStyle} ${cropBorderColor}`,
-            backgroundColor: cropRgba
-          },
-          handleStyle: {
-            width: '14px',
-            height: '14px',
-            backgroundColor: 'white',
-            border: '2px solid black',
-            boxShadow: '0 0 3px rgba(0,0,0,0.5)'
-          }
-        },
-        onChange: (data) => {
-          // Display updated data
-          document.getElementById('output').textContent =
-            JSON.stringify(data, null, 2);
-          // Update active states
-          focusActive = data.focusActive;
-          cropActive = data.cropActive;
-          updateButtonText();
-        }
-      });
-      
-      // Update button text
-      updateButtonText();
-    }
-    
-    // Function to update button text
-    function updateButtonText() {
-      document.getElementById('toggleFocusPoint').textContent =
-        focusActive ? 'Disable Focus Point' : 'Enable Focus Point';
-      document.getElementById('toggleCropZone').textContent =
-        cropActive ? 'Disable Crop Zone' : 'Enable Crop Zone';
-    }
-    
-    // Initialize the tool
-    createImageTool();
-    
-    // Enable/disable focus point
-    document.getElementById('toggleFocusPoint').addEventListener('click', () => {
-      imageTool.toggleFocusPoint();
-      updateButtonText();
-    });
+      h1 {
+        color: #2563eb;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 10px;
+      }
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+      .image-container {
+        position: relative;
+        border: 1px solid #e5e7eb;
+        padding: 10px;
+        border-radius: 8px;
+        flex: 1;
+        min-width: 300px;
+      }
+      .controls {
+        flex: 1;
+        min-width: 300px;
+        background-color: #f9fafb;
+        padding: 20px;
+        border-radius: 8px;
+      }
+      img {
+        max-width: 100%;
+        display: block;
+      }
+      button {
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
+      button:hover {
+        background-color: #1d4ed8;
+      }
+      .output {
+        margin-top: 20px;
+        background-color: #f3f4f6;
+        padding: 15px;
+        border-radius: 4px;
+        font-family: monospace;
+        white-space: pre-wrap;
+      }
+      .code-example {
+        background-color: #f3f4f6;
+        padding: 15px;
+        border-radius: 4px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        margin-top: 30px;
+      }
+      .config-section {
+        margin-top: 20px;
+        padding: 15px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+      }
+      .config-section h3 {
+        margin-top: 0;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      input[type="color"],
+      input[type="range"] {
+        margin-bottom: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>ImageTool - Custom Configuration</h1>
 
-    // Enable/disable crop zone
-    document.getElementById('toggleCropZone').addEventListener('click', () => {
-      imageTool.toggleCropZone();
-      updateButtonText();
-    });
-    
-    // Apply focus point configuration
-    document.getElementById('applyFocusConfig').addEventListener('click', () => {
+    <div class="container">
+      <div class="image-container">
+        <img
+          id="demoImage"
+          src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1024&q=80"
+          alt="Demo landscape"
+        />
+      </div>
+
+      <div class="controls">
+        <h2>Controls</h2>
+        <button id="toggleFocusPoint">Enable Focus Point</button>
+        <button id="toggleCropZone">Enable Crop Zone</button>
+
+        <div class="config-section">
+          <h3>Focus Point Configuration</h3>
+          <label for="focusSize">Marker size:</label>
+          <input type="range" id="focusSize" min="10" max="50" value="30" />
+
+          <label for="focusColor">Marker color:</label>
+          <input type="color" id="focusColor" value="#ff0000" />
+
+          <label for="focusOpacity">Opacity:</label>
+          <input type="range" id="focusOpacity" min="0" max="100" value="50" />
+
+          <button id="applyFocusConfig">Apply</button>
+        </div>
+
+        <div class="config-section">
+          <h3>Crop Zone Configuration</h3>
+          <label for="cropBorderStyle">Border style:</label>
+          <select id="cropBorderStyle">
+            <option value="dashed">Dashed</option>
+            <option value="solid">Solid</option>
+            <option value="dotted">Dotted</option>
+          </select>
+
+          <label for="cropBorderColor">Border color:</label>
+          <input type="color" id="cropBorderColor" value="#ffffff" />
+
+          <label for="cropOverlayColor">Overlay color:</label>
+          <input type="color" id="cropOverlayColor" value="#000000" />
+
+          <label for="cropOverlayOpacity">Overlay opacity:</label>
+          <input
+            type="range"
+            id="cropOverlayOpacity"
+            min="0"
+            max="100"
+            value="40"
+          />
+
+          <button id="applyCropConfig">Apply</button>
+        </div>
+
+        <h3>Current Data</h3>
+        <div id="output" class="output">No data available</div>
+      </div>
+    </div>
+
+    <!-- Load the library (UMD version for the example) -->
+    <script src="https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool/dist/visual-image-tool.umd.js"></script>
+
+    <script>
+      // Variable to store the instance
+      let imageTool;
+      // Track active states
+      let focusActive = false;
+      let cropActive = false;
+
+      // Function to create or recreate the instance with current options
+      function createImageTool() {
+        // Destroy existing instance if it exists
+        if (imageTool) {
+          // Defensive: try to end any drag before destroying
+          try {
+            // Attempt to trigger mouseup in case of drag
+            document.dispatchEvent(new MouseEvent("mouseup"));
+          } catch (e) {}
+          try {
+            imageTool.destroy();
+          } catch (e) {
+            // Prevent error from breaking UI
+            console.error(
+              "Error destroying previous VisualImageTool instance:",
+              e
+            );
+          }
+        }
+
+        // Get configuration values
+        const focusSize = document.getElementById("focusSize").value + "px";
+        const focusColor = document.getElementById("focusColor").value;
+        const focusOpacity =
+          document.getElementById("focusOpacity").value / 100;
+        const focusRgba = `${focusColor}${Math.round(focusOpacity * 255)
+          .toString(16)
+          .padStart(2, "0")}`;
+
+        const cropBorderStyle =
+          document.getElementById("cropBorderStyle").value;
+        const cropBorderColor =
+          document.getElementById("cropBorderColor").value;
+        const cropOverlayColor =
+          document.getElementById("cropOverlayColor").value;
+        const cropOverlayOpacity =
+          document.getElementById("cropOverlayOpacity").value / 100;
+        const cropRgba = `${cropOverlayColor}${Math.round(
+          cropOverlayOpacity * 255
+        )
+          .toString(16)
+          .padStart(2, "0")}`;
+
+        // Create a new instance with the configuration
+        imageTool = new VisualImageTool.VisualImageTool({
+          imageElement: document.getElementById("demoImage"),
+          focusPoint: {
+            enabled: true,
+            style: {
+              width: focusSize,
+              height: focusSize,
+              border: "3px solid white",
+              boxShadow: "0 0 0 2px black, 0 0 5px rgba(0,0,0,0.5)",
+              backgroundColor: focusRgba,
+            },
+          },
+          cropZone: {
+            enabled: true,
+            style: {
+              border: `1px ${cropBorderStyle} ${cropBorderColor}`,
+              backgroundColor: cropRgba,
+            },
+            handleStyle: {
+              width: "14px",
+              height: "14px",
+              backgroundColor: "white",
+              border: "2px solid black",
+              boxShadow: "0 0 3px rgba(0,0,0,0.5)",
+            },
+          },
+          onChange: (data) => {
+            // Display updated data
+            document.getElementById("output").textContent = JSON.stringify(
+              data,
+              null,
+              2
+            );
+            // Update active states
+            focusActive = data.focusActive;
+            cropActive = data.cropActive;
+            updateButtonText();
+          },
+        });
+
+        // Update button text
+        updateButtonText();
+      }
+
+      // Function to update button text
+      function updateButtonText() {
+        document.getElementById("toggleFocusPoint").textContent = focusActive
+          ? "Disable Focus Point"
+          : "Enable Focus Point";
+        document.getElementById("toggleCropZone").textContent = cropActive
+          ? "Disable Crop Zone"
+          : "Enable Crop Zone";
+      }
+
+      // Initialize the tool
       createImageTool();
-    });
-    
-    // Apply crop zone configuration
-    document.getElementById('applyCropConfig').addEventListener('click', () => {
-      createImageTool();
-    });
-  </script>
-</body>
+
+      // Enable/disable focus point
+      document
+        .getElementById("toggleFocusPoint")
+        .addEventListener("click", () => {
+          imageTool.toggleFocusPoint();
+          updateButtonText();
+        });
+
+      // Enable/disable crop zone
+      document
+        .getElementById("toggleCropZone")
+        .addEventListener("click", () => {
+          imageTool.toggleCropZone();
+          updateButtonText();
+        });
+
+      // Apply focus point configuration
+      document
+        .getElementById("applyFocusConfig")
+        .addEventListener("click", () => {
+          createImageTool();
+        });
+
+      // Apply crop zone configuration
+      document
+        .getElementById("applyCropConfig")
+        .addEventListener("click", () => {
+          createImageTool();
+        });
+    </script>
+  </body>
 </html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -34,44 +34,43 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool/dist/visual-image-tool.umd.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-    // Initialize the VisualImageTool with the image element
-    const imageTool = new VisualImageTool.default({
-        imageElement: '#myImage', // Selector for the image element
-        focusPoint: {
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initialize the VisualImageTool with the image element
+        const imageTool = new VisualImageTool.default({
+          imageElement: "#myImage", // Selector for the image element
+          focusPoint: {
             enabled: true,
             style: {
-                width: "30px",
-                height: "30px",
-                border: "3px solid white",
-                boxShadow: "0 0 0 2px black, 0 0 5px rgba(0,0,0,0.5)",
-                backgroundColor: "rgba(255, 255, 255, 0.5)"
-            }
-        },
-        cropZone: {
+              width: "30px",
+              height: "30px",
+              border: "3px solid white",
+              boxShadow: "0 0 0 2px black, 0 0 5px rgba(0,0,0,0.5)",
+              backgroundColor: "rgba(255, 255, 255, 0.5)",
+            },
+          },
+          cropZone: {
             enabled: true,
             style: {
-                border: "3px dashed #fff",
-                backgroundColor: "rgba(0, 0, 0, 0.8)"
+              border: "3px dashed #fff",
+              backgroundColor: "rgba(0, 0, 0, 0.8)",
             },
             handleStyle: {
-                width: "14px",
-                height: "14px",
-                backgroundColor: "white",
-                border: "2px solid black",
-                boxShadow: "0 0 3px rgba(0,0,0,0.5)"
-            }
-        },
-        onChange: function(state) {
-            console.log('State changed:', state);
-        }
-    });
+              width: "14px",
+              height: "14px",
+              backgroundColor: "white",
+              border: "2px solid black",
+              boxShadow: "0 0 3px rgba(0,0,0,0.5)",
+            },
+          },
+          onChange: function (state) {
+            console.log("State changed:", state);
+          },
+        });
 
-    // Example usage
-    imageTool.toggleFocusPoint(true);
-    imageTool.toggleCropZone(true);
-});
-
+        // Example usage
+        imageTool.toggleFocusPoint(true);
+        imageTool.toggleCropZone(true);
+      });
     </script>
   </body>
 </html>
