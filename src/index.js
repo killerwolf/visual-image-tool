@@ -3,7 +3,7 @@
  * Exporte la classe VisualImageTool
  */
 
-import VisualImageTool from './visual-image-tool.js';
+import VisualImageTool from "./visual-image-tool.js";
 
 // Exporter la classe comme export par défaut
 export default VisualImageTool;

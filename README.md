@@ -271,6 +271,13 @@ The `demo/` folder contains the following examples:
 - Safari (latest versions)
 - Edge (latest versions)
 
+## Linting and Formatting
+
+This project uses [Biome](https://biomejs.dev/) for code formatting and linting.
+
+-   Run `npm run lint:check` to check for formatting and linting issues.
+-   Run `npm run lint:fix` to automatically fix formatting and safe linting issues.
+
 ## License
 
 MIT

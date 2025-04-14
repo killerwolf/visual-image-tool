@@ -1,44 +1,44 @@
 {
-  "name": "@h4md1/visual-image-tool",
-  "version": "1.0.0",
-  "description": "Un outil léger en JavaScript vanilla pour définir des points focaux et zones de recadrage sur des images",
-  "main": "dist/image-tool.js",
-  "module": "dist/image-tool.esm.js",
-  "browser": "dist/image-tool.umd.js",
-  "files": [
-    "dist",
-    "src"
-  ],
-  "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "demo": "npx http-server -o ./demo",
-    "publish:demo": "gh-pages -d demo",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublishOnly": "npm run build"
-  },
-  "keywords": [
-    "image",
-    "crop",
-    "focus-point",
-    "vanilla-js",
-    "image-editor",
-    "crop-tool"
-  ],
-  "author": "",
-  "license": "MIT",
-  "devDependencies": {
-    "@rollup/plugin-node-resolve": "^15.0.0",
-    "@rollup/plugin-terser": "^0.4",
-    "gh-pages": "^6.3.0",
-    "rollup": "^2.79.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/killerwolf/visual-image-tool.git"
-  },
-  "bugs": {
-    "url": "https://github.com/killerwolf/visual-image-tool/issues"
-  },
-  "homepage": "https://github.com/killerwolf/visual-image-tool#readme"
+	"name": "@h4md1/visual-image-tool",
+	"version": "1.0.0",
+	"description": "Un outil léger en JavaScript vanilla pour définir des points focaux et zones de recadrage sur des images",
+	"main": "dist/image-tool.js",
+	"module": "dist/image-tool.esm.js",
+	"browser": "dist/image-tool.umd.js",
+	"files": ["dist", "src"],
+	"scripts": {
+		"build": "rollup -c",
+		"dev": "rollup -c -w",
+		"demo": "npx http-server -o ./demo",
+		"publish:demo": "gh-pages -d demo",
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"prepublishOnly": "npm run build",
+		"lint:fix": "biome check --apply .",
+		"lint:check": "biome check ."
+	},
+	"keywords": [
+		"image",
+		"crop",
+		"focus-point",
+		"vanilla-js",
+		"image-editor",
+		"crop-tool"
+	],
+	"author": "",
+	"license": "MIT",
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@rollup/plugin-node-resolve": "^15.0.0",
+		"@rollup/plugin-terser": "^0.4",
+		"gh-pages": "^6.3.0",
+		"rollup": "^2.79.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/killerwolf/visual-image-tool.git"
+	},
+	"bugs": {
+		"url": "https://github.com/killerwolf/visual-image-tool/issues"
+	},
+	"homepage": "https://github.com/killerwolf/visual-image-tool#readme"
 }
