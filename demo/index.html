@@ -1,73 +1,704 @@
 <!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ImageTool Demo - Clean Version</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      margin: 20px;
-    }
-    .container {
-      display: flex;
-      gap: 20px;
-    }
-    .image-container {
-      position: relative;
-      border: 1px solid #ccc;
-      padding: 10px;
-    }
-    img {
-      max-width: 100%;
-      display: block;
-    }
-    button {
-      margin: 5px;
-      padding: 8px 12px;
-      background: #2563eb;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #1d4ed8;
-    }
-  </style>
-</head>
-<body>
-  <h1>ImageTool Demo (Clean Version)</h1>
-  <div class="container">
-    <div class="image-container">
-      <img id="demoImage" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1024&q=80" alt="Demo Image"/>
-    </div>
-    <div>
-      <button id="toggleFocus">Toggle Focus Point</button>
-      <button id="toggleCrop">Toggle Crop Zone</button>
-    </div>
-  </div>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>VisualImageTool – Demos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Prism.js for syntax highlighting -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css"
+    />
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        background: #f8f9fa;
+        margin: 0;
+        padding: 0;
+        color: #222;
+      }
+      header {
+        background: #222;
+        color: #fff;
+        padding: 1.2rem 1rem 0.7rem 1rem;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      main {
+        max-width: 1200px;
+        margin: 2rem auto;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px #0001;
+        padding: 2rem;
+      }
+      h1 {
+        margin-top: 0;
+        font-size: 2.2rem;
+        letter-spacing: -1px;
+      }
+      ul {
+        padding-left: 1.2em;
+      }
+      .demo-links {
+        margin: 2rem 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.7em;
+      }
+      .demo-links a {
+        color: #1565c0;
+        text-decoration: none;
+        font-weight: 500;
+        background: #e3eafc;
+        padding: 0.6em 1em;
+        border-radius: 6px;
+        transition: background 0.2s;
+        border: 1px solid #c3d3f3;
+      }
+      .demo-links a:hover {
+        background: #d2e3fc;
+      }
+      code,
+      pre {
+        background: #f4f4f4;
+        border-radius: 4px;
+        font-size: 1em;
+      }
+      pre {
+        padding: 1em;
+        overflow-x: auto;
+      }
+      .section-title {
+        margin-top: 2.5em;
+        font-size: 1.3em;
+        color: #444;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 0.2em;
+      }
+      /* Demo styles from basic-usage.html */
+      .main-demo-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 2.5em;
+      }
+      .main-demo-image-container {
+        position: relative;
+        border: 1px solid #e5e7eb;
+        padding: 10px;
+        border-radius: 8px;
+        flex: 1;
+        min-width: 300px;
+        background: #fff;
+      }
+      .main-demo-image-container img {
+        max-width: 100%;
+        display: block;
+        border-radius: 4px;
+      }
+      .main-demo-controls {
+        flex: 1;
+        min-width: 300px;
+        background-color: #f9fafb;
+        padding: 20px;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 0.7em;
+      }
+      .main-demo-controls h2,
+      .main-demo-controls h3 {
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+        font-size: 1.1em;
+        color: #2563eb;
+        font-weight: 600;
+      }
+      .main-demo-controls button {
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        font-size: 1em;
+        transition: background 0.2s;
+      }
+      .main-demo-controls button:hover {
+        background-color: #1d4ed8;
+      }
+      .main-demo-output {
+        margin-top: 10px;
+        background-color: #f3f4f6;
+        padding: 15px;
+        border-radius: 4px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        font-size: 0.98em;
+        color: #333;
+      }
+      .main-demo-code-example {
+        background-color: #f3f4f6;
+        padding: 15px;
+        border-radius: 4px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        margin-top: 30px;
+        font-size: 0.98em;
+      }
+      .jsfiddle-link {
+        display: inline-block;
+        margin: 1.5em 0 2em 0;
+        padding: 0.7em 1.2em;
+        background: #f7f7fa;
+        border: 1px solid #c3d3f3;
+        border-radius: 6px;
+        color: #1565c0;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background 0.2s;
+      }
+      .jsfiddle-link:hover {
+        background: #e3eafc;
+        color: #0d47a1;
+      }
+      .jsfiddle-link svg {
+        vertical-align: middle;
+        margin-right: 0.4em;
+        margin-bottom: 0.1em;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="android-chrome-192x192.png" alt="VisualImageTool logo" width="48" height="48" style="margin-bottom: 0.2em; border-radius: 10px; box-shadow: 0 1px 4px #0002;">
+      <h1 style="margin: 0.2em 0 0.1em 0; font-size: 2rem;">VisualImageTool</h1>
+      <p style="margin: 0 0 0.2em 0; font-size: 1.08em;">
+        A lightweight vanilla JavaScript tool to define focus points and crop zones on images.
+      </p>
+    </header>
+    <main>
+      <h2 style="margin-bottom: 1.2em">Interactive demo</h2>
+      <div class="main-demo-container">
+        <div class="main-demo-image-container">
+          <img
+            id="demoImage"
+            src="https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1024&q=80"
+            alt="Demo landscape"
+          />
+        </div>
+        <div class="main-demo-controls">
+          <h2>Controls</h2>
+          <button id="toggleFocusPoint">Enable Focus point</button>
+          <button id="toggleCropZone">Enable Crop zone</button>
+          <h3>Current data</h3>
+          <div id="output" class="main-demo-output">No data available</div>
+          <h3>Actions</h3>
+          <button id="centerFocusPoint">Center Focus point</button>
+          <button id="resetCropZone">Reset Crop zone</button>
+        </div>
+      </div>
+      <a
+        class="jsfiddle-link"
+        href="https://jsfiddle.net/zuadgm4p/7/"
+        target="_blank"
+        rel="noopener"
+      >
+        <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" />
+          <path
+            d="M16 3L3 9.5v13L16 29l13-6.5v-13L16 3zm0 2.2l10.2 5.1-4.5 2.2L16 7.5l-5.7 2.8-4.5-2.2L16 5.2zm-11 6.2l4.2 2.1v4.2l-4.2-2.1v-4.2zm11 15.4l-10.2-5.1 4.2-2.1 6 3v4.2zm1-5.6l-6.2-3.1v-4.2l6.2 3.1v4.2zm1 5.6v-4.2l6-3 4.2 2.1-10.2 5.1zm11-6.2l-4.2-2.1v-4.2l4.2-2.1v8.4zm-5.2-3.1l-6.2 3.1v-4.2l6.2-3.1v4.2z"
+            fill="#1565c0"
+          />
+        </svg>
+        Try online on JSFiddle
+      </a>
+      <div class="section-title">Usage without installation</div>
+      <p>
+        You can use VisualImageTool directly in your HTML pages without
+        installing any dependency, thanks to the CDN
+        <a
+          href="https://www.jsdelivr.com/package/npm/@h4md1/visual-image-tool"
+          target="_blank"
+          rel="noopener"
+          >jsdelivr</a
+        >:
+      </p>
+      <pre><code class="language-html">&lt;!-- UMD via CDN --&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool@0.1.5/dist/visual-image-tool.umd.js"&gt;&lt;/script&gt;
 
-  <!-- Load the UMD bundle -->
-  <script src="../dist/visual-image-tool.umd.js"></script>
+&lt;!-- OR ESM via CDN --&gt;
+&lt;script type="module"&gt;
+  import { VisualImageTool } from 'https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool@0.1.5/dist/visual-image-tool.esm.js';
+  // Your code here
+&lt;/script&gt;</code></pre>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const imageTool = new VisualImageTool.VisualImageTool({
-        imageElement: document.getElementById('demoImage'),
-        onChange: (data) => {
+      <div class="section-title">Quick demos</div>
+      <div class="demo-links">
+        <a href="basic-usage.html">Basic usage</a>
+        <a href="custom-config.html">Custom configuration</a>
+        <a href="demo-esm.html">ESM import demo</a>
+        <a href="demo-umd.html">UMD import demo</a>
+        <a href="preact-importmap-demo.html">Preact integration (importmap)</a>
+        <a href="react-integration.jsx">React integration</a>
+        <a href="vue-importmap-demo.html">Vue integration (importmap)</a>
+      </div>
+
+      <div class="section-title">Features</div>
+      <ul>
+        <li>
+          <strong>Focus point</strong>: Set a point of interest on the image
+          with a visual marker
+        </li>
+        <li>
+          <strong>Crop zone</strong>: Define a crop zone with resize handles
+        </li>
+        <li>
+          <strong>No dependencies</strong>: Works without external libraries
+        </li>
+        <li><strong>Simple API</strong>: Clear and easy-to-use interface</li>
+        <li><strong>Customizable</strong>: Flexible configuration options</li>
+        <li><strong>Responsive</strong>: Adapts to screen resizing</li>
+      </ul>
+
+      <div class="section-title">Installation</div>
+      <pre><code class="language-bash">npm install @h4md1/visual-image-tool</code></pre>
+
+      <div class="section-title">Quick start guide</div>
+      <ol>
+        <li>
+          <strong>Import</strong>
+          <pre><code class="language-js">// ES modules (recommended)
+import VisualImageTool from '@h4md1/visual-image-tool';
+
+// CommonJS
+const VisualImageTool = require('@h4md1/visual-image-tool');
+
+// UMD (script tag)
+&lt;script src="node_modules/image-tool/dist/image-tool.umd.js "&gt;&lt;/script&gt;
+</code></pre>
+        </li>
+        <li>
+          <strong>Initialization</strong>
+          <pre><code class="language-js">const imageTool = new VisualImageTool.VisualImageTool({
+  imageElement: document.getElementById('myImage'),
+  debug: true, // Enable debug logs for overlay positioning (optional)
+  onChange: (data) => {
+    console.log('Focus point:', data.focusPoint);
+    console.log('Crop zone:', data.cropZone);
+  }
+});</code></pre>
+        </li>
+        <li>
+          <strong>Using the features</strong>
+          <pre><code class="language-js">// Enable the focus point
+imageTool.toggleFocusPoint(true);
+
+// Enable the crop zone
+imageTool.toggleCropZone(true);
+
+// Manually set a focus point
+imageTool.setFocusPoint(x, y);
+
+// Manually set a crop zone
+imageTool.setCropZone(x, y, width, height);
+
+// Get current values
+const focusPoint = imageTool.getFocusPoint();
+const cropZone = imageTool.getCropZone();
+</code></pre>
+        </li>
+      </ol>
+
+      <div class="section-title">Full API</div>
+      <h3>Methods</h3>
+      <ul>
+        <li>
+          <strong>toggleFocusPoint(active)</strong>: Enables or disables the
+          focus point.
+          <ul>
+            <li>
+              <code>active</code> (boolean, optional): If set, forces the state
+              to this value. If omitted, toggles the current state.
+            </li>
+            <li>Returns: The VisualImageTool instance for chaining.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>toggleCropZone(active)</strong>: Enables or disables the crop
+          zone.
+          <ul>
+            <li>
+              <code>active</code> (boolean, optional): If set, forces the state
+              to this value. If omitted, toggles the current state.
+            </li>
+            <li>Returns: The VisualImageTool instance for chaining.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>setFocusPoint(x, y)</strong>: Sets the position of the focus
+          point.
+          <ul>
+            <li><code>x</code> (number): X coordinate in original pixels.</li>
+            <li><code>y</code> (number): Y coordinate in original pixels.</li>
+            <li>Returns: The VisualImageTool instance for chaining.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>setCropZone(x, y, width, height)</strong>: Sets the position
+          and dimensions of the crop zone.
+          <ul>
+            <li><code>x</code> (number): X coordinate in original pixels.</li>
+            <li><code>y</code> (number): Y coordinate in original pixels.</li>
+            <li><code>width</code> (number): Width in original pixels.</li>
+            <li><code>height</code> (number): Height in original pixels.</li>
+            <li>Returns: The VisualImageTool instance for chaining.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>getFocusPoint()</strong>: Gets the current position of the
+          focus point.
+          <ul>
+            <li>
+              Returns: An object <code>{x, y}</code> with coordinates in
+              original pixels.
+            </li>
+          </ul>
+        </li>
+        <li>
+          <strong>getCropZone()</strong>: Gets the current position and
+          dimensions of the crop zone.
+          <ul>
+            <li>
+              Returns: An object <code>{x, y, width, height}</code> with values
+              in original pixels.
+            </li>
+          </ul>
+        </li>
+        <li>
+          <strong>getImageDimensions()</strong>: Gets the original dimensions of
+          the image.
+          <ul>
+            <li>
+              Returns: An object <code>{width, height}</code> with dimensions in
+              original pixels.
+            </li>
+          </ul>
+        </li>
+        <li>
+          <strong>destroy()</strong>: Destroys the instance and cleans up
+          resources.
+        </li>
+      </ul>
+
+      <h3>Events</h3>
+      <p>
+        The tool uses the <code>onChange</code> callback to notify about
+        changes. This callback receives an object with the following properties:
+      </p>
+      <pre><code class="language-js">{
+  focusPoint: {x, y},                // Position of the focus point
+  cropZone: {x, y, width, height},   // Position and dimensions of the crop zone
+  focusActive: true|false,           // Activation state of the focus point
+  cropActive: true|false             // Activation state of the crop zone
+}</code></pre>
+
+      <div class="section-title">Configuration Options</div>
+      <pre><code class="language-js">const imageTool = new VisualImageTool.VisualImageTool({
+// Image element (required) - can be a CSS selector or a DOM element
+imageElement: '#myImage',
+
+// Enable debug logs for overlay positioning (optional)
+debug: true, // Set to true to see overlay positioning logs in the console
+
+// Focus point configuration (optional)
+focusPoint: {
+  enabled: true, // Enable/disable the feature
+  style: {
+    width: '30px',
+    height: '30px',
+    border: '3px solid white',
+    boxShadow: '0 0 0 2px black, 0 0 5px rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(255, 0, 0, 0.5)'
+  }
+},
+
+// Crop zone configuration (optional)
+cropZone: {
+  enabled: true, // Enable/disable the feature
+  style: {
+    border: '1px dashed #fff',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)'
+  },
+  handleStyle: {
+    width: '14px',
+    height: '14px',
+    backgroundColor: 'white',
+    border: '2px solid black',
+    boxShadow: '0 0 3px rgba(0,0,0,0.5)'
+  }
+},
+
+// Callback called on changes (optional)
+onChange: function(data) {
+  // data contains focusPoint, cropZone, focusActive, cropActive
+}
+});</code></pre>
+
+      <div class="section-title">Framework Integration Examples</div>
+      <h3>React</h3>
+      <pre><code class="language-js">&lt;!-- React integration example --&gt;
+import React, &#123; useEffect, useRef &#125; from 'react';
+import VisualImageTool from '@h4md1/visual-image-tool';
+
+function ImageEditor() &#123;
+  const imageRef = useRef(null);
+  const toolRef = useRef(null);
+  
+  useEffect(() =&gt; &#123;
+    if (imageRef.current &amp;&amp; !toolRef.current) &#123;
+      toolRef.current = new VisualImageTool(&#123;
+        imageElement: imageRef.current,
+        onChange: (data) =&gt; &#123;
           console.log('Updated data:', data);
-        }
+        &#125;
+      &#125;);
+      
+      // Enable features
+      toolRef.current.toggleFocusPoint(true);
+      toolRef.current.toggleCropZone(true);
+    &#125;
+    
+    // Cleanup
+    return () =&gt; &#123;
+      if (toolRef.current) &#123;
+        toolRef.current.destroy();
+        toolRef.current = null;
+      &#125;
+    &#125;;
+  &#125;, []);
+  
+  return (
+    &lt;div&gt;
+      &lt;img ref=&#123;imageRef&#125; src="path/to/image.jpg" alt="Editable" /&gt;
+    &lt;/div&gt;
+  );
+&#125;
+</code></pre>
+
+      <h3>Vue.js</h3>
+      <pre><code class="language-html">&lt;template&gt;
+  &lt;div&gt;
+    &lt;img ref="editableImage" src="path/to/image.jpg" alt="Editable" /&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import VisualImageTool from '@h4md1/visual-image-tool';
+
+export default {
+  data() {
+    return {
+      imageTool: null
+    };
+  },
+  mounted() {
+    this.imageTool = new VisualImageTool({
+      imageElement: this.$refs.editableImage,
+      onChange: (data) => {
+        console.log('Updated data:', data);
+      }
+    });
+    
+    // Enable features
+    this.imageTool.toggleFocusPoint(true);
+    this.imageTool.toggleCropZone(true);
+  },
+  beforeDestroy() {
+    if (this.imageTool) {
+      this.imageTool.destroy();
+      this.imageTool = null;
+    }
+  }
+};
+&lt;/script&gt;</code></pre>
+
+      <div class="section-title">Browser Compatibility</div>
+      <ul>
+        <li>Chrome (latest versions)</li>
+        <li>Firefox (latest versions)</li>
+        <li>Safari (latest versions)</li>
+        <li>Edge (latest versions)</li>
+      </ul>
+
+      <div class="section-title">License</div>
+      <p>MIT</p>
+    </main>
+    <!-- Prism.js for syntax highlighting -->
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-javascript.min.js"></script>
+    <!-- VisualImageTool UMD bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool@0.1.5/dist/visual-image-tool.umd.js"></script>
+    <script>
+      // Initialize the tool on an image
+      const imageTool = new VisualImageTool.VisualImageTool({
+        imageElement: document.getElementById("demoImage"),
+        onChange: (data) => {
+          // Display updated data
+          document.getElementById("output").textContent = JSON.stringify(
+            data,
+            null,
+            2
+          );
+        },
       });
 
-      document.getElementById('toggleFocus').onclick = () => {
-        imageTool.toggleFocusPoint();
-      };
+      // Wait for image to load before animating demo
+      function initVisualImageToolDemo() {
+        // Activate both features
+        imageTool.toggleFocusPoint(true);
+        imageTool.toggleCropZone(true);
 
-      document.getElementById('toggleCrop').onclick = () => {
-        imageTool.toggleCropZone();
-      };
-    });
-  </script>
-</body>
+        const dimensions = imageTool.getImageDimensions();
+
+        // Animate focus point: move in a smooth, organic arc
+        function animateFocusOrganic(cb) {
+          const steps = 32;
+          let step = 0;
+          function easeInOut(t) {
+            return t < 0.5
+              ? 2 * t * t
+              : -1 + (4 - 2 * t) * t;
+          }
+          function frame() {
+            const t = step / steps;
+            // Arc path: from left-bottom to right-top, with a gentle curve and less amplitude
+            const x = dimensions.width * (0.28 + 0.44 * easeInOut(t));
+            const y = dimensions.height * (0.62 - 0.13 * Math.sin(Math.PI * t));
+            imageTool.setFocusPoint(x, y);
+            step++;
+            if (step <= steps) {
+              setTimeout(frame, 28 + Math.random() * 12);
+            } else if (cb) {
+              cb();
+            }
+          }
+          frame();
+        }
+
+        // Animate crop zone: grow and wiggle a bit
+        function animateCropOrganic(cb) {
+          const steps = 16;
+          let step = 0;
+          function ease(t) {
+            return t < 0.5
+              ? 2 * t * t
+              : -1 + (4 - 2 * t) * t;
+          }
+          function frame() {
+            const t = step / steps;
+            // Grow from small to large, with a little "wiggle"
+            const x = dimensions.width * (0.38 - 0.18 * Math.sin(2 * Math.PI * t) * (1 - t));
+            const y = dimensions.height * (0.38 - 0.18 * Math.cos(2 * Math.PI * t) * (1 - t));
+            const width = dimensions.width * (0.12 + 0.56 * ease(t));
+            const height = dimensions.height * (0.12 + 0.56 * ease(t));
+            imageTool.setCropZone(x, y, width, height);
+            step++;
+            if (step <= steps) {
+              setTimeout(frame, 14 + Math.random() * 8);
+            } else if (cb) {
+              cb();
+            }
+          }
+          frame();
+        }
+
+        // Deactivate all 4 buttons
+        [
+          "toggleFocusPoint",
+          "toggleCropZone",
+          "centerFocusPoint",
+          "resetCropZone"
+        ].forEach(id => {
+          const btn = document.getElementById(id);
+          if (btn) {
+            btn.disabled = true;
+            btn.style.opacity = "0.5";
+            btn.style.pointerEvents = "none";
+          }
+        });
+
+        // Animate focus, then crop, then re-enable buttons
+        animateFocusOrganic(() => {
+          setTimeout(() => {
+            animateCropOrganic(() => {
+              setTimeout(() => {
+                [
+                  "toggleFocusPoint",
+                  "toggleCropZone",
+                  "centerFocusPoint",
+                  "resetCropZone"
+                ].forEach(id => {
+                  const btn = document.getElementById(id);
+                  if (btn) {
+                    btn.disabled = false;
+                    btn.style.opacity = "";
+                    btn.style.pointerEvents = "";
+                  }
+                });
+              }, 200);
+            });
+          }, 80);
+        });
+      }
+
+      const img = document.getElementById("demoImage");
+      if (img.complete) {
+        initVisualImageToolDemo();
+      } else {
+        img.addEventListener("load", initVisualImageToolDemo);
+      }
+
+      // Enable/disable the focus point
+      document
+        .getElementById("toggleFocusPoint")
+        .addEventListener("click", () => {
+          imageTool.toggleFocusPoint();
+        });
+
+      // Enable/disable the crop zone
+      document
+        .getElementById("toggleCropZone")
+        .addEventListener("click", () => {
+          imageTool.toggleCropZone();
+        });
+
+      // Center the focus point
+      document
+        .getElementById("centerFocusPoint")
+        .addEventListener("click", () => {
+          const dimensions = imageTool.getImageDimensions();
+          imageTool.setFocusPoint(dimensions.width / 2, dimensions.height / 2);
+        });
+
+      // Reset the crop zone
+      document.getElementById("resetCropZone").addEventListener("click", () => {
+        const dimensions = imageTool.getImageDimensions();
+        const width = dimensions.width / 2;
+        const height = dimensions.height / 2;
+        imageTool.setCropZone(
+          (dimensions.width - width) / 2,
+          (dimensions.height - height) / 2,
+          width,
+          height
+        );
+      });
+    </script>
+  </body>
 </html>
