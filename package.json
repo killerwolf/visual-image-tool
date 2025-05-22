@@ -9,10 +9,12 @@
 	"scripts": {
 		"build": "rollup -c",
 		"dev": "rollup -c -w",
-		"format": "biome format ./src --write",
-		"lint": "biome lint ./src",
-		"prepare": "npm run build",
+		"demo": "npx http-server -o ./demo",
+		"publish:demo": "gh-pages -d demo",
 		"test": "vitest run",
+		"prepublishOnly": "npm run build",
+		"lint": "biome lint ./src",
+		"format": "biome format ./src --write",
 		"test:watch": "vitest"
 	},
 	"keywords": [
