@@ -81,6 +81,15 @@ class VisualImageTool {
 			scaleY: 1,
 		};
 
+		// Pre-bind event handlers for consistent reference
+		this._boundUpdateScaling = this._updateScaling.bind(this);
+		this._boundImageLoad = this._updateScaling.bind(this); // Assuming _updateScaling is the handler for image load
+		this._boundHandleMouseUp = this._handleMouseUp.bind(this);
+		this._boundHandleMouseMove = this._handleMouseMove.bind(this);
+		this._boundHandleFocusMarkerMouseDown = this._handleFocusMarkerMouseDown.bind(this);
+		this._boundHandleCropOverlayMouseDown = this._handleCropOverlayMouseDown.bind(this);
+		this._boundHandleCropHandleMouseDown = this._handleCropHandleMouseDown.bind(this);
+
 		// Variables for tracking interactions
 		this.interaction = {
 			focusDragging: false,
@@ -96,6 +105,10 @@ class VisualImageTool {
 			startMouseX: 0,
 			startMouseY: 0,
 		};
+
+		this.spinnerElement = null;
+		this.initialLoadComplete = false;
+		this.cropHandles = [];
 
 		// Initialize the tool
 		this._init();
@@ -133,6 +146,37 @@ class VisualImageTool {
 		// Ensure the parent is positioned
 		if (this.imageElement.parentNode) {
 			this.imageElement.parentNode.style.position = "relative";
+
+			// Create spinner element
+			this.spinnerElement = document.createElement("div");
+			this.spinnerElement.style.position = "absolute";
+			this.spinnerElement.style.top = "50%";
+			this.spinnerElement.style.left = "50%";
+			this.spinnerElement.style.transform = "translate(-50%, -50%)";
+			this.spinnerElement.style.width = "40px";
+			this.spinnerElement.style.height = "40px";
+			this.spinnerElement.style.border = "4px solid #f3f3f3"; // Light grey
+			this.spinnerElement.style.borderTop = "4px solid #3498db"; // Blue
+			this.spinnerElement.style.borderRadius = "50%";
+			this.spinnerElement.style.boxSizing = "border-box";
+			this.spinnerElement.style.zIndex = "1000"; // Ensure it's above other elements
+			this.spinnerElement.style.display = "block"; // Initially visible
+			this.spinnerElement.style.animation = "spin 1s linear infinite";
+
+			this.imageElement.parentNode.appendChild(this.spinnerElement);
+
+			// Add CSS keyframes for spinner animation
+			if (!document.getElementById("visual-image-tool-spinner-styles")) {
+				const styleElement = document.createElement("style");
+				styleElement.id = "visual-image-tool-spinner-styles";
+				styleElement.innerHTML = `
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+        `;
+				document.head.appendChild(styleElement);
+			}
 		}
 	}
 
@@ -143,10 +187,27 @@ class VisualImageTool {
 	_updateScaling() {
 		this.state.originalWidth = this.imageElement.naturalWidth || 1;
 		this.state.originalHeight = this.imageElement.naturalHeight || 1;
+
+		// Hide spinner once image is loaded and dimensions are available
+		if (
+			!this.initialLoadComplete &&
+			this.spinnerElement &&
+			this.state.originalWidth > 1 &&
+			this.state.originalHeight > 1
+		) {
+			this.spinnerElement.style.display = "none";
+			this.initialLoadComplete = true;
+		}
 		this.state.displayWidth = this.imageElement.offsetWidth;
 		this.state.displayHeight = this.imageElement.offsetHeight;
 		this.state.scaleX = this.state.displayWidth / this.state.originalWidth;
 		this.state.scaleY = this.state.displayHeight / this.state.originalHeight;
+
+		// Update spinner position during initial load if still visible
+		if (!this.initialLoadComplete && this.spinnerElement) {
+			this.spinnerElement.style.top = `${this.state.displayHeight / 2}px`;
+			this.spinnerElement.style.left = `${this.state.displayWidth / 2}px`;
+		}
 
 		// Reposition elements if active
 		if (this.state.focusActive) {
@@ -211,10 +272,7 @@ class VisualImageTool {
 		this.state.focusMarker = marker;
 
 		// Add event listeners to the marker
-		marker.addEventListener(
-			"mousedown",
-			this._handleFocusMarkerMouseDown.bind(this),
-		);
+		marker.addEventListener("mousedown", this._boundHandleFocusMarkerMouseDown);
 	}
 
 	/**
@@ -315,18 +373,14 @@ class VisualImageTool {
 			}
 
 			// Add event listener
-			handle.addEventListener("mousedown", (e) =>
-				this._handleCropHandleMouseDown(e, handleType),
-			);
+			handle.addEventListener("mousedown", this._boundHandleCropHandleMouseDown);
 
 			overlay.appendChild(handle);
+			this.cropHandles.push(handle);
 		}
 
 		// Add listener for overlay dragging
-		overlay.addEventListener(
-			"mousedown",
-			this._handleCropOverlayMouseDown.bind(this),
-		);
+		overlay.addEventListener("mousedown", this._boundHandleCropOverlayMouseDown);
 
 		this.imageElement.parentNode.appendChild(overlay);
 		this.state.cropOverlay = overlay;
@@ -336,9 +390,9 @@ class VisualImageTool {
 	 * Handles mousedown event on a resize handle
 	 * @private
 	 * @param {MouseEvent} e - Mousedown event
-	 * @param {string} handleType - Handle type
 	 */
-	_handleCropHandleMouseDown(e, handleType) {
+	_handleCropHandleMouseDown(e) {
+		const handleType = e.currentTarget.dataset.handle;
 		this.interaction.cropResizing = true;
 		this.interaction.activeHandle = handleType;
 
@@ -385,19 +439,16 @@ class VisualImageTool {
 	 */
 	_setupEventListeners() {
 		// Listener for window resize
-		window.addEventListener("resize", this._updateScaling.bind(this));
+		window.addEventListener("resize", this._boundUpdateScaling);
 
 		// Listener for image load
-		if (!this.imageElement.complete) {
-			this.imageElement.addEventListener(
-				"load",
-				this._updateScaling.bind(this),
-			);
+		if (this.imageElement && !this.imageElement.complete) {
+			this.imageElement.addEventListener("load", this._boundImageLoad);
 		}
 
 		// Listeners for mouse interactions
-		document.addEventListener("mouseup", this._handleMouseUp.bind(this));
-		document.addEventListener("mousemove", this._handleMouseMove.bind(this));
+		document.addEventListener("mouseup", this._boundHandleMouseUp);
+		document.addEventListener("mousemove", this._boundHandleMouseMove);
 	}
 
 	/**
@@ -906,6 +957,33 @@ class VisualImageTool {
 	 * @public
 	 */
 	destroy() {
+		// Remove event listeners from DOM elements
+		if (this.state.focusMarker && this._boundHandleFocusMarkerMouseDown) {
+			this.state.focusMarker.removeEventListener(
+				"mousedown",
+				this._boundHandleFocusMarkerMouseDown,
+			);
+		}
+
+		if (this.cropHandles && this._boundHandleCropHandleMouseDown) {
+			this.cropHandles.forEach((handle) => {
+				if (handle) {
+					handle.removeEventListener(
+						"mousedown",
+						this._boundHandleCropHandleMouseDown,
+					);
+				}
+			});
+		}
+		this.cropHandles = []; // Clear the array
+
+		if (this.state.cropOverlay && this._boundHandleCropOverlayMouseDown) {
+			this.state.cropOverlay.removeEventListener(
+				"mousedown",
+				this._boundHandleCropOverlayMouseDown,
+			);
+		}
+
 		// Remove DOM elements
 		if (this.state.focusMarker?.parentNode) {
 			this.state.focusMarker.parentNode.removeChild(this.state.focusMarker);
@@ -915,10 +993,33 @@ class VisualImageTool {
 			this.state.cropOverlay.parentNode.removeChild(this.state.cropOverlay);
 		}
 
-		// Remove event listeners
-		window.removeEventListener("resize", this._updateScaling.bind(this));
-		document.removeEventListener("mouseup", this._handleMouseUp.bind(this));
-		document.removeEventListener("mousemove", this._handleMouseMove.bind(this));
+		if (this.spinnerElement?.parentNode) {
+			this.spinnerElement.parentNode.removeChild(this.spinnerElement);
+		}
+		this.spinnerElement = null;
+
+		// Remove global event listeners
+		if (this._boundUpdateScaling) {
+			window.removeEventListener("resize", this._boundUpdateScaling);
+		}
+		if (this.imageElement && this._boundImageLoad) {
+			this.imageElement.removeEventListener("load", this._boundImageLoad);
+		}
+		if (this._boundHandleMouseUp) {
+			document.removeEventListener("mouseup", this._boundHandleMouseUp);
+		}
+		if (this._boundHandleMouseMove) {
+			document.removeEventListener("mousemove", this._boundHandleMouseMove);
+		}
+
+		// Nullify bound handlers
+		this._boundUpdateScaling = null;
+		this._boundImageLoad = null;
+		this._boundHandleMouseUp = null;
+		this._boundHandleMouseMove = null;
+		this._boundHandleFocusMarkerMouseDown = null;
+		this._boundHandleCropOverlayMouseDown = null;
+		this._boundHandleCropHandleMouseDown = null;
 
 		// Reset state
 		this.state = null;
