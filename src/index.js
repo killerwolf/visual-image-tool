@@ -5,8 +5,5 @@
 
 import VisualImageTool from "./visual-image-tool.js";
 
-// Exporter la classe comme export par défaut
-export default VisualImageTool;
-
-// Exporter également comme export nommé pour plus de flexibilité
+// Exporter uniquement la classe comme export nommé
 export { VisualImageTool };
