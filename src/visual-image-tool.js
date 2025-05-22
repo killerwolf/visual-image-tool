@@ -1,38 +1,39 @@
 /**
- * ImageTool - Un outil léger pour définir des points focaux et zones de recadrage sur des images
+ * ImageTool - A lightweight tool for defining focus points and crop zones on images
  * @module visual-image-tool
  */
 
 class VisualImageTool {
 	/**
-	 * Crée une instance de l'outil d'image
-	 * @param {Object} options - Options de configuration
-	 * @param {HTMLElement|string} options.imageElement - Élément image ou sélecteur CSS
-	 * @param {Object} [options.focusPoint] - Configuration du point focal
-	 * @param {boolean} [options.focusPoint.enabled=true] - Activer la fonctionnalité de point focal
-	 * @param {Object} [options.focusPoint.style] - Styles personnalisés pour le marqueur de point focal
-	 * @param {Object} [options.cropZone] - Configuration de la zone de recadrage
-	 * @param {boolean} [options.cropZone.enabled=true] - Activer la fonctionnalité de zone de recadrage
-	 * @param {Object} [options.cropZone.style] - Styles personnalisés pour l'overlay de recadrage
-	 * @param {Function} [options.onChange] - Callback appelé lors des changements
+	 * Creates an instance of the image tool.
+	 * The focus point is initialized to `{x:0, y:0}` in `this.state`. When `toggleFocusPoint(true)` is called for the first time, if the focus point is still `{x:0, y:0}`, it will be automatically centered on the image.
+	 * @param {Object} options - Configuration options
+	 * @param {HTMLElement|string} options.imageElement - Image element or CSS selector
+	 * @param {Object} [options.focusPoint] - Focus point configuration
+	 * @param {boolean} [options.focusPoint.enabled=true] - Enable focus point functionality
+	 * @param {Object} [options.focusPoint.style] - Custom styles for the focus point marker
+	 * @param {Object} [options.cropZone] - Crop zone configuration
+	 * @param {boolean} [options.cropZone.enabled=true] - Enable crop zone functionality
+	 * @param {Object} [options.cropZone.style] - Custom styles for the crop overlay
+	 * @param {Function} [options.onChange] - Callback called on changes
 	 */
 	constructor(options) {
-		// Valider les options
+		// Validate options
 		if (!options || !options.imageElement) {
-			throw new Error("L'élément image est requis");
+			throw new Error("Image element is required");
 		}
 
-		// Initialiser les propriétés
+		// Initialize properties
 		this.imageElement =
 			typeof options.imageElement === "string"
 				? document.querySelector(options.imageElement)
 				: options.imageElement;
 
 		if (!this.imageElement || this.imageElement.tagName !== "IMG") {
-			throw new Error("Élément image invalide");
+			throw new Error("Invalid image element");
 		}
 
-		// Options par défaut
+		// Default options
 		this.options = {
 			focusPoint: {
 				enabled: true,
@@ -64,7 +65,7 @@ class VisualImageTool {
 			debug: options.debug || false,
 		};
 
-		// État interne
+		// Internal state
 		this.state = {
 			focusMarker: null,
 			cropOverlay: null,
@@ -80,7 +81,7 @@ class VisualImageTool {
 			scaleY: 1,
 		};
 
-		// Variables pour le suivi des interactions
+		// Variables for tracking interactions
 		this.interaction = {
 			focusDragging: false,
 			focusDragOffsetX: 0,
@@ -96,22 +97,22 @@ class VisualImageTool {
 			startMouseY: 0,
 		};
 
-		// Initialiser l'outil
+		// Initialize the tool
 		this._init();
 	}
 
 	/**
-	 * Initialise l'outil d'image
+	 * Initializes the image tool
 	 * @private
 	 */
 	_init() {
-		// Préparer le conteneur parent
+		// Prepare the parent container
 		this._prepareContainer();
 
-		// Initialiser les dimensions
+		// Initialize dimensions
 		this._updateScaling();
 
-		// Créer les éléments d'interface si activés
+		// Create UI elements if enabled
 		if (this.options.focusPoint.enabled) {
 			this._createFocusMarker();
 		}
@@ -120,23 +121,23 @@ class VisualImageTool {
 			this._createCropOverlay();
 		}
 
-		// Ajouter les écouteurs d'événements
+		// Add event listeners
 		this._setupEventListeners();
 	}
 
 	/**
-	 * Prépare le conteneur parent de l'image
+	 * Prepares the image's parent container
 	 * @private
 	 */
 	_prepareContainer() {
-		// S'assurer que le parent est positionné
+		// Ensure the parent is positioned
 		if (this.imageElement.parentNode) {
 			this.imageElement.parentNode.style.position = "relative";
 		}
 	}
 
 	/**
-	 * Met à jour les facteurs d'échelle
+	 * Updates scaling factors
 	 * @private
 	 */
 	_updateScaling() {
@@ -147,7 +148,7 @@ class VisualImageTool {
 		this.state.scaleX = this.state.displayWidth / this.state.originalWidth;
 		this.state.scaleY = this.state.displayHeight / this.state.originalHeight;
 
-		// Repositionner les éléments si actifs
+		// Reposition elements if active
 		if (this.state.focusActive) {
 			this._updateFocusMarkerPosition();
 		}
@@ -158,11 +159,11 @@ class VisualImageTool {
 	}
 
 	/**
-	 * Convertit des coordonnées d'affichage en coordonnées originales
+	 * Converts display coordinates to original coordinates
 	 * @private
-	 * @param {number} scaledX - Coordonnée X à l'échelle d'affichage
-	 * @param {number} scaledY - Coordonnée Y à l'échelle d'affichage
-	 * @returns {Object} Coordonnées originales
+	 * @param {number} scaledX - X-coordinate at display scale
+	 * @param {number} scaledY - Y-coordinate at display scale
+	 * @returns {Object} Original coordinates {x, y}
 	 */
 	_toOriginalCoords(scaledX, scaledY) {
 		return {
@@ -172,11 +173,11 @@ class VisualImageTool {
 	}
 
 	/**
-	 * Convertit des coordonnées originales en coordonnées d'affichage
+	 * Converts original coordinates to display coordinates
 	 * @private
-	 * @param {number} originalX - Coordonnée X originale
-	 * @param {number} originalY - Coordonnée Y originale
-	 * @returns {Object} Coordonnées à l'échelle d'affichage
+	 * @param {number} originalX - Original X-coordinate
+	 * @param {number} originalY - Original Y-coordinate
+	 * @returns {Object} Display scale coordinates {x, y}
 	 */
 	_toScaledCoords(originalX, originalY) {
 		return {
@@ -186,7 +187,7 @@ class VisualImageTool {
 	}
 
 	/**
-	 * Crée le marqueur de point focal
+	 * Creates the focus point marker
 	 * @private
 	 */
 	_createFocusMarker() {
@@ -209,7 +210,7 @@ class VisualImageTool {
 		this.imageElement.parentNode.appendChild(marker);
 		this.state.focusMarker = marker;
 
-		// Ajouter les écouteurs d'événements au marqueur
+		// Add event listeners to the marker
 		marker.addEventListener(
 			"mousedown",
 			this._handleFocusMarkerMouseDown.bind(this),
@@ -217,15 +218,15 @@ class VisualImageTool {
 	}
 
 	/**
-	 * Gère l'événement mousedown sur le marqueur de point focal
+	 * Handles mousedown event on the focus point marker
 	 * @private
-	 * @param {MouseEvent} e - Événement mousedown
+	 * @param {MouseEvent} e - Mousedown event
 	 */
 	_handleFocusMarkerMouseDown(e) {
 		this.interaction.focusDragging = true;
 		this.state.focusMarker.style.cursor = "grabbing";
 
-		// Calculer le décalage par rapport au centre du marqueur
+		// Calculate offset from marker center
 		const rect = this.state.focusMarker.getBoundingClientRect();
 		this.interaction.focusDragOffsetX =
 			e.clientX - (rect.left + rect.width / 2);
@@ -236,7 +237,7 @@ class VisualImageTool {
 	}
 
 	/**
-	 * Crée l'overlay de zone de recadrage
+	 * Creates the crop zone overlay
 	 * @private
 	 */
 	_createCropOverlay() {
@@ -251,7 +252,7 @@ class VisualImageTool {
 		overlay.style.display = "none";
 		overlay.style.zIndex = "998";
 
-		// Ajouter les poignées de redimensionnement
+		// Add resize handles
 		const handles = ["tl", "tm", "tr", "ml", "mr", "bl", "bm", "br"];
 		for (const handleType of handles) {
 			const handle = document.createElement("div");
@@ -265,7 +266,7 @@ class VisualImageTool {
 			handle.style.boxSizing = "border-box";
 			handle.dataset.handle = handleType;
 
-			// Positionner la poignée
+			// Position the handle
 			switch (handleType) {
 				case "tl": // Top-left
 					handle.style.top = "-7px";
@@ -313,7 +314,7 @@ class VisualImageTool {
 					break;
 			}
 
-			// Ajouter l'écouteur d'événement
+			// Add event listener
 			handle.addEventListener("mousedown", (e) =>
 				this._handleCropHandleMouseDown(e, handleType),
 			);
@@ -321,7 +322,7 @@ class VisualImageTool {
 			overlay.appendChild(handle);
 		}
 
-		// Ajouter l'écouteur pour le déplacement de l'overlay
+		// Add listener for overlay dragging
 		overlay.addEventListener(
 			"mousedown",
 			this._handleCropOverlayMouseDown.bind(this),
@@ -332,16 +333,16 @@ class VisualImageTool {
 	}
 
 	/**
-	 * Gère l'événement mousedown sur une poignée de redimensionnement
+	 * Handles mousedown event on a resize handle
 	 * @private
-	 * @param {MouseEvent} e - Événement mousedown
-	 * @param {string} handleType - Type de poignée
+	 * @param {MouseEvent} e - Mousedown event
+	 * @param {string} handleType - Handle type
 	 */
 	_handleCropHandleMouseDown(e, handleType) {
 		this.interaction.cropResizing = true;
 		this.interaction.activeHandle = handleType;
 
-		// Enregistrer les dimensions et position initiales
+		// Record initial dimensions and position
 		this.interaction.startX =
 			Number.parseInt(this.state.cropOverlay.style.left, 10) || 0;
 		this.interaction.startY =
@@ -356,18 +357,18 @@ class VisualImageTool {
 	}
 
 	/**
-	 * Gère l'événement mousedown sur l'overlay de recadrage
+	 * Handles mousedown event on the crop overlay
 	 * @private
-	 * @param {MouseEvent} e - Événement mousedown
+	 * @param {MouseEvent} e - Mousedown event
 	 */
 	_handleCropOverlayMouseDown(e) {
-		// Ignorer si on clique sur une poignée
+		// Ignore if clicking on a handle
 		if (e.target !== this.state.cropOverlay) return;
 
 		this.interaction.cropDragging = true;
 		this.state.cropOverlay.style.cursor = "grabbing";
 
-		// Enregistrer la position initiale
+		// Record initial position
 		this.interaction.startX =
 			Number.parseInt(this.state.cropOverlay.style.left, 10) || 0;
 		this.interaction.startY =
@@ -379,14 +380,14 @@ class VisualImageTool {
 	}
 
 	/**
-	 * Configure les écouteurs d'événements globaux
+	 * Sets up global event listeners
 	 * @private
 	 */
 	_setupEventListeners() {
-		// Écouteur pour le redimensionnement de la fenêtre
+		// Listener for window resize
 		window.addEventListener("resize", this._updateScaling.bind(this));
 
-		// Écouteur pour le chargement de l'image
+		// Listener for image load
 		if (!this.imageElement.complete) {
 			this.imageElement.addEventListener(
 				"load",
@@ -394,13 +395,13 @@ class VisualImageTool {
 			);
 		}
 
-		// Écouteurs pour les interactions de souris
+		// Listeners for mouse interactions
 		document.addEventListener("mouseup", this._handleMouseUp.bind(this));
 		document.addEventListener("mousemove", this._handleMouseMove.bind(this));
 	}
 
 	/**
-	 * Gère l'événement mouseup global
+	 * Handles global mouseup event
 	 * @private
 	 */
 	_handleMouseUp() {
@@ -420,75 +421,75 @@ class VisualImageTool {
 	}
 
 	/**
-	 * Gère l'événement mousemove global
+	 * Handles global mousemove event
 	 * @private
-	 * @param {MouseEvent} e - Événement mousemove
+	 * @param {MouseEvent} e - Mousemove event
 	 */
 	_handleMouseMove(e) {
-		// Gestion du déplacement du point focal
+		// Handle focus point dragging
 		if (this.interaction.focusDragging && this.state.focusMarker) {
 			this._handleFocusMarkerDrag(e);
 		}
 
-		// Gestion du déplacement de la zone de recadrage
+		// Handle crop zone dragging
 		if (this.interaction.cropDragging) {
 			this._handleCropOverlayDrag(e);
 		}
 
-		// Gestion du redimensionnement de la zone de recadrage
+		// Handle crop zone resizing
 		if (this.interaction.cropResizing) {
 			this._handleCropOverlayResize(e);
 		}
 	}
 
 	/**
-	 * Gère le déplacement du marqueur de point focal
+	 * Handles focus point marker drag
 	 * @private
-	 * @param {MouseEvent} e - Événement mousemove
+	 * @param {MouseEvent} e - Mousemove event
 	 */
 	_handleFocusMarkerDrag(e) {
 		const imageRect = this.imageElement.getBoundingClientRect();
 
-		// Calculer la position cible relative à l'image
+		// Calculate target position relative to the image
 		const targetScaledX =
 			e.clientX - imageRect.left - this.interaction.focusDragOffsetX;
 		const targetScaledY =
 			e.clientY - imageRect.top - this.interaction.focusDragOffsetY;
 
-		// Convertir en coordonnées originales
+		// Convert to original coordinates
 		const original = this._toOriginalCoords(targetScaledX, targetScaledY);
 
-		// Mettre à jour le point focal
+		// Update focus point
 		this.setFocusPoint(original.x, original.y);
 	}
 
 	/**
-	 * Gère le déplacement de l'overlay de recadrage
+	 * Handles crop overlay drag
 	 * @private
-	 * @param {MouseEvent} e - Événement mousemove
+	 * @param {MouseEvent} e - Mousemove event
 	 */
 	_handleCropOverlayDrag(e) {
 		const deltaX = e.clientX - this.interaction.startMouseX;
 		const deltaY = e.clientY - this.interaction.startMouseY;
 
-		// Calculer la nouvelle position en pixels d'affichage
+		// Calculate new position in display pixels
 		const newX = this.interaction.startX + deltaX;
 		const newY = this.interaction.startY + deltaY;
 
-		// Convertir en coordonnées originales
+		// Convert to original coordinates
 		const original = this._toOriginalCoords(newX, newY);
 
-		// Obtenir les dimensions actuelles en coordonnées originales
+		// Get current dimensions in original coordinates
 		const { width, height } = this.state.cropZone;
 
-		// Mettre à jour la zone de recadrage
+		// Update crop zone
 		this.setCropZone(original.x, original.y, width, height);
 	}
 
 	/**
-	 * Gère le redimensionnement de l'overlay de recadrage
+	 * Handles crop overlay resize
 	 * @private
-	 * @param {MouseEvent} e - Événement mousemove
+	 * @param {MouseEvent} e - Mousemove event
 	 */
 	_handleCropOverlayResize(e) {
 		if (!this.interaction.activeHandle) return;
@@ -501,7 +502,7 @@ class VisualImageTool {
 		let newWidth = this.interaction.startWidth;
 		let newHeight = this.interaction.startHeight;
 
-		// Ajuster en fonction de la poignée active
+		// Adjust based on active handle
 		if (this.interaction.activeHandle.includes("t")) {
 			// Top
 			newY = this.interaction.startY + deltaY;
@@ -521,7 +522,7 @@ class VisualImageTool {
 			newWidth = this.interaction.startWidth + deltaX;
 		}
 
-		// Empêcher les dimensions négatives
+		// Prevent negative dimensions
 		if (newWidth < 10) {
 			if (this.interaction.activeHandle.includes("l")) {
 				newX = this.interaction.startX + this.interaction.startWidth - 10;
@@ -535,18 +536,18 @@ class VisualImageTool {
 			newHeight = 10;
 		}
 
-		// Convertir les coordonnées d'affichage en coordonnées originales
+		// Convert display coordinates to original coordinates
 		const originalX = newX / this.state.scaleX;
 		const originalY = newY / this.state.scaleY;
 		const originalWidth = newWidth / this.state.scaleX;
 		const originalHeight = newHeight / this.state.scaleY;
 
-		// Mettre à jour la zone de recadrage
+		// Update crop zone
 		this.setCropZone(originalX, originalY, originalWidth, originalHeight);
 	}
 
 	/**
-	 * Met à jour la position du marqueur de point focal
+	 * Updates the focus point marker position
 	 * @private
 	 */
 	_updateFocusMarkerPosition() {
@@ -554,11 +555,11 @@ class VisualImageTool {
 
 		const { x, y } = this.state.focusPoint;
 
-		// Limiter les coordonnées aux dimensions de l'image
+		// Clamp coordinates to image dimensions
 		const clampedX = Math.max(0, Math.min(x, this.state.originalWidth));
 		const clampedY = Math.max(0, Math.min(y, this.state.originalHeight));
 
-		// Mettre à jour l'état si les coordonnées ont été limitées
+		// Update state if coordinates were clamped
 		if (x !== clampedX || y !== clampedY) {
 			this.state.focusPoint = { x: clampedX, y: clampedY };
 		}
@@ -583,7 +584,7 @@ class VisualImageTool {
 			);
 		}
 
-		// Ajuster pour centrer le marqueur
+		// Adjust to center the marker
 		// Adjust for container padding (use unique variable names)
 		let focusPaddingLeft = 0;
 		let focusPaddingTop = 0;
@@ -611,7 +612,7 @@ class VisualImageTool {
 	}
 
 	/**
-	 * Met à jour la position et les dimensions de l'overlay de recadrage
+	 * Updates the crop overlay position and dimensions
 	 * @private
 	 */
 	_updateCropOverlayPosition() {
@@ -619,7 +620,7 @@ class VisualImageTool {
 
 		const { x, y, width, height } = this.state.cropZone;
 
-		// Limiter aux dimensions de l'image
+		// Clamp to image dimensions
 		const clampedX = Math.max(0, Math.min(x, this.state.originalWidth - width));
 		const clampedY = Math.max(
 			0,
@@ -634,7 +635,7 @@ class VisualImageTool {
 			Math.min(height, this.state.originalHeight - clampedY),
 		);
 
-		// Mettre à jour l'état si les valeurs ont été limitées
+		// Update state if values were clamped
 		if (
 			x !== clampedX ||
 			y !== clampedY ||
@@ -649,7 +650,7 @@ class VisualImageTool {
 			};
 		}
 
-		// Convertir en coordonnées d'affichage
+		// Convert to display coordinates
 		const scaled = this._toScaledCoords(clampedX, clampedY);
 		const scaledWidth = clampedWidth * this.state.scaleX;
 		const scaledHeight = clampedHeight * this.state.scaleY;
@@ -672,7 +673,7 @@ class VisualImageTool {
 			);
 		}
 
-		// Mettre à jour l'overlay
+		// Update overlay
 		// Adjust for container padding (use unique variable names)
 		let cropPaddingLeft = 0;
 		let cropPaddingTop = 0;
@@ -698,10 +699,11 @@ class VisualImageTool {
 	}
 
 	/**
-	 * Active ou désactive le point focal
+	 * Enables or disables the focus point.
+	 * If the focus point is at its initial state `{x:0, y:0}` (top-left corner), it will be moved to the center of the image when this method is called with `active = true` for the first time.
 	 * @public
-	 * @param {boolean} active - État d'activation
-	 * @returns {ImageTool} Instance pour chaînage
+	 * @param {boolean} active - Activation state
+	 * @returns {VisualImageTool} Instance for chaining
 	 */
 	toggleFocusPoint(active) {
 		if (!this.options.focusPoint.enabled) return this;
@@ -709,12 +711,12 @@ class VisualImageTool {
 		const isActive = active === undefined ? !this.state.focusActive : active;
 
 		if (isActive && !this.state.focusActive) {
-			// Activer le point focal
+			// Enable focus point
 			if (!this.state.focusMarker) {
 				this._createFocusMarker();
 			}
 
-			// Positionner au centre de l'image par défaut si pas déjà défini
+			// Position at image center by default if not already set
 			if (this.state.focusPoint.x === 0 && this.state.focusPoint.y === 0) {
 				this.state.focusPoint = {
 					x: this.state.originalWidth / 2,
@@ -726,24 +728,24 @@ class VisualImageTool {
 			this.state.focusMarker.style.display = "block";
 			this.state.focusActive = true;
 		} else if (!isActive && this.state.focusActive) {
-			// Désactiver le point focal
+			// Disable focus point
 			if (this.state.focusMarker) {
 				this.state.focusMarker.style.display = "none";
 			}
 			this.state.focusActive = false;
 		}
 
-		// Notifier le changement
+		// Notify change
 		this._notifyChange();
 
 		return this;
 	}
 
 	/**
-	 * Active ou désactive la zone de recadrage
+	 * Enables or disables the crop zone
 	 * @public
-	 * @param {boolean} active - État d'activation
-	 * @returns {ImageTool} Instance pour chaînage
+	 * @param {boolean} active - Activation state
+	 * @returns {VisualImageTool} Instance for chaining
 	 */
 	toggleCropZone(active) {
 		if (!this.options.cropZone.enabled) return this;
@@ -751,12 +753,12 @@ class VisualImageTool {
 		const isActive = active === undefined ? !this.state.cropActive : active;
 
 		if (isActive && !this.state.cropActive) {
-			// Activer la zone de recadrage
+			// Enable crop zone
 			if (!this.state.cropOverlay) {
 				this._createCropOverlay();
 			}
 
-			// Définir une zone par défaut si pas déjà définie
+			// Define a default zone if not already set
 			if (this.state.cropZone.width === 0 || this.state.cropZone.height === 0) {
 				const defaultWidth = this.state.originalWidth / 2;
 				const defaultHeight = this.state.originalHeight / 2;
@@ -775,28 +777,28 @@ class VisualImageTool {
 			this.state.cropOverlay.style.display = "block";
 			this.state.cropActive = true;
 		} else if (!isActive && this.state.cropActive) {
-			// Désactiver la zone de recadrage
+			// Disable crop zone
 			if (this.state.cropOverlay) {
 				this.state.cropOverlay.style.display = "none";
 			}
 			this.state.cropActive = false;
 		}
 
-		// Notifier le changement
+		// Notify change
 		this._notifyChange();
 
 		return this;
 	}
 
 	/**
-	 * Définit la position du point focal
+	 * Sets the focus point position
 	 * @public
-	 * @param {number} x - Coordonnée X en pixels originaux
-	 * @param {number} y - Coordonnée Y en pixels originaux
-	 * @returns {ImageTool} Instance pour chaînage
+	 * @param {number} x - X-coordinate in original pixels
+	 * @param {number} y - Y-coordinate in original pixels
+	 * @returns {VisualImageTool} Instance for chaining
 	 */
 	setFocusPoint(x, y) {
-		// Limiter les coordonnées aux dimensions de l'image
+		// Clamp coordinates to image dimensions
 		const clampedX = Math.max(0, Math.min(x, this.state.originalWidth));
 		const clampedY = Math.max(0, Math.min(y, this.state.originalHeight));
 
@@ -806,23 +808,23 @@ class VisualImageTool {
 			this._updateFocusMarkerPosition();
 		}
 
-		// Notifier le changement
+		// Notify change
 		this._notifyChange();
 
 		return this;
 	}
 
 	/**
-	 * Définit la position et les dimensions de la zone de recadrage
+	 * Sets the crop zone position and dimensions
 	 * @public
-	 * @param {number} x - Coordonnée X en pixels originaux
-	 * @param {number} y - Coordonnée Y en pixels originaux
-	 * @param {number} width - Largeur en pixels originaux
-	 * @param {number} height - Hauteur en pixels originaux
-	 * @returns {ImageTool} Instance pour chaînage
+	 * @param {number} x - X-coordinate in original pixels
+	 * @param {number} y - Y-coordinate in original pixels
+	 * @param {number} width - Width in original pixels
+	 * @param {number} height - Height in original pixels
+	 * @returns {VisualImageTool} Instance for chaining
 	 */
 	setCropZone(x, y, width, height) {
-		// Limiter aux dimensions de l'image
+		// Clamp to image dimensions
 		const clampedX = Math.max(0, Math.min(x, this.state.originalWidth - width));
 		const clampedY = Math.max(
 			0,
@@ -848,32 +850,32 @@ class VisualImageTool {
 			this._updateCropOverlayPosition();
 		}
 
-		// Notifier le changement
+		// Notify change
 		this._notifyChange();
 
 		return this;
 	}
 
 	/**
-	 * Obtient la position actuelle du point focal
+	 * Gets the current focus point position
 	 * @public
-	 * @returns {Object} Coordonnées du point focal {x, y}
+	 * @returns {Object} Focus point coordinates {x, y}
 	 */
 	getFocusPoint() {
 		return { ...this.state.focusPoint };
 	}
 
 	/**
-	 * Obtient la position et les dimensions actuelles de la zone de recadrage
+	 * Gets the current crop zone position and dimensions
 	 * @public
-	 * @returns {Object} Zone de recadrage {x, y, width, height}
+	 * @returns {Object} Crop zone {x, y, width, height}
 	 */
 	getCropZone() {
 		return { ...this.state.cropZone };
 	}
 
 	/**
-	 * Obtient les dimensions originales de l'image
+	 * Gets the original image dimensions
 	 * @public
 	 * @returns {Object} Dimensions {width, height}
 	 */
@@ -885,7 +887,7 @@ class VisualImageTool {
 	}
 
 	/**
-	 * Notifie les changements via le callback
+	 * Notifies changes via callback
 	 * @private
 	 */
 	_notifyChange() {
@@ -900,11 +902,11 @@ class VisualImageTool {
 	}
 
 	/**
-	 * Détruit l'instance et nettoie les ressources
+	 * Destroys the instance and cleans up resources
 	 * @public
 	 */
 	destroy() {
-		// Supprimer les éléments DOM
+		// Remove DOM elements
 		if (this.state.focusMarker?.parentNode) {
 			this.state.focusMarker.parentNode.removeChild(this.state.focusMarker);
 		}
@@ -913,12 +915,12 @@ class VisualImageTool {
 			this.state.cropOverlay.parentNode.removeChild(this.state.cropOverlay);
 		}
 
-		// Supprimer les écouteurs d'événements
+		// Remove event listeners
 		window.removeEventListener("resize", this._updateScaling.bind(this));
 		document.removeEventListener("mouseup", this._handleMouseUp.bind(this));
 		document.removeEventListener("mousemove", this._handleMouseMove.bind(this));
 
-		// Réinitialiser l'état
+		// Reset state
 		this.state = null;
 		this.interaction = null;
 		this.options = null;
@@ -926,5 +928,5 @@ class VisualImageTool {
 	}
 }
 
-// Exporter la classe
+// Export class
 export default VisualImageTool;
