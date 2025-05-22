@@ -708,7 +708,7 @@ class VisualImageTool {
 
 		const isActive = active === undefined ? !this.state.focusActive : active;
 
-		if (active && !this.state.focusActive) {
+		if (isActive && !this.state.focusActive) {
 			// Activer le point focal
 			if (!this.state.focusMarker) {
 				this._createFocusMarker();
@@ -725,7 +725,7 @@ class VisualImageTool {
 			this._updateFocusMarkerPosition();
 			this.state.focusMarker.style.display = "block";
 			this.state.focusActive = true;
-		} else if (!active && this.state.focusActive) {
+		} else if (!isActive && this.state.focusActive) {
 			// Désactiver le point focal
 			if (this.state.focusMarker) {
 				this.state.focusMarker.style.display = "none";
@@ -750,7 +750,7 @@ class VisualImageTool {
 
 		const isActive = active === undefined ? !this.state.cropActive : active;
 
-		if (active && !this.state.cropActive) {
+		if (isActive && !this.state.cropActive) {
 			// Activer la zone de recadrage
 			if (!this.state.cropOverlay) {
 				this._createCropOverlay();
@@ -774,7 +774,7 @@ class VisualImageTool {
 			this._updateCropOverlayPosition();
 			this.state.cropOverlay.style.display = "block";
 			this.state.cropActive = true;
-		} else if (!active && this.state.cropActive) {
+		} else if (!isActive && this.state.cropActive) {
 			// Désactiver la zone de recadrage
 			if (this.state.cropOverlay) {
 				this.state.cropOverlay.style.display = "none";
