@@ -97,6 +97,9 @@ class VisualImageTool {
 			startMouseY: 0,
 		};
 
+		this.spinnerElement = null;
+		this.initialLoadComplete = false;
+
 		// Initialize the tool
 		this._init();
 	}
@@ -133,6 +136,37 @@ class VisualImageTool {
 		// Ensure the parent is positioned
 		if (this.imageElement.parentNode) {
 			this.imageElement.parentNode.style.position = "relative";
+
+			// Create spinner element
+			this.spinnerElement = document.createElement("div");
+			this.spinnerElement.style.position = "absolute";
+			this.spinnerElement.style.top = "50%";
+			this.spinnerElement.style.left = "50%";
+			this.spinnerElement.style.transform = "translate(-50%, -50%)";
+			this.spinnerElement.style.width = "40px";
+			this.spinnerElement.style.height = "40px";
+			this.spinnerElement.style.border = "4px solid #f3f3f3"; // Light grey
+			this.spinnerElement.style.borderTop = "4px solid #3498db"; // Blue
+			this.spinnerElement.style.borderRadius = "50%";
+			this.spinnerElement.style.boxSizing = "border-box";
+			this.spinnerElement.style.zIndex = "1000"; // Ensure it's above other elements
+			this.spinnerElement.style.display = "block"; // Initially visible
+			this.spinnerElement.style.animation = "spin 1s linear infinite";
+
+			this.imageElement.parentNode.appendChild(this.spinnerElement);
+
+			// Add CSS keyframes for spinner animation
+			if (!document.getElementById("visual-image-tool-spinner-styles")) {
+				const styleElement = document.createElement("style");
+				styleElement.id = "visual-image-tool-spinner-styles";
+				styleElement.innerHTML = `
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+        `;
+				document.head.appendChild(styleElement);
+			}
 		}
 	}
 
@@ -143,10 +177,27 @@ class VisualImageTool {
 	_updateScaling() {
 		this.state.originalWidth = this.imageElement.naturalWidth || 1;
 		this.state.originalHeight = this.imageElement.naturalHeight || 1;
+
+		// Hide spinner once image is loaded and dimensions are available
+		if (
+			!this.initialLoadComplete &&
+			this.spinnerElement &&
+			this.state.originalWidth > 1 &&
+			this.state.originalHeight > 1
+		) {
+			this.spinnerElement.style.display = "none";
+			this.initialLoadComplete = true;
+		}
 		this.state.displayWidth = this.imageElement.offsetWidth;
 		this.state.displayHeight = this.imageElement.offsetHeight;
 		this.state.scaleX = this.state.displayWidth / this.state.originalWidth;
 		this.state.scaleY = this.state.displayHeight / this.state.originalHeight;
+
+		// Update spinner position during initial load if still visible
+		if (!this.initialLoadComplete && this.spinnerElement) {
+			this.spinnerElement.style.top = `${this.state.displayHeight / 2}px`;
+			this.spinnerElement.style.left = `${this.state.displayWidth / 2}px`;
+		}
 
 		// Reposition elements if active
 		if (this.state.focusActive) {
@@ -914,6 +965,11 @@ class VisualImageTool {
 		if (this.state.cropOverlay?.parentNode) {
 			this.state.cropOverlay.parentNode.removeChild(this.state.cropOverlay);
 		}
+
+		if (this.spinnerElement?.parentNode) {
+			this.spinnerElement.parentNode.removeChild(this.spinnerElement);
+		}
+		this.spinnerElement = null;
 
 		// Remove event listeners
 		window.removeEventListener("resize", this._updateScaling.bind(this));
