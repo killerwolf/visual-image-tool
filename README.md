@@ -299,6 +299,15 @@ This project uses a combination of tools for code formatting and linting to ensu
 
 These formatting checks are automatically enforced in the CI pipeline (see `.github/workflows/code-quality.yml`) to maintain code quality.
 
+## Running Tests
+
+This project uses [Vitest](https://vitest.dev/) for unit testing. To run the tests, use the following npm scripts:
+
+- `npm test`: Runs the tests once.
+- `npm run test:watch`: Runs the tests in watch mode, automatically re-running them when files change.
+
+Ensure you have installed the development dependencies by running `npm install` before executing the tests.
+
 ## License
 
 MIT
