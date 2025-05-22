@@ -904,6 +904,11 @@ class VisualImageTool {
 	 * @public
 	 */
 	destroy() {
+		// Si déjà détruit, ne rien faire
+		if (!this.state) {
+			return;
+		}
+
 		// Supprimer les éléments DOM
 		if (this.state.focusMarker?.parentNode) {
 			this.state.focusMarker.parentNode.removeChild(this.state.focusMarker);

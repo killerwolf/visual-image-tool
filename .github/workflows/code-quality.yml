@@ -1,4 +1,4 @@
-name: Code Quality & Tests
+name: Code Quality & Tests # Keeping this name as it accurately reflects both jobs
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  lint-and-format:
+  code-quality: # Renamed job
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -15,20 +15,18 @@ jobs:
         uses: biomejs/setup-biome@v2
         with:
           version: latest # Or a specific version
-      - name: Run Biome Lint
-        run: biome lint ./src
-      - name: Run Biome Format Check
-        run: biome format ./src
+      - name: Run Biome Check # Consolidated lint and format check
+        run: biome check ./src # This command checks both linting and formatting
 
   test:
     runs-on: ubuntu-latest
-    needs: lint-and-format # Ensures tests run after linting and formatting
+    needs: code-quality # Depends on the renamed job
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18' # Specify a Node.js version compatible with Vitest
+          node-version: '18'
       - name: Install dependencies
         run: npm ci
       - name: Run tests
