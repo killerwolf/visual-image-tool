@@ -81,6 +81,20 @@ class VisualImageTool {
 			scaleY: 1,
 		};
 
+		// Handlers are bound once here: addEventListener and removeEventListener
+		// must be handed the same function reference for removal to work.
+		this._boundUpdateScaling = this._updateScaling.bind(this);
+		this._boundHandleMouseUp = this._handleMouseUp.bind(this);
+		this._boundHandleMouseMove = this._handleMouseMove.bind(this);
+		this._boundFocusMarkerMouseDown =
+			this._handleFocusMarkerMouseDown.bind(this);
+		this._boundCropOverlayMouseDown =
+			this._handleCropOverlayMouseDown.bind(this);
+		this._boundCropHandleMouseDown = this._handleCropHandleMouseDown.bind(this);
+
+		// Resize handles, tracked so their listeners can be removed on destroy
+		this.cropHandles = [];
+
 		// Variables for tracking interactions
 		this.interaction = {
 			focusDragging: false,
@@ -211,10 +225,7 @@ class VisualImageTool {
 		this.state.focusMarker = marker;
 
 		// Add event listeners to the marker
-		marker.addEventListener(
-			"mousedown",
-			this._handleFocusMarkerMouseDown.bind(this),
-		);
+		marker.addEventListener("mousedown", this._boundFocusMarkerMouseDown);
 	}
 
 	/**
@@ -315,18 +326,14 @@ class VisualImageTool {
 			}
 
 			// Add event listener
-			handle.addEventListener("mousedown", (e) =>
-				this._handleCropHandleMouseDown(e, handleType),
-			);
+			handle.addEventListener("mousedown", this._boundCropHandleMouseDown);
 
 			overlay.appendChild(handle);
+			this.cropHandles.push(handle);
 		}
 
 		// Add listener for overlay dragging
-		overlay.addEventListener(
-			"mousedown",
-			this._handleCropOverlayMouseDown.bind(this),
-		);
+		overlay.addEventListener("mousedown", this._boundCropOverlayMouseDown);
 
 		this.imageElement.parentNode.appendChild(overlay);
 		this.state.cropOverlay = overlay;
@@ -336,9 +343,10 @@ class VisualImageTool {
 	 * Handles mousedown event on a resize handle
 	 * @private
 	 * @param {MouseEvent} e - Mousedown event
-	 * @param {string} handleType - Handle type
 	 */
-	_handleCropHandleMouseDown(e, handleType) {
+	_handleCropHandleMouseDown(e) {
+		const handleType = e.currentTarget.dataset.handle;
+
 		this.interaction.cropResizing = true;
 		this.interaction.activeHandle = handleType;
 
@@ -385,19 +393,16 @@ class VisualImageTool {
 	 */
 	_setupEventListeners() {
 		// Listener for window resize
-		window.addEventListener("resize", this._updateScaling.bind(this));
+		window.addEventListener("resize", this._boundUpdateScaling);
 
 		// Listener for image load
 		if (!this.imageElement.complete) {
-			this.imageElement.addEventListener(
-				"load",
-				this._updateScaling.bind(this),
-			);
+			this.imageElement.addEventListener("load", this._boundUpdateScaling);
 		}
 
 		// Listeners for mouse interactions
-		document.addEventListener("mouseup", this._handleMouseUp.bind(this));
-		document.addEventListener("mousemove", this._handleMouseMove.bind(this));
+		document.addEventListener("mouseup", this._boundHandleMouseUp);
+		document.addEventListener("mousemove", this._boundHandleMouseMove);
 	}
 
 	/**
@@ -906,6 +911,31 @@ class VisualImageTool {
 	 * @public
 	 */
 	destroy() {
+		// Already destroyed
+		if (!this.state) {
+			return;
+		}
+
+		// Remove element listeners
+		if (this.state.focusMarker) {
+			this.state.focusMarker.removeEventListener(
+				"mousedown",
+				this._boundFocusMarkerMouseDown,
+			);
+		}
+
+		if (this.state.cropOverlay) {
+			this.state.cropOverlay.removeEventListener(
+				"mousedown",
+				this._boundCropOverlayMouseDown,
+			);
+		}
+
+		for (const handle of this.cropHandles) {
+			handle.removeEventListener("mousedown", this._boundCropHandleMouseDown);
+		}
+		this.cropHandles = [];
+
 		// Remove DOM elements
 		if (this.state.focusMarker?.parentNode) {
 			this.state.focusMarker.parentNode.removeChild(this.state.focusMarker);
@@ -915,10 +945,22 @@ class VisualImageTool {
 			this.state.cropOverlay.parentNode.removeChild(this.state.cropOverlay);
 		}
 
-		// Remove event listeners
-		window.removeEventListener("resize", this._updateScaling.bind(this));
-		document.removeEventListener("mouseup", this._handleMouseUp.bind(this));
-		document.removeEventListener("mousemove", this._handleMouseMove.bind(this));
+		// Remove global listeners
+		window.removeEventListener("resize", this._boundUpdateScaling);
+		document.removeEventListener("mouseup", this._boundHandleMouseUp);
+		document.removeEventListener("mousemove", this._boundHandleMouseMove);
+
+		if (this.imageElement) {
+			this.imageElement.removeEventListener("load", this._boundUpdateScaling);
+		}
+
+		// Release bound handlers
+		this._boundUpdateScaling = null;
+		this._boundHandleMouseUp = null;
+		this._boundHandleMouseMove = null;
+		this._boundFocusMarkerMouseDown = null;
+		this._boundCropOverlayMouseDown = null;
+		this._boundCropHandleMouseDown = null;
 
 		// Reset state
 		this.state = null;

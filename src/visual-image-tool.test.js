@@ -85,4 +85,66 @@ describe("VisualImageTool", () => {
 		// Already destroyed; stop afterEach from tearing it down a second time.
 		instance = null;
 	});
+
+	it("should detach global listeners on destroy", () => {
+		// JSDOM swallows exceptions thrown inside a listener and reports them as
+		// an error event, so dispatching alone would look like a pass. Capture
+		// them instead.
+		const errors = [];
+		const onError = (event) => {
+			event.preventDefault();
+			errors.push(event.error ?? event.message);
+		};
+		window.addEventListener("error", onError);
+
+		try {
+			instance.destroy();
+			instance = null;
+
+			// The handlers dereference this.state, which destroy() nulls out. A
+			// leaked listener therefore blows up on the next global event.
+			window.dispatchEvent(new Event("resize"));
+			document.dispatchEvent(new MouseEvent("mousemove", { bubbles: true }));
+			document.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
+		} finally {
+			window.removeEventListener("error", onError);
+		}
+
+		expect(errors).toEqual([]);
+	});
+
+	it("should detach overlay listeners on destroy", () => {
+		instance.toggleFocusPoint(true);
+		instance.toggleCropZone(true);
+		const focusMarker = instance.state.focusMarker;
+		const cropHandle = instance.cropHandles[0];
+
+		expect(cropHandle).toBeDefined();
+
+		instance.destroy();
+		instance = null;
+
+		expect(() =>
+			focusMarker.dispatchEvent(new MouseEvent("mousedown", { bubbles: true })),
+		).not.toThrow();
+		expect(() =>
+			cropHandle.dispatchEvent(new MouseEvent("mousedown", { bubbles: true })),
+		).not.toThrow();
+	});
+
+	it("should be safe to destroy twice", () => {
+		instance.destroy();
+		expect(() => instance.destroy()).not.toThrow();
+		instance = null;
+	});
+
+	it("should resize the crop zone from the handle that was grabbed", () => {
+		instance.toggleCropZone(true);
+		const handle = instance.cropHandles.find((h) => h.dataset.handle === "br");
+
+		handle.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+
+		expect(instance.interaction.cropResizing).toBe(true);
+		expect(instance.interaction.activeHandle).toBe("br");
+	});
 });
