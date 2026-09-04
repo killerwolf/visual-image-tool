@@ -27,7 +27,7 @@ export default [
 	{
 		input: "src/index.js",
 		output: {
-			file: "dist/visual-image-tool.js",
+			file: "dist/visual-image-tool.cjs",
 			format: "cjs",
 			sourcemap: true,
 		},

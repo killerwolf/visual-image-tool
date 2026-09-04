@@ -52,7 +52,7 @@ Le projet utilise Rollup pour générer trois formats de distribution :
 
 1. **ESM** (`dist/visual-image-tool.esm.js`) : Modules ES pour les bundlers modernes
 2. **UMD** (`dist/visual-image-tool.umd.js`) : Format universel minifié pour l'inclusion directe dans les navigateurs
-3. **CommonJS** (`dist/visual-image-tool.js`) : Format pour Node.js
+3. **CommonJS** (`dist/visual-image-tool.cjs`) : Format pour Node.js
 
 Pour lancer le build :
 

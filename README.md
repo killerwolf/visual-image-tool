@@ -23,13 +23,13 @@ npm install @h4md1/visual-image-tool
 
 ```javascript
 // ES modules import (recommended)
-import VisualImageTool from "@h4md1/visual-image-tool";
+import { VisualImageTool } from "@h4md1/visual-image-tool";
 
 // OR CommonJS import
-const VisualImageTool = require("@h4md1/visual-image-tool");
+const { VisualImageTool } = require("@h4md1/visual-image-tool");
 
 // OR direct usage via script tag (UMD)
-// <script src="node_modules/image-tool/dist/image-tool.umd.js"></script>
+// <script src="node_modules/@h4md1/visual-image-tool/dist/visual-image-tool.umd.js"></script>
 ```
 
 ### 2. Initialization
@@ -188,7 +188,7 @@ The tool uses the `onChange` callback to notify about changes. This callback rec
 
 ```jsx
 import React, { useEffect, useRef } from "react";
-import VisualImageTool from "@h4md1/visual-image-tool";
+import { VisualImageTool } from "@h4md1/visual-image-tool";
 
 function ImageEditor() {
   const imageRef = useRef(null);
@@ -235,7 +235,7 @@ function ImageEditor() {
 </template>
 
 <script>
-import VisualImageTool from "@h4md1/visual-image-tool";
+import { VisualImageTool } from "@h4md1/visual-image-tool";
 
 export default {
   data() {

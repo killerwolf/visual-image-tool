@@ -285,13 +285,13 @@
         <li>
           <strong>Import</strong>
           <pre><code class="language-js">// ES modules (recommended)
-import VisualImageTool from '@h4md1/visual-image-tool';
+import { VisualImageTool } from '@h4md1/visual-image-tool';
 
 // CommonJS
-const VisualImageTool = require('@h4md1/visual-image-tool');
+const { VisualImageTool } = require('@h4md1/visual-image-tool');
 
 // UMD (script tag)
-&lt;script src="node_modules/image-tool/dist/image-tool.umd.js "&gt;&lt;/script&gt;
+&lt;script src="node_modules/@h4md1/visual-image-tool/dist/visual-image-tool.umd.js "&gt;&lt;/script&gt;
 </code></pre>
         </li>
         <li>
@@ -465,7 +465,7 @@ onChange: function(data) {
       <h3>React</h3>
       <pre><code class="language-js">&lt;!-- React integration example --&gt;
 import React, &#123; useEffect, useRef &#125; from 'react';
-import VisualImageTool from '@h4md1/visual-image-tool';
+import { VisualImageTool } from '@h4md1/visual-image-tool';
 
 function ImageEditor() &#123;
   const imageRef = useRef(null);
@@ -510,7 +510,7 @@ function ImageEditor() &#123;
 &lt;/template&gt;
 
 &lt;script&gt;
-import VisualImageTool from '@h4md1/visual-image-tool';
+import { VisualImageTool } from '@h4md1/visual-image-tool';
 
 export default {
   data() {
