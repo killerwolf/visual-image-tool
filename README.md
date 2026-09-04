@@ -301,21 +301,19 @@ These formatting checks are automatically enforced in the CI pipeline (see `.git
 
 ## Tests
 
-Pour lancer la suite de tests unitaires :
+This project uses [Vitest](https://vitest.dev/) and [JSDOM](https://github.com/jsdom/jsdom) for unit tests. They cover the main public API.
 
 ```bash
 npm test
 ```
 
-Pour lancer les tests en mode interactif (watch) :
+Watch mode:
 
 ```bash
 npm run test:watch
 ```
 
-Les tests sont basés sur [Vitest](https://vitest.dev/) et [JSDOM](https://github.com/jsdom/jsdom). Ils couvrent les fonctionnalités principales de l’API publique.
-
-Les tests sont également exécutés automatiquement via GitHub Actions à chaque push ou pull request sur la branche `main`.
+Tests also run in GitHub Actions on pushes and pull requests to `main`.
 
 ## License
 

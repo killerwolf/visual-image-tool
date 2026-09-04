@@ -5,10 +5,7 @@
 	"main": "dist/image-tool.js",
 	"module": "dist/image-tool.esm.js",
 	"browser": "dist/image-tool.umd.js",
-	"files": [
-		"dist",
-		"src"
-	],
+	"files": ["dist", "src"],
 	"scripts": {
 		"build": "rollup -c",
 		"dev": "rollup -c -w",
