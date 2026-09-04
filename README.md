@@ -299,6 +299,22 @@ This project uses a combination of tools for code formatting and linting to ensu
 
 These formatting checks are automatically enforced in the CI pipeline (see `.github/workflows/code-quality.yml`) to maintain code quality.
 
+## Tests
+
+This project uses [Vitest](https://vitest.dev/) and [JSDOM](https://github.com/jsdom/jsdom) for unit tests. They cover the main public API.
+
+```bash
+npm test
+```
+
+Watch mode:
+
+```bash
+npm run test:watch
+```
+
+Tests also run in GitHub Actions on pushes and pull requests to `main`.
+
 ## License
 
 MIT
