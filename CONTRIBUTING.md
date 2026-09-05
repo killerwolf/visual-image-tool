@@ -39,6 +39,7 @@ visual-image-tool/
 ├── vitest.config.js                # Test config
 ├── rollup.config.js                # Build config
 ├── package.json
+├── CHANGELOG.md                    # Release history
 ├── CONTRIBUTING.md                 # This guide
 └── README.md                       # User documentation
 ```
@@ -121,7 +122,9 @@ Authentication uses [npm trusted publishing](https://docs.npmjs.com/trusted-publ
 ### Releasing
 
 1. Make sure `main` is green and holds everything you want to ship.
-2. Tag the release commit. Tags are unprefixed and annotated, matching the existing history (`0.2.3`, not `v0.2.3`):
+1. Move the `## [Unreleased]` entries in `CHANGELOG.md` under the new version
+   heading, and update the comparison links at the bottom of the file.
+1. Tag the release commit. Tags are unprefixed and annotated, matching the existing history (`0.2.3`, not `v0.2.3`):
 
 ```bash
 git tag -a 0.2.4 -m "" --cleanup=verbatim
@@ -133,6 +136,9 @@ git push origin 0.2.4
 ```bash
 npm view @h4md1/visual-image-tool version
 ```
+
+After publishing, the workflow creates a GitHub Release for the tag with
+generated notes, so a tag never lands without a record of what changed.
 
 The workflow runs `npm version --no-git-tag-version --allow-same-version <tag>`, so the tag name is what determines the published version. The `version` field in `package.json` is informational; keep it in step with the latest release to avoid confusion. `--allow-same-version` is what makes that safe — without it npm fails with `Version not changed` when the field already matches the tag.
 
