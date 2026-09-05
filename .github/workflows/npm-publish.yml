@@ -46,7 +46,7 @@ jobs:
 
       - run: npm run build
 
-      - run: npm version --no-git-tag-version ${{ github.ref_name }}
+      - run: npm version --no-git-tag-version --allow-same-version ${{ github.ref_name }}
 
       # No NODE_AUTH_TOKEN: credentials come from the OIDC exchange above.
       # Provenance is attested automatically for a public repo.

@@ -120,7 +120,7 @@ git push origin 0.2.4
 npm view @h4md1/visual-image-tool version
 ```
 
-The workflow runs `npm version --no-git-tag-version <tag>`, so the tag name is what determines the published version. The `version` field in `package.json` is informational; keep it in step with the latest release to avoid confusion.
+The workflow runs `npm version --no-git-tag-version --allow-same-version <tag>`, so the tag name is what determines the published version. The `version` field in `package.json` is informational; keep it in step with the latest release to avoid confusion. `--allow-same-version` is what makes that safe — without it npm fails with `Version not changed` when the field already matches the tag.
 
 Follow [SemVer](https://semver.org/) when choosing a tag:
 
