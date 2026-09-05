@@ -1,7 +1,7 @@
 {
 	"name": "@h4md1/visual-image-tool",
-	"version": "1.0.0",
-	"description": "Un outil léger en JavaScript vanilla pour définir des points focaux et zones de recadrage sur des images",
+	"version": "0.2.4",
+	"description": "A lightweight vanilla JavaScript tool to define focus points and crop zones on images",
 	"main": "dist/visual-image-tool.cjs",
 	"module": "dist/visual-image-tool.esm.js",
 	"browser": "dist/visual-image-tool.umd.js",
