@@ -285,17 +285,24 @@ onBeforeUnmount(() => {
 
 ## Demos
 
-The `demo/` folder contains the following examples:
+Run them with `npm run demo`, or browse the published copy at
+[killerwolf.github.io/visual-image-tool](https://killerwolf.github.io/visual-image-tool/).
 
-- `basic-usage.html`: Basic usage example
-- `custom-config.html`: Custom configuration demo with live controls
-- `demo-esm.html`: ESM (ECMAScript Module) integration demo
-- `demo-umd.html`: UMD (Universal Module Definition) integration demo
-- `index2.html`: Alternate or experimental demo page
-- `preact-importmap-demo.html`: Preact integration using importmap
-- `react-integration.jsx`: React integration example
-- `vue-importmap-demo.html`: Vue integration using importmap
-- `vue-integration.js`: Vue integration script
+| Demo                         | What it shows                                        |
+| ---------------------------- | ---------------------------------------------------- |
+| `index.html`                 | Landing page — live tool plus the full API reference |
+| `basic-usage.html`           | Smallest working setup                               |
+| `custom-config.html`         | Custom styling with live controls                    |
+| `demo-esm.html`              | Loading the ESM build                                |
+| `demo-umd.html`              | Loading the UMD build from a script tag              |
+| `preact-importmap-demo.html` | Preact integration, no build step                    |
+| `react-importmap-demo.html`  | React 18 integration, no build step                  |
+| `vue-importmap-demo.html`    | Vue 3 integration, no build step                     |
+| `index-local.html`           | Same as the landing page, against your local `dist/` |
+
+Every demo except `index-local.html` loads the published package from the
+jsDelivr CDN, so they exercise the released version. Use `index-local.html`
+to check changes you have not published yet — run `npm run build` first.
 
 ## Browser Compatibility
 
