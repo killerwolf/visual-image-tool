@@ -1,6 +1,6 @@
 # <img src="demo/android-chrome-192x192.png" alt="Visual Image Tool logo" width="48" height="48" style="vertical-align:middle; margin-right: 0.5em; border-radius: 8px;"> Visual Image Tool
 
-A lightweight vanilla JavaScript tool to define focus points and crop zones on images.
+Zero-dependency vanilla JS tool to pick focal points and crop zones on images. Returns pixel coordinates you can feed straight into your image pipeline.
 
 ## Features
 
