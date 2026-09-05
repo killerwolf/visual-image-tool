@@ -35,6 +35,7 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: "22"
+          cache: "npm"
 
       # Node 22 bundles npm 10.x; trusted publishing needs npm >= 11.5.1.
       - name: Upgrade npm for trusted publishing
@@ -43,6 +44,10 @@ jobs:
           npm --version
 
       - run: npm ci
+
+      # Code Quality Check only runs on push/PR to main, so a tag push is
+      # otherwise ungated. Run the suite here or a red commit publishes.
+      - run: npm test
 
       - run: npm run build
 

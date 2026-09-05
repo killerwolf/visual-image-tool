@@ -170,7 +170,7 @@ Gets the current position of the focus point.
 
 The focus point starts at `{x: 0, y: 0}`, and `getFocusPoint()` returns that
 until the feature is first enabled. The first `toggleFocusPoint(true)` moves a
-still-unset point to the centre of the image, so read it back after enabling
+still-unset point to the center of the image, so read it back after enabling
 the feature — or call `setFocusPoint(x, y)` yourself to place it explicitly.
 
 #### `getCropZone()`
