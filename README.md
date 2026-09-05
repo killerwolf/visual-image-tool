@@ -286,7 +286,7 @@ onBeforeUnmount(() => {
 ## Demos
 
 Run them with `npm run demo`, or browse the published copy at
-[killerwolf.github.io/visual-image-tool](https://killerwolf.github.io/visual-image-tool/).
+[h4md1.fr/visual-image-tool](https://h4md1.fr/visual-image-tool/).
 
 | Demo                         | What it shows                                        |
 | ---------------------------- | ---------------------------------------------------- |
