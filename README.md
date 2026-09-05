@@ -27,22 +27,37 @@ import { VisualImageTool } from "@h4md1/visual-image-tool";
 
 // OR CommonJS import
 const { VisualImageTool } = require("@h4md1/visual-image-tool");
-
-// OR direct usage via script tag (UMD)
-// <script src="node_modules/@h4md1/visual-image-tool/dist/visual-image-tool.umd.js"></script>
 ```
+
+Or load the UMD build directly with a script tag:
+
+```html
+<script src="node_modules/@h4md1/visual-image-tool/dist/visual-image-tool.umd.js"></script>
+```
+
+The UMD build exposes a global `VisualImageTool` object holding the named
+export, so the class is `VisualImageTool.VisualImageTool`. With an `import` or
+`require` you already have the class itself.
 
 ### 2. Initialization
 
 ```javascript
 // Create an instance with an image
-const imageTool = new VisualImageTool.VisualImageTool({
+const imageTool = new VisualImageTool({
   imageElement: document.getElementById("myImage"),
   debug: true, // Enable debug logs for overlay positioning (optional)
   onChange: (data) => {
     console.log("Focus point:", data.focusPoint);
     console.log("Crop zone:", data.cropZone);
   },
+});
+```
+
+Via the script tag above, the same call reads:
+
+```javascript
+const imageTool = new VisualImageTool.VisualImageTool({
+  imageElement: document.getElementById("myImage"),
 });
 ```
 
@@ -69,7 +84,7 @@ const cropZone = imageTool.getCropZone();
 ## Configuration Options
 
 ```javascript
-const imageTool = new VisualImageTool.VisualImageTool({
+const imageTool = new VisualImageTool({
   // Image element (required) - can be a CSS selector or a DOM element
   imageElement: "#myImage",
 
@@ -153,6 +168,11 @@ Gets the current position of the focus point.
 
 - Returns: An object `{x, y}` with coordinates in original pixels.
 
+The focus point starts at `{x: 0, y: 0}`, and `getFocusPoint()` returns that
+until the feature is first enabled. The first `toggleFocusPoint(true)` moves a
+still-unset point to the centre of the image, so read it back after enabling
+the feature — or call `setFocusPoint(x, y)` yourself to place it explicitly.
+
 #### `getCropZone()`
 
 Gets the current position and dimensions of the crop zone.
@@ -234,34 +254,32 @@ function ImageEditor() {
   </div>
 </template>
 
-<script>
+<script setup>
+import { onBeforeUnmount, onMounted, ref } from "vue";
 import { VisualImageTool } from "@h4md1/visual-image-tool";
 
-export default {
-  data() {
-    return {
-      imageTool: null,
-    };
-  },
-  mounted() {
-    this.imageTool = new VisualImageTool({
-      imageElement: this.$refs.editableImage,
-      onChange: (data) => {
-        console.log("Updated data:", data);
-      },
-    });
+const editableImage = ref(null);
+let imageTool = null;
 
-    // Enable features
-    this.imageTool.toggleFocusPoint(true);
-    this.imageTool.toggleCropZone(true);
-  },
-  beforeDestroy() {
-    if (this.imageTool) {
-      this.imageTool.destroy();
-      this.imageTool = null;
-    }
-  },
-};
+onMounted(() => {
+  imageTool = new VisualImageTool({
+    imageElement: editableImage.value,
+    onChange: (data) => {
+      console.log("Updated data:", data);
+    },
+  });
+
+  // Enable features
+  imageTool.toggleFocusPoint(true);
+  imageTool.toggleCropZone(true);
+});
+
+onBeforeUnmount(() => {
+  if (imageTool) {
+    imageTool.destroy();
+    imageTool = null;
+  }
+});
 </script>
 ```
 
@@ -295,7 +313,7 @@ This project uses a combination of tools for code formatting and linting to ensu
   - Fix: `npm run lint:fix` (`biome check --write .`)
 - **[Prettier](https://prettier.io/)**: Handles formatting for other file types like HTML, CSS, Markdown, etc.
   - Check: `npm run format:check` (`prettier --check --ignore-unknown .`)
-  - Fix: `npm run format:write` (`prettier --write --ignore-unknown .`)
+  - Fix: `npm run format:fix` (`prettier --write --ignore-unknown .`)
 
 These formatting checks are automatically enforced in the CI pipeline (see `.github/workflows/code-quality.yml`) to maintain code quality.
 
