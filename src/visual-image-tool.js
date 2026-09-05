@@ -165,16 +165,26 @@ class VisualImageTool {
 			this.spinnerElement.style.boxSizing = "border-box";
 			this.spinnerElement.style.zIndex = "1000"; // Ensure it's above other elements
 			this.spinnerElement.style.display = "block"; // Initially visible
-			this.spinnerElement.style.animation = "spin 1s linear infinite";
+			this.spinnerElement.style.animation =
+				"visual-image-tool-spin 1s linear infinite";
 
 			this.imageElement.parentNode.appendChild(this.spinnerElement);
 
-			// Add CSS keyframes for spinner animation
+			// Add CSS keyframes for spinner animation.
+			//
+			// The animation name is namespaced: keyframes are global to the
+			// document, so a bare name like `spin` would collide with one
+			// defined by the host page, and whichever stylesheet was injected
+			// last would silently win.
+			//
+			// This stylesheet is shared by every instance and deliberately
+			// outlives destroy(): removing it would break the animation for
+			// any instance still alive. The id guard keeps it to one element.
 			if (!document.getElementById("visual-image-tool-spinner-styles")) {
 				const styleElement = document.createElement("style");
 				styleElement.id = "visual-image-tool-spinner-styles";
 				styleElement.innerHTML = `
-@keyframes spin {
+@keyframes visual-image-tool-spin {
     0% { transform: translate(-50%, -50%) rotate(0deg); }
     100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
