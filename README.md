@@ -1,6 +1,16 @@
-# <img src="demo/android-chrome-192x192.png" alt="Visual Image Tool logo" width="48" height="48" style="vertical-align:middle; margin-right: 0.5em; border-radius: 8px;"> Visual Image Tool
+# <img src="https://raw.githubusercontent.com/killerwolf/visual-image-tool/main/demo/android-chrome-192x192.png" alt="Visual Image Tool logo" width="48" height="48" style="vertical-align:middle; margin-right: 0.5em; border-radius: 8px;"> Visual Image Tool
 
 Zero-dependency vanilla JS tool to pick focal points and crop zones on images. Returns pixel coordinates you can feed straight into your image pipeline.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/killerwolf/visual-image-tool/main/.github/assets/demo.gif" alt="Dragging the focus point and resizing the crop zone, with the coordinates updating live" width="880">
+</p>
+
+<p align="center">
+  <a href="https://h4md1.fr/visual-image-tool/"><b>Live demo</b></a>
+  &nbsp;·&nbsp;
+  <a href="https://jsfiddle.net/zuadgm4p/7/">JSFiddle</a>
+</p>
 
 ## Features
 
