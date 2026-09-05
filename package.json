@@ -19,7 +19,7 @@
 		"build": "rollup -c",
 		"dev": "rollup -c -w",
 		"demo": "npx http-server -o ./demo",
-		"publish:demo": "gh-pages -d demo",
+		"publish:demo": "gh-pages -d demo --src \"**/!(index-local).*\"",
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"prepublishOnly": "npm run build",
