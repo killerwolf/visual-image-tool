@@ -138,6 +138,58 @@ describe("VisualImageTool", () => {
 		instance = null;
 	});
 
+	it("should namespace the spinner keyframes to avoid colliding with the host page", () => {
+		const styleElement = document.getElementById(
+			"visual-image-tool-spinner-styles",
+		);
+
+		expect(styleElement).not.toBeNull();
+
+		// A bare `spin` would collide with an animation of the same name on the
+		// consuming page, and the later stylesheet would silently win.
+		expect(styleElement.innerHTML).toContain(
+			"@keyframes visual-image-tool-spin",
+		);
+		expect(styleElement.innerHTML).not.toMatch(/@keyframes\s+spin\b/);
+		expect(instance.spinnerElement.style.animation).toContain(
+			"visual-image-tool-spin",
+		);
+	});
+
+	it("should inject the spinner stylesheet only once across instances", () => {
+		const second = new VisualImageTool({ imageElement });
+
+		expect(
+			document.querySelectorAll("#visual-image-tool-spinner-styles"),
+		).toHaveLength(1);
+
+		second.destroy();
+
+		// The stylesheet is shared, so it must survive one instance being torn
+		// down while another is still alive.
+		expect(
+			document.getElementById("visual-image-tool-spinner-styles"),
+		).not.toBeNull();
+		expect(instance.spinnerElement.style.animation).toContain(
+			"visual-image-tool-spin",
+		);
+	});
+
+	it("should hide the spinner once the image dimensions are known", () => {
+		expect(instance.spinnerElement.style.display).toBe("none");
+		expect(instance.initialLoadComplete).toBe(true);
+	});
+
+	it("should remove the spinner from the DOM on destroy", () => {
+		const spinner = instance.spinnerElement;
+		expect(container.contains(spinner)).toBe(true);
+
+		instance.destroy();
+		instance = null;
+
+		expect(container.contains(spinner)).toBe(false);
+	});
+
 	it("should resize the crop zone from the handle that was grabbed", () => {
 		instance.toggleCropZone(true);
 		const handle = instance.cropHandles.find((h) => h.dataset.handle === "br");
