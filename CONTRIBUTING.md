@@ -1,150 +1,171 @@
-# Guide du mainteneur du package
+# Maintainer guide
 
-Ce document est destiné aux développeurs qui maintiennent, modifient ou contribuent au package `image-tool`.
+This document is for developers who maintain, modify or contribute to the `@h4md1/visual-image-tool` package.
 
-## Environnement de développement
+## Development environment
 
-### Prérequis
+### Requirements
 
-- Node.js (v14 ou supérieur)
-- npm (v6 ou supérieur)
+- Node.js `>=18.0.0 <23.0.0` (see `engines` in `package.json`)
+- npm
 
-### Installation locale
+### Local setup
 
-1. Clonez le dépôt :
+1. Clone the repository:
 
 ```bash
 git clone https://github.com/killerwolf/visual-image-tool.git
 cd visual-image-tool
 ```
 
-2. Installez les dépendances :
+2. Install dependencies:
 
 ```bash
 npm install
 ```
 
-## Structure du projet
+## Project structure
 
 ```
-image-tool/
-├── src/                  # Code source
-│   ├── index.js          # Point d'entrée
-│   └── image-tool.js     # Classe principale
-├── dist/                 # Fichiers de distribution (générés)
-├── demos/                # Exemples de démonstration
-├── docs/                 # Documentation
-├── package.json          # Configuration npm
-├── rollup.config.js      # Configuration de build
-├── MAINTAINER.md         # Ce guide
-└── README.md             # Documentation utilisateur
+visual-image-tool/
+├── .github/workflows/              # CI and release automation
+├── src/
+│   ├── index.js                    # Package entry point
+│   ├── visual-image-tool.js        # Main class
+│   └── visual-image-tool.test.js   # Unit tests
+├── demo/                           # Demo pages, published to GitHub Pages
+├── dist/                           # Build output (generated, git-ignored)
+├── biome.json                      # Lint and format config for JS/JSON
+├── vitest.config.js                # Test config
+├── rollup.config.js                # Build config
+├── package.json
+├── CONTRIBUTING.md                 # This guide
+└── README.md                       # User documentation
 ```
 
-## Scripts disponibles
+## Available scripts
 
-- `npm run build` : Génère les fichiers de distribution dans le dossier `dist/`
-- `npm run dev` : Lance le build en mode watch pour le développement
-- `npm test` : Exécute les tests (à implémenter)
+| Script                 | Purpose                                            |
+| ---------------------- | -------------------------------------------------- |
+| `npm run build`        | Generate the distribution files in `dist/`         |
+| `npm run dev`          | Run the build in watch mode                        |
+| `npm test`             | Run the unit tests once                            |
+| `npm run test:watch`   | Run the tests in watch mode                        |
+| `npm run lint:check`   | Check linting and formatting of JS/JSON with Biome |
+| `npm run lint:fix`     | Apply Biome fixes                                  |
+| `npm run format:check` | Check formatting of other file types with Prettier |
+| `npm run format:fix`   | Apply Prettier formatting                          |
+| `npm run demo`         | Serve `demo/` locally                              |
+| `npm run publish:demo` | Publish `demo/` to GitHub Pages                    |
 
-## Processus de build
+Linting and formatting are enforced in CI, so run `npm run lint:check` and `npm run format:check` before pushing.
 
-Le projet utilise Rollup pour générer trois formats de distribution :
+## Build process
 
-1. **ESM** (`dist/visual-image-tool.esm.js`) : Modules ES pour les bundlers modernes
-2. **UMD** (`dist/visual-image-tool.umd.js`) : Format universel minifié pour l'inclusion directe dans les navigateurs
-3. **CommonJS** (`dist/visual-image-tool.cjs`) : Format pour Node.js
+Rollup generates three distribution formats:
 
-Pour lancer le build :
+1. **ESM** (`dist/visual-image-tool.esm.js`) — ES modules for modern bundlers
+2. **UMD** (`dist/visual-image-tool.umd.js`) — minified universal format for direct use in browsers
+3. **CommonJS** (`dist/visual-image-tool.cjs`) — for Node.js
+
+The CommonJS bundle uses a `.cjs` extension on purpose: the package is `"type": "module"`, so a `.js` file would be parsed as ESM and expose no exports. The `exports` map in `package.json` routes `import` to the ESM build and `require` to the CommonJS one.
+
+To build:
 
 ```bash
 npm run build
 ```
 
-## Tester les modifications
+## Testing changes
 
-Après avoir effectué des modifications, vous pouvez les tester en :
-
-1. Exécutant le build : `npm run build`
-2. Ouvrant les démos dans un navigateur pour vérifier le comportement
-3. Utilisant `npm link` pour tester dans un projet local
+The test suite uses [Vitest](https://vitest.dev/) with [JSDOM](https://github.com/jsdom/jsdom):
 
 ```bash
-# Dans le dossier du package
+npm test
+```
+
+Beyond the unit tests, you can:
+
+1. Run the build: `npm run build`
+2. Open the demos in a browser to check behaviour: `npm run demo`
+3. Use `npm link` to test against a local project
+
+```bash
+# In the package directory
 npm link
 
-# Dans votre projet de test
-npm link visual-image-tool
+# In your test project
+npm link @h4md1/visual-image-tool
 ```
 
-## Publication sur npm
+## Publishing to npm
 
-### Préparation
+Publishing is automated. Pushing a tag triggers `.github/workflows/npm-publish.yml`, which builds the package, sets the version from the tag name and publishes it.
 
-1. Mettez à jour la version dans `package.json` selon les règles de [SemVer](https://semver.org/) :
+Authentication uses [npm trusted publishing](https://docs.npmjs.com/trusted-publishers) over OIDC — there is no npm token in the repository. The trust relationship is configured on the package's npmjs.com settings page and points at this repository and the `npm-publish.yml` workflow filename. Provenance is attested automatically.
 
-   - Patch (1.0.x) : Corrections de bugs
-   - Minor (1.x.0) : Nouvelles fonctionnalités rétrocompatibles
-   - Major (x.0.0) : Changements non rétrocompatibles
+### Releasing
 
-2. Mettez à jour la documentation si nécessaire
-
-3. Assurez-vous que tous les tests passent : `npm test`
-
-### Publication
-
-1. Connectez-vous à npm :
+1. Make sure `main` is green and holds everything you want to ship.
+2. Tag the release commit. Tags are unprefixed and annotated, matching the existing history (`0.2.3`, not `v0.2.3`):
 
 ```bash
-npm login
+git tag -a 0.2.4 -m "" --cleanup=verbatim
+git push origin 0.2.4
 ```
 
-2. Publiez le package :
+3. Watch the run, then confirm the release landed:
 
 ```bash
-npm publish
+npm view @h4md1/visual-image-tool version
 ```
 
-Pour une version bêta ou release candidate :
+The workflow runs `npm version --no-git-tag-version <tag>`, so the tag name is what determines the published version. The `version` field in `package.json` is informational; keep it in step with the latest release to avoid confusion.
 
-```bash
-npm publish --tag beta
-```
+Follow [SemVer](https://semver.org/) when choosing a tag:
 
-## Bonnes pratiques de développement
+- Patch (`0.2.x`) — bug fixes
+- Minor (`0.x.0`) — backwards-compatible features
+- Major (`x.0.0`) — breaking changes
 
-### Modifications du code
+## Development practices
 
-- Maintenez la compatibilité avec l'API existante
-- Documentez toutes les méthodes publiques avec JSDoc
-- Suivez les conventions de style du projet
-- Testez sur différents navigateurs
+### Code changes
 
-### Gestion des versions
+- Preserve compatibility with the existing API
+- Document all public methods with JSDoc
+- Follow the project's style conventions (Biome and Prettier enforce them)
+- Add tests for behaviour you fix or introduce
+- Test across browsers
 
-- Utilisez Git pour le contrôle de version
-- Créez des branches pour les nouvelles fonctionnalités
-- Utilisez des messages de commit descriptifs
+### Version control
+
+- Create a branch for each change; do not commit to `main` directly
+- Write descriptive commit messages
+- Open a pull request and let CI run
 
 ### Documentation
 
-- Mettez à jour la documentation lorsque vous modifiez l'API
-- Maintenez les exemples à jour avec les dernières fonctionnalités
+- Update the documentation when you change the API
+- Keep the examples current
 
-## Résolution des problèmes courants
+## Troubleshooting
 
-### Erreurs de build
+### Build errors
 
-- Vérifiez que toutes les dépendances sont installées : `npm install`
-- Nettoyez le dossier `dist/` et reconstruisez : `rm -rf dist && npm run build`
+- Check that dependencies are installed: `npm install`
+- Clean `dist/` and rebuild: `rm -rf dist && npm run build`
 
-### Problèmes de compatibilité
+Clearing `dist/` matters before a manual pack or publish: a stale bundle from an older filename scheme would otherwise be included alongside the current output.
 
-- Testez sur différents navigateurs
-- Utilisez des polyfills si nécessaire pour les fonctionnalités modernes
+### Compatibility issues
 
-## Contribution
+- Test across browsers
+- Use polyfills where modern features are needed
 
-1. Créez une branche pour votre fonctionnalité
-2. Effectuez vos modifications
-3. Assurez-vous que les tests passent
-4. Soumettez une pull request avec une description détaillée
+## Contributing
+
+1. Create a branch for your change
+2. Make your changes
+3. Make sure `npm test`, `npm run lint:check` and `npm run format:check` pass
+4. Open a pull request with a detailed description

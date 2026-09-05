@@ -16,13 +16,23 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      # The version below is taken from the tag name, so a workflow_dispatch
+      # from a branch would run `npm version main` and fail halfway through.
+      # Stop up front with a readable message. Dispatching against a tag ref
+      # still works.
+      - name: Require a tag
+        if: github.ref_type != 'tag'
+        run: |
+          echo "::error::This workflow must run from a tag; got ${{ github.ref_type }} '${{ github.ref_name }}'."
+          exit 1
+
+      - uses: actions/checkout@v7
 
       # Deliberately no `registry-url` here. setup-node would write an
       # `_authToken` line into .npmrc, npm would read that as "auth is already
       # configured", skip the OIDC exchange entirely and fail with E404. The
       # registry comes from the checked-in .npmrc instead.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: "22"
 
