@@ -45,20 +45,34 @@ visual-image-tool/
 
 ## Available scripts
 
-| Script                 | Purpose                                            |
-| ---------------------- | -------------------------------------------------- |
-| `npm run build`        | Generate the distribution files in `dist/`         |
-| `npm run dev`          | Run the build in watch mode                        |
-| `npm test`             | Run the unit tests once                            |
-| `npm run test:watch`   | Run the tests in watch mode                        |
-| `npm run lint:check`   | Check linting and formatting of JS/JSON with Biome |
-| `npm run lint:fix`     | Apply Biome fixes                                  |
-| `npm run format:check` | Check formatting of other file types with Prettier |
-| `npm run format:fix`   | Apply Prettier formatting                          |
-| `npm run demo`         | Serve `demo/` locally                              |
-| `npm run publish:demo` | Publish `demo/` to GitHub Pages                    |
+| Script                 | Purpose                                                      |
+| ---------------------- | ------------------------------------------------------------ |
+| `npm run build`        | Generate the distribution files in `dist/`                   |
+| `npm run dev`          | Run the build in watch mode                                  |
+| `npm test`             | Run the unit tests once                                      |
+| `npm run test:watch`   | Run the tests in watch mode                                  |
+| `npm run lint:check`   | Check linting and formatting of JS/JSON with Biome           |
+| `npm run lint:fix`     | Apply Biome fixes                                            |
+| `npm run format:check` | Check formatting of other file types with Prettier           |
+| `npm run format:fix`   | Apply Prettier formatting                                    |
+| `npm run demo`         | Serve `demo/` locally                                        |
+| `npm run publish:demo` | Publish `demo/` to GitHub Pages (all but `index-local.html`) |
 
 Linting and formatting are enforced in CI, so run `npm run lint:check` and `npm run format:check` before pushing.
+
+### Publishing the demos
+
+`npm run publish:demo` pushes `demo/` to the `gh-pages` branch, which is served
+at <https://h4md1.fr/visual-image-tool/>.
+
+The `--src "**/!(index-local).*"` pattern excludes `index-local.html`. That page
+loads `../dist/visual-image-tool.umd.js`, which resolves above the site root
+once published and 404s, so the page is only meaningful when served locally.
+Everything else in `demo/` loads the published package from the CDN.
+
+Note that `gh-pages` removes the branch's existing files before copying, but the
+pattern it uses for that never matches dotfiles — anything like `.github/` that
+lands on `gh-pages` stays there until it is removed by hand.
 
 ## Build process
 

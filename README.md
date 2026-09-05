@@ -302,7 +302,9 @@ Run them with `npm run demo`, or browse the published copy at
 
 Every demo except `index-local.html` loads the published package from the
 jsDelivr CDN, so they exercise the released version. Use `index-local.html`
-to check changes you have not published yet — run `npm run build` first.
+to check changes you have not published yet — run `npm run build` first. It is
+local-only and is not published to the demo site, because the local `dist/` it
+points at does not exist there.
 
 ## Browser Compatibility
 
