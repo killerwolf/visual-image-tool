@@ -6,23 +6,38 @@ on:
       - "*"
   workflow_dispatch:
 
+# Required for npm trusted publishing: GitHub mints a short-lived OIDC token
+# that npm exchanges for publish rights. No long-lived NPM_TOKEN involved.
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
+      # Deliberately no `registry-url` here. setup-node would write an
+      # `_authToken` line into .npmrc, npm would read that as "auth is already
+      # configured", skip the OIDC exchange entirely and fail with E404. The
+      # registry comes from the checked-in .npmrc instead.
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-          registry-url: "https://registry.npmjs.org"
+
+      # Node 22 bundles npm 10.x; trusted publishing needs npm >= 11.5.1.
+      - name: Upgrade npm for trusted publishing
+        run: |
+          npm install -g npm@latest
+          npm --version
 
       - run: npm ci
 
       - run: npm run build
 
-      - run: npm version --no-git-tag-version ${{github.ref_name}}
+      - run: npm version --no-git-tag-version ${{ github.ref_name }}
 
+      # No NODE_AUTH_TOKEN: credentials come from the OIDC exchange above.
+      # Provenance is attested automatically for a public repo.
       - run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
