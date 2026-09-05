@@ -65,11 +65,11 @@
         white-space: pre-wrap;
       }
     </style>
-    <!-- Import Map pour charger Vue depuis unpkg -->
+    <!-- Import map: load Vue and the tool straight from the CDN -->
     <script type="importmap">
       {
         "imports": {
-          "vue": "https://unpkg.com/vue@3.2.47/dist/vue.esm-browser.js",
+          "vue": "https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.esm-browser.js",
           "@h4md1/visual-image-tool": "https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool/dist/visual-image-tool.esm.js"
         }
       }
@@ -126,9 +126,9 @@
           const focusActive = ref(false);
           const cropActive = ref(false);
 
-          // Initialiser l'outil lorsque le composant est monté
+          // Initialize the tool once the component is mounted
           onMounted(() => {
-            // Attendre que l'image soit chargée
+            // Wait for the image to load
             if (editableImage.value.complete) {
               initializeTool();
             } else {
@@ -136,7 +136,7 @@
             }
           });
 
-          // Nettoyer lors de la destruction du composant
+          // Clean up when the component is unmounted
           onBeforeUnmount(() => {
             if (imageTool.value) {
               imageTool.value.destroy();
@@ -144,7 +144,7 @@
             }
           });
 
-          // Initialiser l'outil
+          // Initialize the tool
           const initializeTool = () => {
             imageTool.value = new VisualImageTool({
               imageElement: editableImage.value,
@@ -169,7 +169,7 @@
             });
           };
 
-          // Gérer les changements de l'outil
+          // Handle updates from the tool
           const handleToolChange = (data) => {
             focusPoint.value = data.focusPoint;
             cropZone.value = data.cropZone;
@@ -177,21 +177,21 @@
             cropActive.value = data.cropActive;
           };
 
-          // Activer/désactiver le point focal
+          // Toggle the focus point
           const toggleFocusPoint = () => {
             if (imageTool.value) {
               imageTool.value.toggleFocusPoint();
             }
           };
 
-          // Activer/désactiver la zone de recadrage
+          // Toggle the crop zone
           const toggleCropZone = () => {
             if (imageTool.value) {
               imageTool.value.toggleCropZone();
             }
           };
 
-          // Centrer le point focal
+          // Center the focus point
           const centerFocusPoint = () => {
             if (imageTool.value) {
               const dimensions = imageTool.value.getImageDimensions();
@@ -202,7 +202,7 @@
             }
           };
 
-          // Réinitialiser la zone de recadrage
+          // Reset the crop zone
           const resetCropZone = () => {
             if (imageTool.value) {
               const dimensions = imageTool.value.getImageDimensions();

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ImageTool - Basic Usage Example</title>
+    <title>VisualImageTool - Basic Usage Example</title>
     <style>
       body {
         font-family:
@@ -106,10 +106,12 @@
       <h2>Example Code</h2>
       <pre>
 // Import the library (in a module environment)
-// import ImageTool from 'image-tool';
+// import { VisualImageTool } from '@h4md1/visual-image-tool';
 
-// Initialize the tool on an image
-const imageTool = new ImageTool({
+// This page loads the UMD build from a script tag, where the global is the
+// module namespace -- hence VisualImageTool.VisualImageTool. After an import
+// you construct VisualImageTool directly.
+const imageTool = new VisualImageTool.VisualImageTool({
   imageElement: document.getElementById('demoImage'),
   onChange: (data) => {
     // Display updated data
