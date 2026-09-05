@@ -48,7 +48,7 @@ The workflow file is at `.github/workflows/npm-publish.yml`.
 - **npm upgrade:** installs a current npm, for the trusted-publishing support.
 - **Install:** `npm ci` for a clean install.
 - **Build:** `npm run build` generates the distributable files.
-- **Versioning:** `npm version --no-git-tag-version ${{github.ref_name}}` sets the package version to the tag name without creating another tag.
+- **Versioning:** `npm version --no-git-tag-version --allow-same-version ${{github.ref_name}}` sets the package version to the tag name without creating another tag. `--allow-same-version` matters: without it, npm exits with `Version not changed` whenever `package.json` already holds the tagged version, which is easy to hit if you keep that field in step with releases.
 - **Publish:** `npm publish --access public` publishes as a public package, authenticated via OIDC.
 - **Provenance:** attested automatically for a public package in a public repository. No `--provenance` flag needed.
 
@@ -92,7 +92,7 @@ jobs:
 
       - run: npm run build
 
-      - run: npm version --no-git-tag-version ${{github.ref_name}}
+      - run: npm version --no-git-tag-version --allow-same-version ${{github.ref_name}}
 
       - run: npm publish --access public
 ```
