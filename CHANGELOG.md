@@ -12,6 +12,10 @@ release steps in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ### Added
 
+- README now opens with status badges, a demo GIF, and an "Is this the right
+  tool?" section answering the question evaluators actually arrive with.
+- A CDN install option, so the library can be tried without an npm install.
+
 - TypeScript declarations, shipped with the package as `src/index.d.ts` and
   wired into `exports` so both `bundler` and `node16` resolution find them.
   TypeScript consumers previously got an implicit `any`.
