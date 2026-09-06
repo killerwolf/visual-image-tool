@@ -25,6 +25,8 @@ jobs:
         run: npm run lint:check
       - name: Check formatting (Prettier)
         run: npm run format:check
+      - name: Check types
+        run: npm run types:check
 
   test:
     runs-on: ubuntu-latest
