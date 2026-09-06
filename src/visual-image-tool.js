@@ -34,32 +34,57 @@ class VisualImageTool {
 		}
 
 		// Default options
+		const focusPointDefaults = {
+			enabled: true,
+			style: {
+				width: "30px",
+				height: "30px",
+				border: "3px solid white",
+				boxShadow: "0 0 0 2px black, 0 0 5px rgba(0,0,0,0.5)",
+				backgroundColor: "rgba(255, 0, 0, 0.5)",
+			},
+		};
+
+		const cropZoneDefaults = {
+			enabled: true,
+			style: {
+				border: "1px dashed #fff",
+				backgroundColor: "rgba(0, 0, 0, 0.4)",
+			},
+			handleStyle: {
+				width: "14px",
+				height: "14px",
+				backgroundColor: "white",
+				border: "2px solid black",
+				boxShadow: "0 0 3px rgba(0,0,0,0.5)",
+			},
+		};
+
+		// The style objects are merged a level deeper than the rest of the
+		// options: overriding one property should leave the others at their
+		// defaults, not drop them. A plain spread would replace the whole
+		// object, so `{ style: { width: "40px" } }` would leave the marker
+		// with no border, shadow or background at all.
 		this.options = {
 			focusPoint: {
-				enabled: true,
-				style: {
-					width: "30px",
-					height: "30px",
-					border: "3px solid white",
-					boxShadow: "0 0 0 2px black, 0 0 5px rgba(0,0,0,0.5)",
-					backgroundColor: "rgba(255, 0, 0, 0.5)",
-				},
+				...focusPointDefaults,
 				...options.focusPoint,
+				style: {
+					...focusPointDefaults.style,
+					...options.focusPoint?.style,
+				},
 			},
 			cropZone: {
-				enabled: true,
+				...cropZoneDefaults,
+				...options.cropZone,
 				style: {
-					border: "1px dashed #fff",
-					backgroundColor: "rgba(0, 0, 0, 0.4)",
+					...cropZoneDefaults.style,
+					...options.cropZone?.style,
 				},
 				handleStyle: {
-					width: "14px",
-					height: "14px",
-					backgroundColor: "white",
-					border: "2px solid black",
-					boxShadow: "0 0 3px rgba(0,0,0,0.5)",
+					...cropZoneDefaults.handleStyle,
+					...options.cropZone?.handleStyle,
 				},
-				...options.cropZone,
 			},
 			onChange: options.onChange || (() => {}),
 			debug: options.debug || false,
