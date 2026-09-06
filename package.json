@@ -1,6 +1,6 @@
 {
 	"name": "@h4md1/visual-image-tool",
-	"version": "0.2.6",
+	"version": "0.3.0",
 	"description": "Zero-dependency vanilla JS tool to pick focal points and crop zones on images.",
 	"main": "dist/visual-image-tool.cjs",
 	"module": "dist/visual-image-tool.esm.js",
