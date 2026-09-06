@@ -10,6 +10,15 @@ release steps in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## [Unreleased]
 
+### Added
+
+- Open Graph and Twitter card metadata on the demo site, plus a description and
+  canonical URL. Links to the demo previously rendered as a bare URL with no
+  preview anywhere they were shared, and search engines had no description to
+  index the page on.
+- A 1200x630 social card, `demo/social-preview.jpg`, rendered from the demo
+  itself so it shows the tool in use.
+
 ## [0.2.6] - 2026-09-05
 
 ### Changed
