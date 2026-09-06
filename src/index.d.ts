@@ -37,9 +37,7 @@ export interface ChangeData {
 /**
  * Appearance of the focus point marker.
  *
- * Note: this object replaces the defaults wholesale rather than merging into
- * them, so any property you leave out is simply unset — pass the complete set
- * if you override it at all.
+ * Merged into the defaults, so overriding one property leaves the rest alone.
  */
 export interface FocusPointStyle {
 	width?: string;
@@ -52,7 +50,7 @@ export interface FocusPointStyle {
 /**
  * Appearance of the crop overlay.
  *
- * Note: replaces the defaults wholesale — see {@link FocusPointStyle}.
+ * Merged into the defaults — see {@link FocusPointStyle}.
  */
 export interface CropZoneStyle {
 	border?: string;
@@ -62,7 +60,7 @@ export interface CropZoneStyle {
 /**
  * Appearance of the eight crop resize handles.
  *
- * Note: replaces the defaults wholesale — see {@link FocusPointStyle}.
+ * Merged into the defaults — see {@link FocusPointStyle}.
  */
 export interface CropHandleStyle {
 	width?: string;
