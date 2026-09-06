@@ -12,6 +12,12 @@ release steps in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ### Added
 
+- TypeScript declarations, shipped with the package as `src/index.d.ts` and
+  wired into `exports` so both `bundler` and `node16` resolution find them.
+  TypeScript consumers previously got an implicit `any`.
+- `npm run types:check`, a `tsc --noEmit` pass over a compile-time test of the
+  public surface, enforced in CI so the declarations cannot drift from the
+  implementation unnoticed.
 - Open Graph and Twitter card metadata on the demo site, plus a description and
   canonical URL. Links to the demo previously rendered as a bare URL with no
   preview anywhere they were shared, and search engines had no description to

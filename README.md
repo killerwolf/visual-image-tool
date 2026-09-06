@@ -136,6 +136,30 @@ const imageTool = new VisualImageTool({
 });
 ```
 
+## TypeScript
+
+Type declarations ship with the package — there is nothing extra to install.
+
+```typescript
+import {
+  VisualImageTool,
+  type ChangeData,
+  type CropZone,
+  type FocusPoint,
+} from "@h4md1/visual-image-tool";
+
+const tool = new VisualImageTool({
+  imageElement: document.querySelector<HTMLImageElement>("#myImage")!,
+  onChange: (data: ChangeData) => {
+    const { x, y }: FocusPoint = data.focusPoint;
+    const crop: CropZone = data.cropZone;
+  },
+});
+```
+
+Exported types: `VisualImageToolOptions`, `ChangeData`, `FocusPoint`, `CropZone`,
+`ImageDimensions`, `FocusPointOptions`, `CropZoneOptions`, and the style interfaces.
+
 ## Full API
 
 ### Methods
