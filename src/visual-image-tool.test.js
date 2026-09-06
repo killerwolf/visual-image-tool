@@ -199,4 +199,82 @@ describe("VisualImageTool", () => {
 		expect(instance.interaction.cropResizing).toBe(true);
 		expect(instance.interaction.activeHandle).toBe("br");
 	});
+
+	describe("partial style overrides", () => {
+		// Overriding one style property used to replace the whole style object,
+		// leaving every property the caller did not mention unset.
+		let tool;
+
+		afterEach(() => {
+			tool?.destroy();
+			tool = null;
+		});
+
+		it("keeps the focus marker's other defaults", () => {
+			tool = new VisualImageTool({
+				imageElement,
+				focusPoint: { style: { width: "40px" } },
+			});
+			tool.toggleFocusPoint(true);
+			const marker = tool.state.focusMarker;
+
+			expect(marker.style.width).toBe("40px");
+			expect(marker.style.height).toBe("30px");
+			expect(marker.style.border).toBe("3px solid white");
+			expect(marker.style.backgroundColor).toBe("rgba(255, 0, 0, 0.5)");
+			expect(marker.style.boxShadow).not.toBe("");
+		});
+
+		it("keeps the crop overlay's other defaults", () => {
+			tool = new VisualImageTool({
+				imageElement,
+				cropZone: { style: { border: "2px solid red" } },
+			});
+			tool.toggleCropZone(true);
+			const overlay = tool.state.cropOverlay;
+
+			expect(overlay.style.border).toBe("2px solid red");
+			expect(overlay.style.backgroundColor).toBe("rgba(0, 0, 0, 0.4)");
+		});
+
+		it("keeps a resize handle's other defaults", () => {
+			tool = new VisualImageTool({
+				imageElement,
+				cropZone: { handleStyle: { width: "20px" } },
+			});
+			tool.toggleCropZone(true);
+			const handle = tool.cropHandles.find((h) => h.dataset.handle === "br");
+
+			expect(handle.style.width).toBe("20px");
+			expect(handle.style.height).toBe("14px");
+			expect(handle.style.backgroundColor).toBe("white");
+			expect(handle.style.border).toBe("2px solid black");
+			expect(handle.style.boxShadow).not.toBe("");
+		});
+
+		it("still lets scalar options through untouched", () => {
+			tool = new VisualImageTool({
+				imageElement,
+				focusPoint: { enabled: false, style: { width: "40px" } },
+			});
+
+			expect(tool.options.focusPoint.enabled).toBe(false);
+			expect(tool.options.focusPoint.style.width).toBe("40px");
+			expect(tool.options.focusPoint.style.height).toBe("30px");
+
+			// A disabled feature stays disabled.
+			tool.toggleFocusPoint(true);
+			expect(tool.state.focusActive).toBe(false);
+		});
+
+		it("falls back to the defaults when no style is given at all", () => {
+			tool = new VisualImageTool({
+				imageElement,
+				cropZone: { enabled: true },
+			});
+
+			expect(tool.options.cropZone.style.border).toBe("1px dashed #fff");
+			expect(tool.options.cropZone.handleStyle.width).toBe("14px");
+		});
+	});
 });
