@@ -10,6 +10,8 @@ release steps in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-06
+
 ### Added
 
 - TypeScript declarations, shipped with the package as `src/index.d.ts` and
@@ -111,7 +113,8 @@ release steps in [CONTRIBUTING.md](CONTRIBUTING.md).
 - Adopted Biome for linting and formatting, and Prettier for everything Biome
   does not cover, both enforced in CI.
 
-[unreleased]: https://github.com/killerwolf/visual-image-tool/compare/0.2.6...HEAD
+[unreleased]: https://github.com/killerwolf/visual-image-tool/compare/0.3.0...HEAD
+[0.3.0]: https://github.com/killerwolf/visual-image-tool/compare/0.2.6...0.3.0
 [0.2.6]: https://github.com/killerwolf/visual-image-tool/compare/0.2.5...0.2.6
 [0.2.5]: https://github.com/killerwolf/visual-image-tool/compare/0.2.4...0.2.5
 [0.2.4]: https://github.com/killerwolf/visual-image-tool/compare/0.2.3...0.2.4
