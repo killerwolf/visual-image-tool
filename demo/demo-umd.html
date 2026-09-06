@@ -34,9 +34,9 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool/dist/visual-image-tool.umd.js"></script>
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
+      function initDemo() {
         // Initialize the VisualImageTool with the image element
-        const imageTool = new VisualImageTool.default({
+        const imageTool = new VisualImageTool.VisualImageTool({
           imageElement: "#myImage", // Selector for the image element
           focusPoint: {
             enabled: true,
@@ -70,7 +70,14 @@
         // Example usage
         imageTool.toggleFocusPoint(true);
         imageTool.toggleCropZone(true);
-      });
+      }
+
+      const img = document.getElementById("myImage");
+      if (img.complete) {
+        initDemo();
+      } else {
+        img.addEventListener("load", initDemo);
+      }
     </script>
   </body>
 </html>

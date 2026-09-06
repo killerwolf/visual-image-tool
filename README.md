@@ -17,7 +17,7 @@ Zero-dependency vanilla JS tool to pick focal points and crop zones on images. R
 <p align="center">
   <a href="https://h4md1.fr/visual-image-tool/"><b>Live demo</b></a>
   &nbsp;·&nbsp;
-  <a href="https://jsfiddle.net/zuadgm4p/7/">JSFiddle</a>
+  <a href="https://jsfiddle.net/ugswzmo2/">JSFiddle</a>
 </p>
 
 ## Features
@@ -60,7 +60,7 @@ Or skip the install entirely and load it from a CDN — this is what the
 ```
 
 Pin the exact version rather than the major in production. There is a runnable
-[JSFiddle](https://jsfiddle.net/zuadgm4p/7/) if you would rather poke at it first.
+[JSFiddle](https://jsfiddle.net/ugswzmo2/) if you would rather poke at it first.
 
 ## Quick Start Guide
 

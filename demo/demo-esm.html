@@ -35,7 +35,7 @@
     <script type="module">
       import { VisualImageTool } from "https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool/dist/visual-image-tool.esm.js";
 
-      document.addEventListener("DOMContentLoaded", function () {
+      function initDemo() {
         // Initialize the VisualImageTool with the image element
         const imageTool = new VisualImageTool({
           imageElement: "#myImage", // Selector for the image element
@@ -71,7 +71,14 @@
         // Example usage
         imageTool.toggleFocusPoint(true);
         imageTool.toggleCropZone(true);
-      });
+      }
+
+      const img = document.getElementById("myImage");
+      if (img.complete) {
+        initDemo();
+      } else {
+        img.addEventListener("load", initDemo);
+      }
     </script>
   </body>
 </html>
