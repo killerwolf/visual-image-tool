@@ -1,7 +1,7 @@
 {
 	"name": "@h4md1/visual-image-tool",
 	"version": "0.2.6",
-	"description": "A lightweight vanilla JavaScript tool to define focus points and crop zones on images",
+	"description": "Zero-dependency vanilla JS tool to pick focal points and crop zones on images.",
 	"main": "dist/visual-image-tool.cjs",
 	"module": "dist/visual-image-tool.esm.js",
 	"browser": "dist/visual-image-tool.umd.js",
@@ -29,14 +29,23 @@
 		"format:fix": "prettier --write --ignore-unknown ."
 	},
 	"keywords": [
+		"focal-point",
+		"focus-point",
+		"image-crop",
+		"cropper",
+		"crop-tool",
+		"image-editor",
 		"image",
 		"crop",
-		"focus-point",
 		"vanilla-js",
-		"image-editor",
-		"crop-tool"
+		"zero-dependency",
+		"no-dependencies",
+		"responsive-images",
+		"object-position",
+		"hotspot",
+		"browser"
 	],
-	"author": "",
+	"author": "Hamdi Laadhari (https://h4md1.fr)",
 	"license": "MIT",
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
