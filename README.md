@@ -3,6 +3,14 @@
 Zero-dependency vanilla JS tool to pick focal points and crop zones on images. Returns pixel coordinates you can feed straight into your image pipeline.
 
 <p align="center">
+  <a href="https://www.npmjs.com/package/@h4md1/visual-image-tool"><img alt="npm version" src="https://img.shields.io/npm/v/@h4md1/visual-image-tool?color=cb3837&logo=npm"></a>
+  <a href="https://bundlephobia.com/package/@h4md1/visual-image-tool"><img alt="gzipped size" src="https://img.shields.io/bundlephobia/minzip/@h4md1/visual-image-tool?label=gzipped"></a>
+  <a href="https://www.npmjs.com/package/@h4md1/visual-image-tool"><img alt="types included" src="https://img.shields.io/npm/types/@h4md1/visual-image-tool"></a>
+  <a href="https://github.com/killerwolf/visual-image-tool/actions/workflows/code-quality.yml"><img alt="CI status" src="https://github.com/killerwolf/visual-image-tool/actions/workflows/code-quality.yml/badge.svg"></a>
+  <a href="https://github.com/killerwolf/visual-image-tool/blob/main/LICENSE"><img alt="MIT licence" src="https://img.shields.io/npm/l/@h4md1/visual-image-tool"></a>
+</p>
+
+<p align="center">
   <img src="https://raw.githubusercontent.com/killerwolf/visual-image-tool/main/.github/assets/demo.gif" alt="Dragging the focus point and resizing the crop zone, with the coordinates updating live" width="880">
 </p>
 
@@ -16,16 +24,43 @@ Zero-dependency vanilla JS tool to pick focal points and crop zones on images. R
 
 - **Focus point**: Set a point of interest on the image with a visual marker
 - **Crop zone**: Define a crop zone with resize handles
-- **No dependencies**: Works without external libraries
-- **Simple API**: Clear and easy-to-use interface
+- **No dependencies**: 3.6 kB gzipped, nothing else to install
+- **Typed**: TypeScript declarations ship with the package
+- **Framework-agnostic**: plain DOM, so it drops into anything
 - **Customizable**: Flexible configuration options
 - **Responsive**: Adapts to screen resizing
+
+## Is this the right tool?
+
+**Yes, if** you need a person to mark _where_ the subject of an image is, and
+you want those positions back as numbers — to store on a record, or hand to an
+image pipeline. The coordinates are in the image's original pixels, so they stay
+valid at any display size:
+
+| What you get             | Where it tends to go                                                     |
+| ------------------------ | ------------------------------------------------------------------------ |
+| `focusPoint: {x, y}`     | CSS `object-position`, imgix `fp-x`/`fp-y`, Cloudinary gravity           |
+| `cropZone: {x, y, w, h}` | a server-side crop with sharp or ImageMagick, or a stored crop rectangle |
+
+**No, if** you need the browser to actually produce the cropped image — rotation,
+zoom, canvas export, file output. This library never touches pixels; it only
+reports coordinates. A full cropper such as Cropper.js is built for that job.
 
 ## Installation
 
 ```bash
 npm install @h4md1/visual-image-tool
 ```
+
+Or skip the install entirely and load it from a CDN — this is what the
+[live demo](https://h4md1.fr/visual-image-tool/) does:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool@0.2/dist/visual-image-tool.umd.js"></script>
+```
+
+Pin the exact version rather than the major in production. There is a runnable
+[JSFiddle](https://jsfiddle.net/zuadgm4p/7/) if you would rather poke at it first.
 
 ## Quick Start Guide
 

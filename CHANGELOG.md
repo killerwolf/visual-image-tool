@@ -18,6 +18,9 @@ release steps in [CONTRIBUTING.md](CONTRIBUTING.md).
 - `npm run types:check`, a `tsc --noEmit` pass over a compile-time test of the
   public surface, enforced in CI so the declarations cannot drift from the
   implementation unnoticed.
+- README now opens with status badges, a demo GIF, and an "Is this the right
+  tool?" section answering the question evaluators actually arrive with.
+- A CDN install option, so the library can be tried without an npm install.
 - Open Graph and Twitter card metadata on the demo site, plus a description and
   canonical URL. Links to the demo previously rendered as a bare URL with no
   preview anywhere they were shared, and search engines had no description to
