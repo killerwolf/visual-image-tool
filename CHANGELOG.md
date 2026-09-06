@@ -19,6 +19,15 @@ release steps in [CONTRIBUTING.md](CONTRIBUTING.md).
 - A 1200x630 social card, `demo/social-preview.jpg`, rendered from the demo
   itself so it shows the tool in use.
 
+### Fixed
+
+- Partial style overrides no longer discard the defaults. Passing something like
+  `focusPoint: { style: { width: "40px" } }` previously replaced the whole style
+  object, leaving the marker with no border, shadow or background instead of
+  just a different width. The same applied to `cropZone.style` and
+  `cropZone.handleStyle`. The nested style objects are now merged a level
+  deeper, so an override layers onto the defaults.
+
 ## [0.2.6] - 2026-09-05
 
 ### Changed
