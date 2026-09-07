@@ -652,7 +652,12 @@
           Or skip the install entirely and load it from a CDN — this is what the
           demo above does. Pin the exact version in production.
         </p>
+        <!-- Cloudflare's email obfuscation reads "visual-image-tool@0.3.0"
+           as an address and rewrites it to [email protected], which breaks
+           the snippet for anyone who copies it. email_off is its opt-out. -->
+        <!--email_off-->
         <pre><code class="language-html">&lt;script src="https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool@0.3.0/dist/visual-image-tool.umd.js"&gt;&lt;/script&gt;</code></pre>
+        <!--email_on-->
         <p class="sub">
           There is a runnable
           <a href="https://jsfiddle.net/ugswzmo2/">JSFiddle</a>
