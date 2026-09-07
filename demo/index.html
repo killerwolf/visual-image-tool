@@ -66,351 +66,719 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css"
     />
+
     <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #ffffff;
+        --bg-alt: #f7f8fa;
+        --bg-sunk: #eef0f4;
+        --fg: #16181d;
+        --fg-mut: #5b6270;
+        --line: #e2e5ea;
+        --accent: #d6335b;
+        --accent-fg: #ffffff;
+        --accent-soft: #fdeef2;
+        --ok: #17795e;
+        --ok-soft: #eaf6f1;
+        --radius: 12px;
+        --wrap: 940px;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0f1116;
+          --bg-alt: #161922;
+          --bg-sunk: #1d212c;
+          --fg: #eef0f5;
+          --fg-mut: #a2aab9;
+          --line: #262b36;
+          --accent: #ff5c7f;
+          --accent-fg: #1a0a10;
+          --accent-soft: #2a1720;
+          --ok: #58d3a8;
+          --ok-soft: #12241e;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
       body {
-        font-family: system-ui, sans-serif;
-        background: #f8f9fa;
         margin: 0;
-        padding: 0;
-        color: #222;
+        background: var(--bg);
+        color: var(--fg);
+        font:
+          16px/1.65 -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
       }
-      header {
-        background: #222;
-        color: #fff;
-        padding: 1.2rem 1rem 0.7rem 1rem;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+
+      .wrap {
+        max-width: var(--wrap);
+        margin: 0 auto;
+        padding: 0 22px;
       }
-      main {
-        max-width: 1200px;
-        margin: 2rem auto;
-        background: #fff;
-        border-radius: 10px;
-        box-shadow: 0 2px 8px #0001;
-        padding: 2rem;
+
+      a {
+        color: var(--accent);
+        text-underline-offset: 2px;
       }
-      h1 {
-        margin-top: 0;
-        font-size: 2.2rem;
-        letter-spacing: -1px;
-      }
-      ul {
-        padding-left: 1.2em;
-      }
-      .demo-links {
-        margin: 2rem 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.7em;
-      }
-      .demo-links a {
-        color: #1565c0;
+      a:hover {
         text-decoration: none;
-        font-weight: 500;
-        background: #e3eafc;
-        padding: 0.6em 1em;
-        border-radius: 6px;
-        transition: background 0.2s;
-        border: 1px solid #c3d3f3;
       }
-      .demo-links a:hover {
-        background: #d2e3fc;
+
+      .skip {
+        position: absolute;
+        left: -9999px;
+        background: var(--accent);
+        color: var(--accent-fg);
+        padding: 10px 16px;
+        border-radius: 0 0 var(--radius) 0;
+        z-index: 10;
       }
-      code,
-      pre {
-        background: #f4f4f4;
-        border-radius: 4px;
-        font-size: 1em;
+      .skip:focus {
+        left: 0;
+        top: 0;
       }
-      pre {
-        padding: 1em;
-        overflow-x: auto;
+
+      /* ---------- hero ---------- */
+      .hero {
+        background: var(--bg-alt);
+        border-bottom: 1px solid var(--line);
+        padding: 46px 0 52px;
       }
-      .section-title {
-        margin-top: 2.5em;
-        font-size: 1.3em;
-        color: #444;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 0.2em;
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 600;
+        font-size: 1.05rem;
+        letter-spacing: -0.01em;
+        color: var(--fg-mut);
       }
-      /* Demo styles from basic-usage.html */
+      .brand img {
+        border-radius: 12px;
+      }
+
+      h1 {
+        margin: 26px 0 0;
+        font-size: clamp(2rem, 5.2vw, 3.1rem);
+        line-height: 1.1;
+        letter-spacing: -0.03em;
+        max-width: 16ch;
+      }
+      h1 em {
+        font-style: normal;
+        color: var(--accent);
+      }
+
+      .lede {
+        margin: 20px 0 0;
+        font-size: 1.14rem;
+        color: var(--fg-mut);
+        max-width: 60ch;
+      }
+
+      .facts {
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 26px 0 0;
+        padding: 0;
+      }
+      .facts li {
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 6px 14px;
+        font-size: 0.87rem;
+        color: var(--fg-mut);
+      }
+      .facts strong {
+        color: var(--fg);
+      }
+
+      .cta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        margin-top: 28px;
+      }
+      .copy {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 6px 6px 6px 16px;
+      }
+      .copy code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.9rem;
+        white-space: nowrap;
+      }
+      .copy-btn {
+        border: 0;
+        cursor: pointer;
+        border-radius: 8px;
+        background: var(--accent);
+        color: var(--accent-fg);
+        padding: 8px 14px;
+        font: inherit;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+      .copy-btn:hover {
+        filter: brightness(1.08);
+      }
+      .btn {
+        display: inline-block;
+        border-radius: var(--radius);
+        padding: 11px 18px;
+        font-size: 0.92rem;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .btn.ghost {
+        border: 1px solid var(--line);
+        color: var(--fg);
+        background: var(--bg);
+      }
+      .btn.ghost:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      /* ---------- sections ---------- */
+      .section {
+        padding: 56px 0 0;
+      }
+      .section h2 {
+        margin: 0;
+        font-size: clamp(1.4rem, 3.2vw, 1.9rem);
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+      }
+      .section h3 {
+        margin: 0;
+        font-size: 1rem;
+        letter-spacing: -0.01em;
+      }
+      .sub {
+        color: var(--fg-mut);
+        margin: 12px 0 0;
+        max-width: 62ch;
+      }
+      .section > .sub + .main-demo-container,
+      .section > .sub + .table-scroll,
+      .section > .sub + pre {
+        margin-top: 22px;
+      }
+      .section > h2 + .main-demo-container,
+      .section > h2 + .table-scroll,
+      .section > h2 + pre,
+      .section > h2 + .cols,
+      .section > h2 + .links {
+        margin-top: 22px;
+      }
+
+      /* ---------- demo ---------- */
       .main-demo-container {
         display: flex;
         flex-wrap: wrap;
         gap: 20px;
-        margin-bottom: 2.5em;
+        margin-bottom: 0;
       }
       .main-demo-image-container {
         position: relative;
-        border: 1px solid #e5e7eb;
-        padding: 10px;
-        border-radius: 8px;
-        flex: 1;
+        flex: 1 1 340px;
         min-width: 300px;
-        background: #fff;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 10px;
       }
       .main-demo-image-container img {
-        max-width: 100%;
         display: block;
-        border-radius: 4px;
+        max-width: 100%;
+        height: auto;
+        border-radius: 6px;
       }
       .main-demo-controls {
-        flex: 1;
+        flex: 1 1 300px;
         min-width: 300px;
-        background-color: #f9fafb;
+        background: var(--bg-alt);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
         padding: 20px;
-        border-radius: 8px;
         display: flex;
         flex-direction: column;
         gap: 0.7em;
       }
-      .main-demo-controls h2,
-      .main-demo-controls h3 {
-        margin-top: 0.5em;
-        margin-bottom: 0.5em;
-        font-size: 1.1em;
-        color: #2563eb;
-        font-weight: 600;
-      }
       .main-demo-controls button {
-        background-color: #2563eb;
-        color: white;
-        border: none;
-        padding: 8px 16px;
-        border-radius: 4px;
+        font: inherit;
+        font-size: 0.92rem;
+        font-weight: 500;
         cursor: pointer;
-        margin-right: 10px;
-        margin-bottom: 10px;
-        font-size: 1em;
-        transition: background 0.2s;
+        background: var(--bg);
+        color: var(--fg);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 9px 14px;
+        text-align: left;
       }
-      .main-demo-controls button:hover {
-        background-color: #1d4ed8;
+      .main-demo-controls button:hover:not(:disabled) {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .main-demo-controls button:disabled {
+        opacity: 0.5;
+        cursor: default;
       }
       .main-demo-output {
-        margin-top: 10px;
-        background-color: #f3f4f6;
-        padding: 15px;
-        border-radius: 4px;
-        font-family: monospace;
+        margin-top: 2px;
+        background: var(--bg-sunk);
+        border-radius: 8px;
+        padding: 14px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
         white-space: pre-wrap;
-        font-size: 0.98em;
-        color: #333;
+        font-size: 0.82rem;
+        color: var(--fg);
+        max-height: 210px;
+        overflow: auto;
       }
-      .main-demo-code-example {
-        background-color: #f3f4f6;
-        padding: 15px;
-        border-radius: 4px;
-        font-family: monospace;
-        white-space: pre-wrap;
-        margin-top: 30px;
-        font-size: 0.98em;
+
+      /* ---------- tables ---------- */
+      .table-scroll {
+        overflow-x: auto;
       }
-      .jsfiddle-link {
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 0.94rem;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      tbody tr:last-child td {
+        border-bottom: 0;
+      }
+      th {
+        background: var(--bg-alt);
+        font-size: 0.83rem;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        color: var(--fg-mut);
+      }
+      td code {
+        white-space: nowrap;
+      }
+
+      /* ---------- yes / no ---------- */
+      .cols {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: 1fr 1fr;
+      }
+      @media (max-width: 700px) {
+        .cols {
+          grid-template-columns: 1fr;
+        }
+      }
+      .card {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 20px;
+      }
+      .card p {
+        margin: 10px 0 0;
+        color: var(--fg-mut);
+      }
+      .card.yes {
+        background: var(--ok-soft);
+        border-color: transparent;
+      }
+      .card.yes h3 {
+        color: var(--ok);
+      }
+      .card.no {
+        background: var(--accent-soft);
+        border-color: transparent;
+      }
+      .card.no h3 {
+        color: var(--accent);
+      }
+      .card strong {
+        color: var(--fg);
+      }
+
+      /* ---------- code ---------- */
+      pre {
+        background: var(--bg-sunk) !important;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 16px 18px;
+        overflow-x: auto;
+        margin: 18px 0 0;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      pre code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+      :not(pre) > code {
+        background: var(--bg-sunk);
+        border-radius: 5px;
+        padding: 1px 6px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.88em;
+      }
+      .gotcha {
+        margin: 18px 0 0;
+        padding: 14px 16px;
+        background: var(--bg-alt);
+        border-left: 3px solid var(--accent);
+        border-radius: 0 8px 8px 0;
+        color: var(--fg-mut);
+        font-size: 0.95rem;
+      }
+      .gotcha strong {
+        color: var(--fg);
+      }
+
+      /* ---------- links list ---------- */
+      .links {
+        list-style: none;
+        padding: 0;
+        margin: 22px 0 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .links a {
         display: inline-block;
-        margin: 1.5em 0 2em 0;
-        padding: 0.7em 1.2em;
-        background: #f7f7fa;
-        border: 1px solid #c3d3f3;
-        border-radius: 6px;
-        color: #1565c0;
-        font-weight: 500;
         text-decoration: none;
-        transition: background 0.2s;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 7px 15px;
+        font-size: 0.9rem;
+        color: var(--fg);
       }
-      .jsfiddle-link:hover {
-        background: #e3eafc;
-        color: #0d47a1;
+      .links a:hover {
+        border-color: var(--accent);
+        color: var(--accent);
       }
-      .jsfiddle-link svg {
-        vertical-align: middle;
-        margin-right: 0.4em;
-        margin-bottom: 0.1em;
+
+      /* ---------- footer ---------- */
+      .footer {
+        margin-top: 72px;
+        padding: 40px 0 56px;
+        border-top: 1px solid var(--line);
+        background: var(--bg-alt);
+      }
+      .footer .cta {
+        margin-top: 0;
+      }
+      .footer p {
+        color: var(--fg-mut);
+        font-size: 0.92rem;
+      }
+      .footer .fine {
+        font-size: 0.85rem;
+        margin-bottom: 0;
       }
     </style>
   </head>
+
   <body>
-    <header>
-      <img
-        src="android-chrome-192x192.png"
-        alt="VisualImageTool logo"
-        width="48"
-        height="48"
-        style="
-          margin-bottom: 0.2em;
-          border-radius: 10px;
-          box-shadow: 0 1px 4px #0002;
-        "
-      />
-      <h1 style="margin: 0.2em 0 0.1em 0; font-size: 2rem">VisualImageTool</h1>
-      <p style="margin: 0 0 0.2em 0; font-size: 1.08em">
-        Let people pick the focal point and crop zone. You get the pixel
-        coordinates.
-      </p>
+    <a class="skip" href="#demo">Skip to the demo</a>
+
+    <header class="hero">
+      <div class="wrap">
+        <div class="brand">
+          <img src="android-chrome-192x192.png" alt="" width="56" height="56" />
+          <span>Visual Image Tool</span>
+        </div>
+
+        <h1>
+          Let someone say <em>where the subject is</em>. Get back numbers.
+        </h1>
+
+        <p class="lede">
+          A zero-dependency vanilla JS tool to pick focal points and crop zones
+          on images. It hands you pixel coordinates you can feed straight into
+          your image pipeline — it never touches the pixels itself.
+        </p>
+
+        <ul class="facts">
+          <li><strong>3.6 kB</strong> gzipped</li>
+          <li><strong>Zero</strong> dependencies</li>
+          <li>TypeScript declarations included</li>
+          <li>MIT</li>
+        </ul>
+
+        <div class="cta">
+          <div class="copy" data-copy="npm install @h4md1/visual-image-tool">
+            <code>npm install @h4md1/visual-image-tool</code>
+            <button
+              type="button"
+              class="copy-btn"
+              aria-label="Copy install command"
+            >
+              Copy
+            </button>
+          </div>
+          <a class="btn ghost" href="#demo">Try it below</a>
+          <a
+            class="btn ghost"
+            href="https://github.com/killerwolf/visual-image-tool"
+            >GitHub</a
+          >
+        </div>
+      </div>
     </header>
-    <main>
-      <h2 style="margin-bottom: 1.2em">Interactive demo</h2>
-      <div class="main-demo-container">
-        <div class="main-demo-image-container">
-          <img
-            id="demoImage"
-            src="https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1024&q=80"
-            alt="Demo landscape"
-          />
+
+    <main class="wrap">
+      <section id="demo" class="section">
+        <h2>Drag the marker. Resize the box. Watch the numbers.</h2>
+        <p class="sub">
+          This is the actual library running on this page, loaded from a CDN
+          with no build step. It starts by demonstrating itself — then it's
+          yours.
+        </p>
+
+        <div class="main-demo-container">
+          <div class="main-demo-image-container">
+            <img
+              id="demoImage"
+              src="https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1024&q=80"
+              alt="A landscape photograph used to demonstrate the focal point and crop zone tools"
+            />
+          </div>
+          <div class="main-demo-controls">
+            <h3>Controls</h3>
+            <button id="toggleFocusPoint" type="button">
+              Enable Focus point
+            </button>
+            <button id="toggleCropZone" type="button">Enable Crop zone</button>
+            <h3>Current data</h3>
+            <div id="output" class="main-demo-output">No data available</div>
+            <h3>Actions</h3>
+            <button id="centerFocusPoint" type="button">
+              Center Focus point
+            </button>
+            <button id="resetCropZone" type="button">Reset Crop zone</button>
+          </div>
         </div>
-        <div class="main-demo-controls">
-          <h2>Controls</h2>
-          <button id="toggleFocusPoint">Enable Focus point</button>
-          <button id="toggleCropZone">Enable Crop zone</button>
-          <h3>Current data</h3>
-          <div id="output" class="main-demo-output">No data available</div>
-          <h3>Actions</h3>
-          <button id="centerFocusPoint">Center Focus point</button>
-          <button id="resetCropZone">Reset Crop zone</button>
+      </section>
+
+      <section class="section">
+        <h2>What you get back, and where it goes</h2>
+        <p class="sub">
+          Coordinates come back in the image's <strong>original pixels</strong>,
+          so they stay valid at any display size.
+        </p>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>What you get</th>
+                <th>Where it tends to go</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>focusPoint: {x, y}</code></td>
+                <td>
+                  CSS <code>object-position</code>, imgix
+                  <code>fp-x</code>/<code>fp-y</code>, Cloudinary gravity
+                </td>
+              </tr>
+              <tr>
+                <td><code>cropZone: {x, y, w, h}</code></td>
+                <td>
+                  a server-side crop with sharp or ImageMagick, or a stored crop
+                  rectangle
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-      </div>
-      <a
-        class="jsfiddle-link"
-        href="https://jsfiddle.net/ugswzmo2/"
-        target="_blank"
-        rel="noopener"
-      >
-        <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
-          <rect width="32" height="32" rx="6" fill="#fff" />
-          <path
-            d="M16 3L3 9.5v13L16 29l13-6.5v-13L16 3zm0 2.2l10.2 5.1-4.5 2.2L16 7.5l-5.7 2.8-4.5-2.2L16 5.2zm-11 6.2l4.2 2.1v4.2l-4.2-2.1v-4.2zm11 15.4l-10.2-5.1 4.2-2.1 6 3v4.2zm1-5.6l-6.2-3.1v-4.2l6.2 3.1v4.2zm1 5.6v-4.2l6-3 4.2 2.1-10.2 5.1zm11-6.2l-4.2-2.1v-4.2l4.2-2.1v8.4zm-5.2-3.1l-6.2 3.1v-4.2l6.2-3.1v4.2z"
-            fill="#1565c0"
-          />
-        </svg>
-        Try online on JSFiddle
-      </a>
-      <div class="section-title">Usage without installation</div>
-      <p>
-        You can use VisualImageTool directly in your HTML pages without
-        installing any dependency, thanks to the CDN
-        <a
-          href="https://www.jsdelivr.com/package/npm/@h4md1/visual-image-tool"
-          target="_blank"
-          rel="noopener"
-          >jsdelivr</a
-        >:
-      </p>
-      <pre><code class="language-html">&lt;!-- UMD via CDN --&gt;
-&lt;script src="https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool/dist/visual-image-tool.umd.js"&gt;&lt;/script&gt;
+      </section>
 
-&lt;!-- OR ESM via CDN --&gt;
-&lt;script type="module"&gt;
-  import { VisualImageTool } from 'https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool/dist/visual-image-tool.esm.js';
-  // Your code here
-&lt;/script&gt;</code></pre>
+      <section class="section">
+        <h2>Is this the right tool?</h2>
+        <div class="cols">
+          <div class="card yes">
+            <h3>Yes, if</h3>
+            <p>
+              you need a person to mark <em>where</em> the subject of an image
+              is, and you want those positions back as numbers — to store on a
+              record, or hand to an image pipeline.
+            </p>
+          </div>
+          <div class="card no">
+            <h3>No, if</h3>
+            <p>
+              you need the browser to actually produce the cropped image —
+              rotation, zoom, canvas export, file output. This library never
+              touches pixels. A full cropper such as
+              <strong>Cropper.js</strong> is built for that job.
+            </p>
+          </div>
+        </div>
+      </section>
 
-      <div class="section-title">Quick demos</div>
-      <div class="demo-links">
-        <a href="basic-usage.html">Basic usage</a>
-        <a href="custom-config.html">Custom configuration</a>
-        <a href="demo-esm.html">ESM import demo</a>
-        <a href="demo-umd.html">UMD import demo</a>
-        <a href="preact-importmap-demo.html">Preact integration (importmap)</a>
-        <a href="react-importmap-demo.html">React integration (importmap)</a>
-        <a href="vue-importmap-demo.html">Vue integration (importmap)</a>
-      </div>
+      <section class="section">
+        <h2>Install</h2>
+        <pre><code class="language-bash">npm install @h4md1/visual-image-tool</code></pre>
+        <p class="sub">
+          Or skip the install entirely and load it from a CDN — this is what the
+          demo above does. Pin the exact version in production.
+        </p>
+        <pre><code class="language-html">&lt;script src="https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool@0.3.0/dist/visual-image-tool.umd.js"&gt;&lt;/script&gt;</code></pre>
+        <p class="sub">
+          There is a runnable
+          <a href="https://jsfiddle.net/ugswzmo2/">JSFiddle</a>
+          if you would rather poke at it first.
+        </p>
+      </section>
 
-      <div class="section-title">Features</div>
-      <ul>
-        <li>
-          <strong>Focus point</strong>: Set a point of interest on the image
-          with a visual marker
-        </li>
-        <li>
-          <strong>Crop zone</strong>: Define a crop zone with resize handles
-        </li>
-        <li>
-          <strong>No dependencies</strong>: Works without external libraries
-        </li>
-        <li><strong>Simple API</strong>: Clear and easy-to-use interface</li>
-        <li><strong>Customizable</strong>: Flexible configuration options</li>
-        <li><strong>Responsive</strong>: Adapts to screen resizing</li>
-      </ul>
+      <section class="section">
+        <h2>Quick start</h2>
+        <pre><code class="language-js">import { VisualImageTool } from "@h4md1/visual-image-tool";
 
-      <div class="section-title">Installation</div>
-      <pre><code class="language-bash">npm install @h4md1/visual-image-tool</code></pre>
-
-      <div class="section-title">Quick start guide</div>
-      <ol>
-        <li>
-          <strong>Import</strong>
-          <pre><code class="language-js">// ES modules (recommended)
-import { VisualImageTool } from '@h4md1/visual-image-tool';
-
-// CommonJS
-const { VisualImageTool } = require('@h4md1/visual-image-tool');
-
-// UMD (script tag)
-&lt;script src="node_modules/@h4md1/visual-image-tool/dist/visual-image-tool.umd.js"&gt;&lt;/script&gt;
-</code></pre>
-        </li>
-        <li>
-          <strong>Initialization</strong>
-          <pre><code class="language-js">// With an import or require you hold the class itself.
-// Loaded from the UMD script tag it is VisualImageTool.VisualImageTool.
-const imageTool = new VisualImageTool({
-  imageElement: document.getElementById('myImage'),
-  debug: true, // Enable debug logs for overlay positioning (optional)
+const tool = new VisualImageTool({
+  imageElement: document.getElementById("myImage"),
   onChange: (data) => {
-    console.log('Focus point:', data.focusPoint);
-    console.log('Crop zone:', data.cropZone);
-  }
-});</code></pre>
-        </li>
-        <li>
-          <strong>Using the features</strong>
-          <pre><code class="language-js">// Enable the focus point
-imageTool.toggleFocusPoint(true);
+    console.log(data.focusPoint); // { x, y }   in original pixels
+    console.log(data.cropZone);   // { x, y, width, height }
+  },
+});
 
-// Enable the crop zone
-imageTool.toggleCropZone(true);
+tool.toggleFocusPoint(true);
+tool.toggleCropZone(true);</code></pre>
+        <p class="gotcha">
+          <strong>Loading the UMD build from a script tag?</strong> The global
+          holds the named export, so the class is
+          <code>VisualImageTool.VisualImageTool</code>. With an
+          <code>import</code> or <code>require</code> you already have the class
+          itself.
+        </p>
+      </section>
 
-// Manually set a focus point
-imageTool.setFocusPoint(x, y);
+      <section class="section">
+        <h2>It's plain DOM, so it drops into anything</h2>
+        <ul class="links">
+          <li><a href="basic-usage.html">Basic usage</a></li>
+          <li><a href="custom-config.html">Custom configuration</a></li>
+          <li><a href="demo-esm.html">ESM import</a></li>
+          <li><a href="demo-umd.html">UMD import</a></li>
+          <li><a href="react-importmap-demo.html">React</a></li>
+          <li><a href="vue-importmap-demo.html">Vue</a></li>
+          <li><a href="preact-importmap-demo.html">Preact</a></li>
+        </ul>
+      </section>
 
-// Manually set a crop zone
-imageTool.setCropZone(x, y, width, height);
+      <section class="section">
+        <h2>The whole API</h2>
+        <div class="table-scroll">
+          <table>
+            <tbody>
+              <tr>
+                <td><code>toggleFocusPoint(active?)</code></td>
+                <td>Show or hide the focus point marker.</td>
+              </tr>
+              <tr>
+                <td><code>toggleCropZone(active?)</code></td>
+                <td>Show or hide the crop zone.</td>
+              </tr>
+              <tr>
+                <td><code>setFocusPoint(x, y)</code></td>
+                <td>Place the marker, in original pixels.</td>
+              </tr>
+              <tr>
+                <td><code>setCropZone(x, y, w, h)</code></td>
+                <td>Place and size the crop zone.</td>
+              </tr>
+              <tr>
+                <td>
+                  <code>getFocusPoint()</code> / <code>getCropZone()</code>
+                </td>
+                <td>Read the current values.</td>
+              </tr>
+              <tr>
+                <td><code>getImageDimensions()</code></td>
+                <td>The image's natural size.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="sub">
+          Setters return the instance, so they chain. Full options and types are
+          in the
+          <a href="https://github.com/killerwolf/visual-image-tool#readme"
+            >README</a
+          >.
+        </p>
+      </section>
 
-// Get current values
-const focusPoint = imageTool.getFocusPoint();
-const cropZone = imageTool.getCropZone();
-</code></pre>
-        </li>
-      </ol>
-
-      <div class="section-title">Full API</div>
-      <p>
-        The complete reference — every method, all configuration options and the
-        framework integration examples — lives in the
-        <a href="https://github.com/killerwolf/visual-image-tool#readme"
-          >README</a
-        >. It is kept in one place so this page cannot drift out of step with
-        the code.
-      </p>
-
-      <div class="section-title">Browser Compatibility</div>
-      <ul>
-        <li>Chrome (latest versions)</li>
-        <li>Firefox (latest versions)</li>
-        <li>Safari (latest versions)</li>
-        <li>Edge (latest versions)</li>
-      </ul>
-
-      <div class="section-title">License</div>
-      <p>MIT</p>
+      <section class="section">
+        <h2>Browser support</h2>
+        <p class="sub">Current versions of Chrome, Firefox, Safari and Edge.</p>
+      </section>
     </main>
-    <!-- Prism.js for syntax highlighting -->
+
+    <footer class="footer">
+      <div class="wrap">
+        <div class="cta">
+          <div class="copy" data-copy="npm install @h4md1/visual-image-tool">
+            <code>npm install @h4md1/visual-image-tool</code>
+            <button
+              type="button"
+              class="copy-btn"
+              aria-label="Copy install command"
+            >
+              Copy
+            </button>
+          </div>
+        </div>
+        <p>
+          <a href="https://www.npmjs.com/package/@h4md1/visual-image-tool"
+            >npm</a
+          >
+          ·
+          <a href="https://github.com/killerwolf/visual-image-tool">GitHub</a>
+          ·
+          <a
+            href="https://github.com/killerwolf/visual-image-tool/blob/main/LICENSE"
+            >MIT</a
+          >
+        </p>
+        <p class="fine">Built by Hamdi Laadhari.</p>
+      </div>
+    </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-javascript.min.js"></script>
-    <!-- VisualImageTool UMD bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-markup.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool/dist/visual-image-tool.umd.js"></script>
     <script>
       // Initialize the tool on an image
@@ -565,6 +933,25 @@ const cropZone = imageTool.getCropZone();
           width,
           height
         );
+      });
+    </script>
+    <script>
+      // Copy-to-clipboard for the install command.
+      document.querySelectorAll(".copy").forEach((box) => {
+        const btn = box.querySelector(".copy-btn");
+        btn.addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(box.dataset.copy);
+            const was = btn.textContent;
+            btn.textContent = "Copied";
+            setTimeout(() => {
+              btn.textContent = was;
+            }, 1600);
+          } catch {
+            // Clipboard denied (insecure context, or the user said no) — the
+            // command is visible right there, so leave it be.
+          }
+        });
       });
     </script>
   </body>
