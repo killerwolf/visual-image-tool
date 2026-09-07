@@ -56,7 +56,7 @@ Or skip the install entirely and load it from a CDN — this is what the
 [live demo](https://h4md1.fr/visual-image-tool/) does:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool@0.2/dist/visual-image-tool.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@h4md1/visual-image-tool@0.3.0/dist/visual-image-tool.umd.js"></script>
 ```
 
 Pin the exact version rather than the major in production. There is a runnable
