@@ -1,0 +1,61 @@
+name: Deploy demo site
+
+# Publishes demo/ to GitHub Pages on every push to main that touches it.
+#
+# This replaces `npm run publish:demo` (the gh-pages package), which pushed
+# the working directory to a gh-pages branch by hand. That made merging and
+# deploying two separate events — a merged PR left the live site stale until
+# someone remembered to run it — and published whatever happened to be on
+# disk rather than a specific commit.
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "demo/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# The site is only ever the newest commit, so a queued run can be dropped —
+# but never one that is mid-deploy.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Stage the publishable demo files
+        run: |
+          mkdir -p _site
+          # index-local.html points at a local dist/ build and is a dev-only
+          # harness; the old publish script excluded it and so does this.
+          rsync -a --exclude 'index-local.html' demo/ _site/
+          # Without .nojekyll, Pages runs Jekyll and drops files starting "_".
+          touch _site/.nojekyll
+          echo "Publishing:"
+          ls -A _site
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
